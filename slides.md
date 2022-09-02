@@ -63,9 +63,10 @@ pandoc -t revealjs slides.md -o index.html  \
 
 ::: incremental
 
-- Eat spaghetti
-- Drink wine
-- Do something else
+- Eat 
+- Skate
+- Don't sleep
+- Repeat
 
 :::
 
