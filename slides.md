@@ -23,6 +23,7 @@ autoPlayMedia: true
 - write your slides in markdown
 - include interactive figures, videos, code, math, ...
 - fine tune the presentation via `.css`
+- [revealjs documentation](https://revealjs.com/)
 
 ### Requirements
 
@@ -33,7 +34,7 @@ autoPlayMedia: true
 ### Usage
 
 ```shell
-pandoc -t revealjs slides.md -o slides.html  \
+pandoc -t revealjs slides.md -o index.html  \
 	--mathjax \
 	--standalone \
 	--css=styles.css \
