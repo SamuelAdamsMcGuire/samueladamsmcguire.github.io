@@ -65,7 +65,7 @@ pandoc -t revealjs slides.md -o index.html  \
 
 - Eat 
 - Skate
-- Don't sleep
+- Sleep
 - Repeat
 
 :::
