@@ -5,7 +5,7 @@
 - Run to convert your markdown `slides.md` into a html file `slides.html`:
 
 ```shell
-pandoc -t revealjs slides.md -o slides.html  \
+pandoc -t revealjs slides.md -o index.html  \
 	--mathjax \
 	--standalone \
 	--css=styles.css \

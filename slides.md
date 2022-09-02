@@ -1,8 +1,8 @@
 ---
 author: Spiced Academy
-title: Final Project Kickoff
-subtitle: DataBasils Graduation @ Spiced Academy
-date: 2022-22-06
+title: Non-Teacning Day 
+subtitle: Data Science and Analytics
+date: 05-09-2022
 theme: moon # https://revealjs.com/themes/
 transition: concave # https://revealjs.com/transitions/
 # see all the options here: https://revealjs.com/config/
