@@ -24,6 +24,7 @@ autoPlayMedia: true
 - include interactive figures, videos, code, math, ...
 - fine tune the presentation via `.css`
 - [revealjs documentation](https://revealjs.com/)
+- [Awesome projects](https://github.com/NirantK/awesome-project-ideas)
 
 ### Requirements
 
