@@ -3,7 +3,7 @@ name: Build and deploy
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build_deploy:
@@ -17,6 +17,7 @@ jobs:
         wget https://github.com/jgm/pandoc/releases/download/2.12/pandoc-2.12-1-amd64.deb
         sudo dpkg -i pandoc-2.12-1-amd64.deb
         rm pandoc-2.12-1-amd64.deb
+
     - name: Prepare build folder
       run: |
         mkdir public
@@ -24,7 +25,7 @@ jobs:
     
     - name: Build slides
       run: >
-        pandoc -t revealjs slides.md -o index.html
+        pandoc -t revealjs slides.md -o public/index.html
         --mathjax 
         --standalone
         --css=static/styles.css
