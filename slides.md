@@ -73,7 +73,7 @@ pandoc -t revealjs slides.md -o index.html  \
 
 ### Plots
 
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/plotly_example.html" height="450" width="100%"></iframe>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="static/plotly_example.html" height="450" width="100%"></iframe>
 
 
 ### Math
