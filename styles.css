@@ -8,11 +8,7 @@
 
 /*change the font size of the title on the first slide*/
 .title {
-  font-size: 1em !important; /*important makes this first priority */
-}
-
-.reveal h1 {
-  font-size: 1em;
+  font-size: 2.5em !important; /*important makes this first priority */
 }
 
 
