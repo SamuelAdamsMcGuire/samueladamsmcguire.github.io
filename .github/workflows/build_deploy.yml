@@ -1,0 +1,36 @@
+name: Build and deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup repo
+      uses: actions/checkout@v2    
+    
+    - name: Install pandoc
+      run: |
+        wget https://github.com/jgm/pandoc/releases/download/2.12/pandoc-2.12-1-amd64.deb
+        sudo dpkg -i pandoc-2.12-1-amd64.deb
+        rm pandoc-2.12-1-amd64.deb
+    - name: Prepare build folder
+      run: |
+        mkdir public
+        cp -R static public/
+    
+    - name: Build slides
+      run: >
+        pandoc -t revealjs slides.md -o public/index.html
+        --mathjax 
+        --standalone
+        --css=static/styles.css
+        --css=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css
+    
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
