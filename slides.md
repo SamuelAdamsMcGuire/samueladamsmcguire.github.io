@@ -1,9 +1,10 @@
 ---
-author: Malte Bonart
-title: Markdown Presentation
-subtitle: <img src="static/coding.jpg" style="max-height:300px;"></img>
-theme: night # https://revealjs.com/themes/
-transition: slide # https://revealjs.com/transitions/
+author: Spiced Academy
+title: Non-Teacning Day 
+subtitle: Data Science and Analytics
+date: 05-09-2022
+theme: moon # https://revealjs.com/themes/
+transition: concave # https://revealjs.com/transitions/
 # see all the options here: https://revealjs.com/config/
 highlight-style: breezeDark
 progress: true
