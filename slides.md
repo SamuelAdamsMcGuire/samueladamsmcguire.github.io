@@ -1,8 +1,8 @@
 ---
 author: Spiced Academy
-title: Non Teaching Day
-subtitle: Markdown Presentation
-date: 05-09-2022
+title: SaffronQL
+subtitle: Final Project
+date: 06-09-2022
 theme: moon # https://revealjs.com/themes/
 transition: concave # https://revealjs.com/transitions/
 # see all the options here: https://revealjs.com/config/
