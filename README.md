@@ -1,6 +1,6 @@
 # How To: Presentations with pandoc and `reveal.js`
 
-- Download and install `pandoc` (see [here](https://anaconda.org/conda-forge/pandoc))
+- Download and install `pandoc` (see [here](https://pandoc.org/)))
 - Create your slides in a markdown file
 - Run to convert your markdown `slides.md` into a html file `slides.html`:
 
