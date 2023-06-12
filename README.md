@@ -12,5 +12,13 @@ pandoc -t revealjs slides.md -o index.html  \
 	--css=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css
 ```
 
+### Online hosting with github
+
+In order to host the presentation online please name the repo in the following way:
+
+`your_github_name.github.io`
+
+The file `.github/workflows/build_deploy.yml` does the rest. For more information on how it works see [hosting on github pages](https://pages.github.com/)
+
 
 
