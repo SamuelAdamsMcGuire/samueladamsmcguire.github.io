@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="author" content="Spiced Academy">
-  <title>Non-Teacning Day</title>
+  <title>Mustard Deviations</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -90,10 +90,10 @@
     <div class="slides">
 
 <section id="title-slide">
-  <h1 class="title">Non-Teacning Day</h1>
-  <p class="subtitle">Data Science and Analytics</p>
+  <h1 class="title">Mustard Deviations</h1>
+  <p class="subtitle">Final Project Presentation</p>
   <p class="author">Spiced Academy</p>
-  <p class="date">05-09-2022</p>
+  <p class="date">12-06-2023</p>
 </section>
 
 <section>
@@ -104,15 +104,18 @@
 <section id="what-can-you-do-with-reveal.js" class="slide level3">
 <h3>What can you do with <code>reveal.js</code></h3>
 <ul>
+<li><code>.html</code> presentations can be viewed in any webbrowser</li>
 <li>write your slides in markdown</li>
 <li>include interactive figures, videos, code, math, …</li>
-<li>use <code>pandoc</code> to transform markdown to html</li>
-<li>presentations can be viewed in any webbrowser</li>
+<li>fine tune the presentation via <code>.css</code></li>
 </ul>
 </section>
-<section id="installation" class="slide level3">
-<h3>Installation</h3>
-<pre><code>pip install pandoc </code></pre>
+<section id="requirements" class="slide level3">
+<h3>Requirements</h3>
+<ul>
+<li><code>pandoc</code> to transform markdown into html</li>
+<li>get it from <a href="https://pandoc.org/">here</a></li>
+</ul>
 </section>
 <section id="usage" class="slide level3">
 <h3>Usage</h3>
@@ -141,7 +144,7 @@
 </tr>
 <tr class="even">
 <td style="text-align: left;"><i class="fas fa-plus"></i></td>
-<td style="text-align: center;">200</td>
+<td style="text-align: center;">250</td>
 <td style="text-align: center;">300n</td>
 </tr>
 </tbody>
@@ -162,34 +165,63 @@
 </ul>
 </div>
 </section>
+<section id="fragments-part-2" class="slide level3">
+<h3>Fragments part 2</h3>
+<div>
+<ul>
+<li class="fragment">Eat pizza</li>
+<li class="fragment">Drink beer</li>
+<li class="fragment">Do something else</li>
+</ul>
+</div>
+</section>
 <section id="plots" class="slide level3">
 <h3>Plots</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="static/plotly_example.html" height="450" width="100%">
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/plotly_example.html" height="450" width="100%">
 </iframe>
 </section>
 <section id="math" class="slide level3">
 <h3>Math</h3>
-<pre><code>f(x, y) = \frac{\sqrt{x^2+y^2}}{x+y}</code></pre>
 <p><span class="math display">\[
 f(x, y) = \frac{\sqrt{x^2+y^2}}{x+y}
 \]</span></p>
 </section>
 <section id="code" class="slide level3">
 <h3>Code</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fun(a, b):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&#39;add numbers&#39;</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fun(<span class="dv">2</span>, <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fun(a, b):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&#39;add numbers&#39;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fun(<span class="dv">2</span>, <span class="dv">2</span>)</span></code></pre></div>
+</section>
+<section id="dataframe-converted-to-markdown" class="slide level3">
+<h3>DataFrame converted to markdown</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.to_markdown())   </span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;"></th>
+<th style="text-align: left;">animal_1</th>
+<th style="text-align: left;">animal_2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">elk</td>
+<td style="text-align: left;">dog</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">pig</td>
+<td style="text-align: left;">quetzal</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="images" class="slide level3">
 <h3>Images</h3>
-<p><img src="static/coding.jpg" style="max-height:400px;"></img></p>
+<p><img data-src="assets/coding.jpg" style="width:40.0%" /></p>
 <p><span class="smallfont">Photo by <a href="https://unsplash.com/@arifriyanto?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Arif Riyanto</a> on <a href="https://unsplash.com/s/photos/coding?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span></p>
-</section></section>
-<section>
-<section id="section" class="title-slide slide level1" data-background="static/coding.jpg">
-<h1 data-background="static/coding.jpg"></h1>
-
 </section>
 <section id="css-styling" class="slide level3">
 <h3>CSS Styling</h3>
@@ -205,15 +237,115 @@ or the color
 <section id="links" class="slide level3">
 <h3>Links</h3>
 <ul>
-<li><a href="https://github.com/NirantK/awesome-project-ideas">Awesome deep learning projects</a></li>
-<li><a href="https://github.com/awesomedata/awesome-public-datasets">Awesome public datasets</a></li>
-<li><a href="https://www.drivendata.org/">DrivenData DS Competitions</a></li>
-<li><a href="https://www.kaggle.com/competitions">Kaggle DS Competitions</a></li>
+<li><a href="https://github.com/NirantK/awesome-project-ideas">Awesome projects</a></li>
+<li><a href="https://github.com/awesomedata/awesome-public-datasets">Awesome datasets</a></li>
+<li><a href="https://www.drivendata.org/">DrivenData Competitions</a></li>
+<li><a href="https://www.kaggle.com/competitions">Kaggle Competitions</a></li>
+<li><a href="https://spiced.space/data-basils/da-course/09-final-project/project-ideas.html">Spiced Project Ideas</a></li>
 </ul>
 </section>
 <section id="fontawesome-icons" class="slide level3">
 <h3>Fontawesome icons</h3>
 <p><i class="fas fa-file-code"></i> <i class="fab fa-github-square"></i> <i class="fab fa-codepen"></i> <i class="fab fa-snapchat-ghost"></i></p>
+<p><a href="https://fontawesome.com/icons/">Fontawesome Website</a></p>
+</section></section>
+<section>
+<section id="guidelines-tips-for-final-project-presentations" class="title-slide slide level1">
+<h1>Guidelines / Tips for Final Project Presentations</h1>
+
+</section>
+<section id="section" class="slide level3">
+<h3>⏱</h3>
+<ul>
+<li>The graduation will start at 15:00PM</li>
+<li><strong>7-8</strong> minutes followed by Q&amp;A (10 min MAX)</li>
+</ul>
+</section>
+<section id="section-1" class="slide level3">
+<h3>😀</h3>
+<ul>
+<li>talk loud</li>
+<li>be confident and proud of what you have achieved</li>
+</ul>
+</section>
+<section id="section-2" class="slide level3">
+<h3>⚙️</h3>
+<ul>
+<li>demo working software only</li>
+<li>say something about your <strong>TECH STACK</strong></li>
+</ul>
+</section>
+<section id="section-3" class="slide level3">
+<h3>🖼</h3>
+<ul>
+<li>~one slide/min.</li>
+<li>one image, four points max. per slide.</li>
+</ul>
+</section>
+<section id="section-4" class="slide level3">
+<h3>🚫</h3>
+<ul>
+<li><strong>no</strong> raw code / Jupyter Notebook</li>
+<li>if nescessary, show max &lt;= 10 lines of code at a time</li>
+</ul>
+</section>
+<section id="section-5" class="slide level3">
+<h3>🗣</h3>
+<ul>
+<li>make sure that your code is tested</li>
+<li>does it work offline?</li>
+<li>have a backup</li>
+</ul>
+</section>
+<section id="section-6" class="slide level3">
+<h3>🔌</h3>
+<ul>
+<li>do a <strong>TECH CHECK</strong>!! (e.g. HDMI cable, etc.0)</li>
+</ul>
+</section>
+<section id="section-7" class="slide level3">
+<h3>🙊</h3>
+<ul>
+<li>mistakes are not a problem</li>
+<li>just keep going</li>
+<li><strong>don’t apologize</strong></li>
+</ul>
+</section>
+<section id="section-8" class="slide level3">
+<h3>🤖</h3>
+<ul>
+<li>focus on results</li>
+<li>focus on showing off the features that work</li>
+<li>it is completely fine to mention features that you’d like to add in the future.</li>
+</ul>
+</section>
+<section id="section-9" class="slide level3">
+<h3>📖</h3>
+<ul>
+<li>show some raw numbers/ descriptive statistics</li>
+<li>tell stories, mishaps, basics, funny details</li>
+</ul>
+</section>
+<section id="section-10" class="slide level3">
+<h3>⁉️</h3>
+<ul>
+<li>expect questions from the audience</li>
+<li>if you are not sure of the answer, say that you don’t know and that’s about it</li>
+</ul>
+</section>
+<section id="section-11" class="slide level3">
+<h3>🛑</h3>
+<ul>
+<li>stop working on your project <strong>early enough</strong></li>
+<li>you will ALWAYS feel like you can do more</li>
+</ul>
+</section>
+<section id="section-12" class="slide level3">
+<h3>👏</h3>
+<ul>
+<li>you have worked hard for this</li>
+<li>be proud of your work</li>
+</ul>
 </section></section>
     </div>
   </div>
@@ -250,8 +382,6 @@ or the color
         autoPlayMedia: true,
         // Transition style
         transition: 'concave', // none/fade/slide/convex/concave/zoom
-        // Factor of the display size that should remain empty around the content
-        margin: 0.01,
         math: {
           mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
           config: 'TeX-AMS_HTML-full',
