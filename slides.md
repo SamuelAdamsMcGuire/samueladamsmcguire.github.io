@@ -1,8 +1,8 @@
 ---
 author: Spiced Academy
-title: SaffronQL
-subtitle: Final Project
-date: 06-09-2022
+title: Mustard Deviations
+subtitle: Final Project Presentation
+date: 12-06-2023
 theme: moon # https://revealjs.com/themes/
 transition: concave # https://revealjs.com/transitions/
 # see all the options here: https://revealjs.com/config/
@@ -33,7 +33,7 @@ autoPlayMedia: true
 ### Usage
 
 ```shell
-pandoc -t revealjs slides.md -o slides.html  \
+pandoc -t revealjs slides.md -o index.html  \
 	--mathjax \
 	--standalone \
 	--css=styles.css \
@@ -48,7 +48,7 @@ pandoc -t revealjs slides.md -o slides.html  \
 | | A | B |
 | :---| :---: | :---: |
 | <i class="fas fa-clock"></i> | 100 | 400 |
-| <i class="fas fa-plus"></i> | 200 | 300n |
+| <i class="fas fa-plus"></i> | 250 | 300n |
 
 
 ### Videos
@@ -68,6 +68,15 @@ pandoc -t revealjs slides.md -o slides.html  \
 
 :::
 
+### Fragments part 2
+
+::: incremental
+
+- Eat pizza
+- Drink beer
+- Do something else
+
+:::
 
 ### Plots
 
