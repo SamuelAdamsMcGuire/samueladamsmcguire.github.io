@@ -18,6 +18,8 @@ In order to host the presentation online please name the repo in the following w
 
 `your_github_name.github.io`
 
+If everything works then the above URL will be where your presentation will be hosted. 
+
 The file `.github/workflows/build_deploy.yml` does the rest. For more information on how it works see [hosting on github pages](https://pages.github.com/)
 
 
