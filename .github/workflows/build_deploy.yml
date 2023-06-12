@@ -21,7 +21,6 @@ jobs:
     - name: Prepare build folder
       run: |
         mkdir public
-        cp -R static public/
     
     - name: Build slides
       run: >
