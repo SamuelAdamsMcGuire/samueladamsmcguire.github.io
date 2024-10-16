@@ -65,12 +65,12 @@ autoPlayMedia: true
 
 :::
 
-### Open Short term todos
+### Next Steps
 
 ::: incremental
 
 - Set up with external URL
-- Add to Fraaliance Platform login
+- Add to Fraalliance Platform login
 - Add source company for every entity
 - Add more data validation tests
 - Add more entity types - e.g. Superset 
