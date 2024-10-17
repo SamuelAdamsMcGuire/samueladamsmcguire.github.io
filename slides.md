@@ -1,7 +1,7 @@
 ---
 author: Samuel McGuire Datatactics
 title: Open Data Discovery
-subtitle: Data Catalog
+subtitle: Fraalliance-Data Catalog
 date: 17-10-2024
 theme: moon # https://revealjs.com/themes/
 transition: concave # https://revealjs.com/transitions/
@@ -22,6 +22,7 @@ autoPlayMedia: true
 - **Centralize and Organize All Data Assets** 
 - **Ensure Data Quality and Consistency**
 - **Improve Compliance and Data Governance**
+- **Reduce Data Redundancy**
 - **Enhance Collaboration** 
 
 ### Centralize and Organize All Data Assets
@@ -35,12 +36,14 @@ autoPlayMedia: true
 
 ### Improve Compliance and Data Governance
 
-
 ![](assets/data_lineage.png){ width=120% }
+
+### Reduce Data Redundancy
+
+![](assets/search.png){ width=120% }
 
 
 ### Enhance Collaboration
-
 
 ![](assets/discussions.png){ width=120% }
 
@@ -73,7 +76,7 @@ autoPlayMedia: true
 - Add to Fraalliance Platform login
 - Add source company for every entity
 - Add more data validation tests
-- Add more entity types - e.g. Superset 
+- Add more entity types - e.g. Superset, MLFLow 
 
 :::
 
@@ -81,9 +84,10 @@ autoPlayMedia: true
 
 ::: incremental
 
-- Automate some of the manual tasks
-- Integrate options for selling the data
-- Integrate tracking of data growth/Other statistics
+- Automate some of the manual tasks 
+- LLM/API to create descriptions
+- Enable Internal Data Marketplace/Subscriptions
+- Automate stats and tagging via odd-profiler
 - Your ideas?
  
 
