@@ -23,7 +23,7 @@ jobs:
     
     - name: Build slides
       run: >
-        pandoc -t revealjs -s slides.md -o public/index.html--variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@4.4.0
+         pandoc -t revealjs -s slides.md -o public/index.html --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@4.4.0
     
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
