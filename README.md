@@ -2,11 +2,15 @@
 
 - Download and install `pandoc` (see [here](https://pandoc.org/))
 - Create your slides in a markdown file
-- Run to convert your markdown `slides.md` into a html file `slides.html`:
-- Currently only works locally
+- Run to convert your markdown `slides.md` into a html file `index.html`:
 
 ```shell
-pandoc -t revealjs -s slides.md -o slides.html --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@4.4.0
+pandoc -t revealjs -s slides.md -o index.html --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@4.4.0
+```
+
+Render in browser:
+```shell
+firefox index.html
 ```
 
 ### Online hosting with github
