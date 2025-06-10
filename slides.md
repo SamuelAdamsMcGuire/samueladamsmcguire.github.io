@@ -1,8 +1,8 @@
 ---
 author: Samuel McGuire Datatactics
-title: Open Data Discovery
-subtitle: Fraalliance-Data Catalog
-date: 17-10-2024
+title: The Surprising Complexity of Fueling an Aircraft
+subtitle: A Machine Learning Approach
+date: 17-06-2025
 theme: moon # https://revealjs.com/themes/
 transition: concave # https://revealjs.com/transitions/
 # see all the options here: https://revealjs.com/config/
@@ -16,6 +16,7 @@ autoPlayMedia: true
 
 # Open Data Discovery
 
+---
 
 ### What can you do with `ODD` 
 
@@ -27,7 +28,7 @@ autoPlayMedia: true
 
 ### Centralize and Organize All Data Assets
 
-![](assets/landing_page.png){ width=120% }
+![](assets/airport-delay.png){ width=120% }
 
 
 ### Ensure Data Quality and Consistency
