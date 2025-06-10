@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <meta name="author" content="Samuel McGuire Datatactics">
-  <title>The Surprising Complexity of Fueling an Aircraft</title>
+  <meta name="author" content="Samuel McGuire">
+  <title>Datatactics GmbH</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -37,87 +37,100 @@
     <div class="slides">
 
 <section id="title-slide">
-  <h1 class="title">The Surprising Complexity of Fueling an
-Aircraft</h1>
-  <p class="subtitle">A Machine Learning Approach</p>
-  <p class="author">Samuel McGuire Datatactics</p>
+  <h1 class="title">Datatactics GmbH</h1>
+  <p class="subtitle">The Surprising Complexity of Fueling an
+Aircraft</p>
+  <p class="author">Samuel McGuire</p>
   <p class="date">17-06-2025</p>
 </section>
 
-<section>
-<section id="open-data-discovery" class="title-slide slide level1">
-<h1>Open Data Discovery</h1>
+<section class="slide level3">
 
+<h4 id="has-your-flight-ever-been-delayed">Has Your Flight Ever Been
+Delayed?</h4>
+<p><img data-src="assets/airport_delays.png" style="width:60.0%" /></p>
+<p><strong>Delays happen. But have you ever thought about
+why?</strong></p>
 </section>
-<section id="what-can-you-do-with-odd" class="slide level3">
-<h3>What can you do with <code>ODD</code></h3>
+<section class="slide level3">
+
+<h4 id="why-planes-are-late">Why Planes Are Late</h4>
 <ul>
-<li><strong>Centralize and Organize All Data Assets</strong></li>
-<li><strong>Ensure Data Quality and Consistency</strong></li>
-<li><strong>Improve Compliance and Data Governance</strong></li>
-<li><strong>Reduce Data Redundancy</strong></li>
-<li><strong>Enhance Collaboration</strong></li>
+<li class="fragment">Late incoming aircraft</li>
+<li class="fragment">Weather disruptions</li>
+<li class="fragment">Air traffic congestion</li>
+<li class="fragment">Technical or maintenance issues</li>
+<li class="fragment">Crew availability</li>
+<li class="fragment">Catering or baggage loading delays</li>
+<li class="fragment">Fueling took too long</li>
 </ul>
 </section>
-<section id="centralize-and-organize-all-data-assets"
-class="slide level3">
-<h3>Centralize and Organize All Data Assets</h3>
-<p><img data-src="assets/airport-delay.png" style="width:120.0%" /></p>
-</section>
-<section id="ensure-data-quality-and-consistency" class="slide level3">
-<h3>Ensure Data Quality and Consistency</h3>
-<p><img data-src="assets/data_entity_overview.png"
-style="width:120.0%" /></p>
-</section>
-<section id="improve-compliance-and-data-governance"
-class="slide level3">
-<h3>Improve Compliance and Data Governance</h3>
-<p><img data-src="assets/data_lineage.png" style="width:120.0%" /></p>
-</section>
-<section id="reduce-data-redundancy" class="slide level3">
-<h3>Reduce Data Redundancy</h3>
-<p><img data-src="assets/search.png" style="width:120.0%" /></p>
-</section>
-<section id="enhance-collaboration" class="slide level3">
-<h3>Enhance Collaboration</h3>
-<p><img data-src="assets/discussions.png" style="width:120.0%" /></p>
-</section>
-<section id="what-works-automatically-now" class="slide level3">
-<h3>What works automatically now:</h3>
+<section class="slide level3">
+
+<h4 id="how-much-to-fuel">How Much to Fuel</h4>
 <ul>
-<li class="fragment">Metadata is collected logged to ODD</li>
-<li class="fragment">Tests are logged and alerts are sent if they
-fail</li>
-<li class="fragment">The lineage of the data modelling is logged in
-ODD</li>
+<li class="fragment">Where the plane is flying to (with reserves taken
+into account)</li>
+<li class="fragment">How much fuel is already in the plane</li>
+<li class="fragment">Weight Matters</li>
+<li class="fragment">Tankering (Used to Be Common Practice)</li>
+<li class="fragment">New EU Tankering Regulations (2024)</li>
 </ul>
 </section>
-<section id="what-works-manually-now" class="slide level3">
-<h3>What works manually now:</h3>
+<section id="when-will-fueling-actually-finish" class="slide level3">
+<h3>When Will Fueling Actually Finish?</h3>
+<ol type="1">
+<li>Pilot places fuel order<br />
+</li>
+<li>Fueling starts → Prediction kicks in here<br />
+</li>
+<li>Fueling ends → Flight departs</li>
+</ol>
+</section>
+<section id="pipeline" class="slide level3">
+<h3>Pipeline</h3>
+<p><img data-src="assets/prediction_flow.png" style="width:80.0%" /></p>
+</section>
+<section id="uplift-prediction" class="slide level3">
+<h3>Uplift Prediction</h3>
 <ul>
-<li class="fragment">Adding descriptions of the data entities</li>
-<li class="fragment">Configuring new tests and collectors</li>
-<li class="fragment">Adding owners, tags etc</li>
+<li class="fragment">Uplift = Block Fuel - FOB</li>
+<li class="fragment">This is what the pilot orders</li>
+<li class="fragment">the prediction is made using the FOB, aircraft type
+and minutes to take off</li>
 </ul>
 </section>
-<section id="next-steps" class="slide level3">
-<h3>Next Steps</h3>
-<ul>
-<li class="fragment">Set up with external URL</li>
-<li class="fragment">Add to Fraalliance Platform login</li>
-<li class="fragment">Add source company for every entity</li>
-<li class="fragment">Add more data validation tests</li>
-<li class="fragment">Add more entity types - e.g. Superset, MLFLow</li>
-</ul>
+<section id="techstack" class="slide level3">
+<h3>Techstack</h3>
+<p>🧱 PostgreSQL – Raw flight &amp; fueling data 🔁 Rahla – ETL 🧠
+Linear Regression model – Fueling duration prediction 🧪 MLflow – Model
+versioning / Serving 🔁 ArgoCD – Orchestration 🛠️ Theia – Continual
+development environment</p>
 </section>
-<section id="long-term-goals" class="slide level3">
-<h3>Long term goals</h3>
+<section id="current-results" class="slide level3">
+<h3>Current Results</h3>
+</section>
+<section id="what-is-this-prediction-even-for" class="slide level3">
+<h3>What is this prediction even for?</h3>
+<pre><code>We asked: “What’s the real point of the prediction?”
+
+The answer: to improve visibility and coordination
+
+Before departure:
+🛫 Fueling must be done
+🍽 Catering must be finished
+👨‍✈️ Crew needs a clear status
+
+Simple monitoring → Smoother operations → Fewer delays
+
+Currently prediciton is made after the fuel is ordered</code></pre>
+</section>
+<section id="future-plans" class="slide level3">
+<h3>Future Plans</h3>
 <ul>
-<li class="fragment">Automate some of the manual tasks</li>
-<li class="fragment">LLM/API to create descriptions</li>
-<li class="fragment">Enable Internal Data Marketplace/Subscriptions</li>
-<li class="fragment">Automate stats and tagging via odd-profiler</li>
-<li class="fragment">Your ideas?</li>
+<li>Currently prediciton is made after the fuel is ordered</li>
+<li>Long term goal is use the preiction to trigger the fueling</li>
+<li>This will ensure the fueling is done before planned take off</li>
 </ul>
 </section>
 <section id="links" class="slide level3">
@@ -132,7 +145,7 @@ INT ODD URL</a></li>
 href="https://odd-fraalliance-platform.prod.k8s.lsyesp.lhgroup.de">Internal
 PROD ODD URL</a></li>
 </ul>
-</section></section>
+</section>
     </div>
   </div>
 
