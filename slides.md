@@ -1,7 +1,7 @@
 ---
-author: Samuel McGuire Datatactics
-title: The Surprising Complexity of Fueling an Aircraft
-subtitle: A Machine Learning Approach
+author: Samuel McGuire 
+title: Datatactics GmbH
+subtitle: The Surprising Complexity of Fueling an Aircraft
 date: 17-06-2025
 theme: moon # https://revealjs.com/themes/
 transition: concave # https://revealjs.com/transitions/
@@ -14,85 +14,106 @@ navigationMode: linear
 autoPlayMedia: true
 ---
 
-# Open Data Discovery
+#### Has Your Flight Ever Been Delayed?
+
+![](assets/airport_delays.png){ width=60% }
+
+**Delays happen. But have you ever thought about why?**
 
 ---
 
-### What can you do with `ODD` 
-
-- **Centralize and Organize All Data Assets** 
-- **Ensure Data Quality and Consistency**
-- **Improve Compliance and Data Governance**
-- **Reduce Data Redundancy**
-- **Enhance Collaboration** 
-
-### Centralize and Organize All Data Assets
-
-![](assets/airport-delay.png){ width=120% }
-
-
-### Ensure Data Quality and Consistency
-
-![](assets/data_entity_overview.png){ width=120% }
-
-### Improve Compliance and Data Governance
-
-![](assets/data_lineage.png){ width=120% }
-
-### Reduce Data Redundancy
-
-![](assets/search.png){ width=120% }
-
-
-### Enhance Collaboration
-
-![](assets/discussions.png){ width=120% }
-
-
-### What works automatically now:
+#### Why Planes Are Late
 
 ::: incremental
 
-- Metadata is collected logged to ODD
-- Tests are logged and alerts are sent if they fail
-- The lineage of the data modelling is logged in ODD
+- Late incoming aircraft
+- Weather disruptions
+- Air traffic congestion
+- Technical or maintenance issues
+- Crew availability
+- Catering or baggage loading delays
+- Fueling took too long   
 
 :::
+--- 
 
-### What works manually now:
+#### How Much to Fuel
 
 ::: incremental
-
-- Adding descriptions of the data entities
-- Configuring new tests and collectors
-- Adding owners, tags etc
-
+- Where the plane is flying to (with reserves taken into account)
+- How much fuel is already in the plane
+- Weight Matters
+- Tankering (Used to Be Common Practice)
+- New EU Tankering Regulations (2024)
 :::
 
-### Next Steps
+
+### When Will Fueling Actually Finish?
+
+1. Pilot places fuel order  
+2. Fueling starts → Prediction kicks in here  
+3. Fueling ends → Flight departs  
+
+---
+
+
+### Pipeline
+
+![](assets/prediction_flow.png){ width=80% }
+
+---
+
+
+### Uplift Prediction
+
 
 ::: incremental
-
-- Set up with external URL
-- Add to Fraalliance Platform login
-- Add source company for every entity
-- Add more data validation tests
-- Add more entity types - e.g. Superset, MLFLow 
-
+- Uplift = Block Fuel - FOB 
+- This is what the pilot orders
+- the prediction is made using the FOB, aircraft type and minutes to take off
 :::
 
-### Long term goals
+---
 
-::: incremental
+### Techstack
 
-- Automate some of the manual tasks 
-- LLM/API to create descriptions
-- Enable Internal Data Marketplace/Subscriptions
-- Automate stats and tagging via odd-profiler
-- Your ideas?
- 
 
-:::
+
+🧱 PostgreSQL – Raw flight & fueling data
+🔁 Rahla – ETL
+🧠 Linear Regression model – Fueling duration prediction
+🧪 MLflow – Model versioning / Serving
+🔁 ArgoCD – Orchestration
+🛠️ Theia – Continual development environment
+
+---
+
+### Current Results
+
+
+
+
+### What is this prediction even for?
+
+    We asked: “What’s the real point of the prediction?”
+
+    The answer: to improve visibility and coordination
+
+    Before departure:
+    🛫 Fueling must be done
+    🍽 Catering must be finished
+    👨‍✈️ Crew needs a clear status
+
+    Simple monitoring → Smoother operations → Fewer delays
+
+    Currently prediciton is made after the fuel is ordered
+---
+
+### Future Plans
+
+- Currently prediciton is made after the fuel is ordered
+- Long term goal is use the preiction to trigger the fueling
+- This will ensure the fueling is done before planned take off
 
 
 ### Links

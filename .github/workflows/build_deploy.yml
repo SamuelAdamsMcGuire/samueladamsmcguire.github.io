@@ -8,24 +8,26 @@ jobs:
   build_deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Setup repo
-      uses: actions/checkout@v2    
+      - name: Setup repo
+        uses: actions/checkout@v2    
     
-    - name: Install pandoc
-      run: |
-        wget https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-1-amd64.deb
-        sudo dpkg -i pandoc-3.7.0.2-1-amd64.deb
-        rm pandoc-3.7.0.2-1-amd64.deb
+      - name: Install pandoc
+        run: |
+          wget https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-1-amd64.deb
+          sudo dpkg -i pandoc-3.7.0.2-1-amd64.deb
+          rm pandoc-3.7.0.2-1-amd64.deb
 
-    - name: Prepare build folder
-      run: |
-        mkdir public
+      - name: Prepare build folder
+        run: mkdir public
     
-    - name: Build slides
-      run: >
-         pandoc -t revealjs -s slides.md -o public/index.html --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@4.4.0
+      - name: Build slides
+        run: >
+          pandoc -t revealjs -s slides.md -o public/index.html
+          --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@4.4.0
     
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+

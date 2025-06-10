@@ -1,15 +1,12 @@
 # How To: Presentations with pandoc and `reveal.js`
 
-- Download and install `pandoc` (see [here](https://pandoc.org/)))
+- Download and install `pandoc` (see [here](https://pandoc.org/))
 - Create your slides in a markdown file
 - Run to convert your markdown `slides.md` into a html file `slides.html`:
+- Currently only works locally
 
 ```shell
-pandoc -t revealjs slides.md -o index.html  \
-	--mathjax \
-	--standalone \
-	--css=styles.css \
-	--css=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css
+pandoc -t revealjs -s slides.md -o slides.html --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@4.4.0
 ```
 
 ### Online hosting with github
