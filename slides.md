@@ -18,7 +18,7 @@ autoPlayMedia: true
 
 ![](assets/airport_delays.png){ width=60% }
 
-**Delays happen. But have you ever thought about why?**
+**Delays happen. But we always blame the weather?**
 
 ---
 
@@ -28,11 +28,10 @@ autoPlayMedia: true
 
 - Late incoming aircraft
 - Weather disruptions
-- Air traffic congestion
 - Technical or maintenance issues
 - Crew availability
 - Catering or baggage loading delays
-- Fueling took too long   
+- Fueling took too long  -> REALLY?? 
 
 :::
 --- 
