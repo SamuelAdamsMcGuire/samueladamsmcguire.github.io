@@ -77,14 +77,13 @@ autoPlayMedia: true
 
 ### Techstack
 
-
-
-🧱 PostgreSQL – Raw flight & fueling data
-🔁 Rahla – ETL
-🧠 Linear Regression model – Fueling duration prediction
-🧪 MLflow – Model versioning / Serving
-🔁 ArgoCD – Orchestration
-🛠️ Theia – Continual development environment
+- 🧱 PostgreSQL – Raw flight & fueling data
+- 🔁 Rahla – ETL - not in the classic sense
+- 🧠 Linear Regression model – Fueling duration prediction
+- 🧪 MLflow – Model versioning / Serving
+- ☸️ Kubernetes – Deployment platform
+- 🔁 ArgoCD – Orchestration
+- 🛠️ Theia – Continual development environment
 
 ---
 
@@ -118,8 +117,10 @@ autoPlayMedia: true
 
 ### Links
 
-- [odd documentation](https://docs.opendatadiscovery.org/)
-- [Internal INT ODD URL](https://odd-fraalliance-platform.int.k8s.lsyesp.lhgroup.de)
-- [Internal PROD ODD URL](https://odd-fraalliance-platform.prod.k8s.lsyesp.lhgroup.de)
+- [These sides](https://samueladamsmcguire.github.io)
+- [datatactics website](https://www.datatactics.de/)
+- [datatactics LinkedIn](https://www.linkedin.com/company/datatactics-gmbh)
+- [My Personal LinkedIn](https://www.linkedin.com/in/samuel-mcguire/)
+
 
 
