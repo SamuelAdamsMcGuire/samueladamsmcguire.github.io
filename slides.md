@@ -36,6 +36,14 @@ autoPlayMedia: true
 :::
 --- 
 
+
+
+#### Costs of late planes
+
+According to Eurocontrol in 2023 27% of delays were due to maintanence, baggage handling, boarding and fueling issues. This cost airlines 275 million € in fuel burn, crew time, lost opportunity and almost 650 million € in compensation given to customers from EU261.
+
+---
+
 #### How Much to Fuel
 
 ::: incremental
@@ -86,10 +94,19 @@ autoPlayMedia: true
 
 ---
 
+### Model comparison
+
+![](assets/model_comparison)
+
+---
+
 ### Current Results
 
 
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%"></iframe>
+
+---
+
 
 ### What is this prediction even for?
 
