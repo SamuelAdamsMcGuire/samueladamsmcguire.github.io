@@ -96,7 +96,7 @@ According to Eurocontrol in 2023 27% of delays were due to maintanence, baggage 
 
 ### Model comparison
 
-![](assets/model_comparison)
+![](assets/model_comparison.png)
 
 ---
 
