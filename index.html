@@ -49,69 +49,140 @@ Aircraft</p>
 <h4 id="has-your-flight-ever-been-delayed">Has Your Flight Ever Been
 Delayed?</h4>
 <p><img data-src="assets/airport_delays.png" style="width:60.0%" /></p>
-<p><strong>Delays happen. But we always blame the weather?</strong></p>
+<p><strong>Annoying to pax, expensive for all!</strong></p>
 </section>
 <section class="slide level3">
 
-<h4 id="why-planes-are-late">Why Planes Are Late</h4>
+<h4 id="costs-of-late-planes">💸 Costs of Late Planes</h4>
 <ul>
-<li class="fragment">Late incoming aircraft</li>
-<li class="fragment">Weather disruptions</li>
-<li class="fragment">Technical or maintenance issues</li>
-<li class="fragment">Crew availability</li>
-<li class="fragment">Catering or baggage loading delays</li>
-<li class="fragment">Fueling took too long -&gt; REALLY??</li>
+<li class="fragment"><p>27% of delays are due to baggage, boarding,
+apron (incl. fueling) issues</p></li>
+<li class="fragment"><p>€275 million in airline costs (fuel, crew
+delays, losses)</p></li>
+<li class="fragment"><p>€650 million in EU261 passenger
+compensation</p></li>
+<li class="fragment"><p><a
+href="https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf">Source:
+Eurocontrol Performance Review</a></p></li>
 </ul>
 </section>
 <section class="slide level3">
 
-<h4 id="costs-of-late-planes">Costs of late planes</h4>
-<p>According to Eurocontrol in 2023 27% of delays were due to
-maintanence, baggage handling, boarding and fueling issues. This cost
-airlines 275 million € in fuel burn, crew time, lost opportunity and
-almost 650 million € in compensation given to customers from EU261.</p>
+<h4 id="why-planes-get-delayed">✈️ Why Planes Get Delayed</h4>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 65%" />
+</colgroup>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🚶 Passenger Flow</td>
+<td>Congestion at checkpoints</td>
+</tr>
+<tr>
+<td>🧳 Baggage Loading</td>
+<td>Slow or misplaced luggage</td>
+</tr>
+<tr>
+<td>🌧️ Weather</td>
+<td>Storms or low visibility</td>
+</tr>
+<tr>
+<td>⛽ <strong>Fueling Delays</strong></td>
+<td><em>Common — but solvable!</em></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section class="slide level3">
 
-<h4 id="how-much-to-fuel">How Much to Fuel</h4>
-<ul>
-<li class="fragment">Where the plane is flying to (with reserves taken
-into account)</li>
-<li class="fragment">How much fuel is already in the plane</li>
-<li class="fragment">Weight Matters</li>
-<li class="fragment">Tankering (Used to Be Common Practice)</li>
-<li class="fragment">New EU Tankering Regulations (2024)</li>
-</ul>
+<h4 id="how-pilots-decide-fuel-quantity">🛢️ How Pilots Decide Fuel
+Quantity</h4>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 64%" />
+</colgroup>
+<thead>
+<tr>
+<th>Factor</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🗺️ Route &amp; Reserves</td>
+<td>Distance and more</td>
+</tr>
+<tr>
+<td>⛽ FOB</td>
+<td>Current tank level</td>
+</tr>
+<tr>
+<td>⚖️ Aircraft Weight</td>
+<td>More weight = more drag</td>
+</tr>
+<tr>
+<td>🇪🇺 EU Law (2024)</td>
+<td>Restrict excess tankering</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="when-will-fueling-actually-finish" class="slide level3">
-<h3>When Will Fueling Actually Finish?</h3>
+<section id="fueling-timeline-when-will-it-be-done"
+class="slide level3">
+<h3>⛽ Fueling Timeline: When Will It Be Done?</h3>
 <ol type="1">
-<li>Pilot places fuel order<br />
+<li>🧑‍✈️ Pilot places fuel order (Uplift = Block Fuel – FOB)<br />
 </li>
-<li>Fueling starts → Prediction kicks in here<br />
-</li>
-<li>Fueling ends → Flight departs</li>
+<li>🚛 Fueling starts — predict how long it will take</li>
+<li>🛫 Helps align catering, crew, and departure timing</li>
+<li>✅ Fueling ends → Aircraft ready to depart</li>
 </ol>
+<p><strong>Knowing the fueling end time = fewer surprises &amp; smoother
+handovers</strong></p>
 </section>
-<section id="pipeline" class="slide level3">
-<h3>Pipeline</h3>
-<p><img data-src="assets/prediction_flow.png" style="width:80.0%" /></p>
-</section>
-<section id="uplift-prediction" class="slide level3">
-<h3>Uplift Prediction</h3>
+<section id="message-to-prediction-pipeline" class="slide level3">
+<h3>Message to Prediction Pipeline</h3>
 <ul>
-<li class="fragment">Uplift = Block Fuel - FOB</li>
-<li class="fragment">This is what the pilot orders</li>
-<li class="fragment">the prediction is made using the FOB, aircraft type
-and minutes to take off</li>
+<li class="fragment">📨 Queue receives milestone messages</li>
+<li class="fragment">🧠 Parse messages into structured data</li>
+<li class="fragment">🗃️ Insert parsed messages into the database</li>
+<li class="fragment">🔁 Duplicate message for prediction route</li>
+<li class="fragment">🔍 Extract hashkey and message type</li>
+<li class="fragment">❓ Check message type</li>
+<li class="fragment">🧩 Join message with context</li>
+<li class="fragment">📤 Send features to ML model via MLflow</li>
+<li class="fragment">📥 Receive predicted fueling duration</li>
+<li class="fragment">🧾 Concatenate prediction with original
+message</li>
+<li class="fragment">🛠️ Update database row with prediction</li>
+</ul>
+</section>
+<section id="which-features-actually-matter" class="slide level3">
+<h3>🔍 Which Features Actually Matter?</h3>
+<ul>
+<li class="fragment">🛩 Aircraft type captures weight, fuel tank size,
+engine count — all embedded in a single variable</li>
+<li class="fragment">⛽ Remaining uplift = Block Fuel – Fuel On Board →
+directly tied to fueling time</li>
+<li class="fragment">⏱ Minutes until takeoff encodes operational
+urgency: Time pressure, Likelihood of parallel fueling (more trucks
+dispatched), Typical ramp behavior</li>
 </ul>
 </section>
 <section id="techstack" class="slide level3">
 <h3>Techstack</h3>
 <ul>
 <li>🧱 PostgreSQL – Raw flight &amp; fueling data</li>
-<li>🔁 Rahla – ETL - not in the classic sense</li>
-<li>🧠 Linear Regression model – Fueling duration prediction</li>
+<li>🔁 Rahla – Event-driven flight data processor</li>
+<li>🧠 Fueling duration prediction model</li>
 <li>🧪 MLflow – Model versioning / Serving</li>
 <li>☸️ Kubernetes – Deployment platform</li>
 <li>🔁 ArgoCD – Orchestration</li>
@@ -143,24 +214,44 @@ Simple monitoring → Smoother operations → Fewer delays
 Currently prediciton is made after the fuel is ordered</code></pre>
 </section>
 <section id="future-plans" class="slide level3">
-<h3>Future Plans</h3>
+<h3>✈️ Future Plans</h3>
 <ul>
-<li>Currently prediciton is made after the fuel is ordered</li>
-<li>Long term goal is use the preiction to trigger the fueling</li>
-<li>This will ensure the fueling is done before planned take off</li>
+<li>🔍 Prediction starts after the fuel order is placed</li>
+<li>🚀 Trigger fueling proactively using the prediction</li>
+<li>🕓 Ensure fueling completes before planned takeoff</li>
+<li>🤝 Better coordination</li>
+<li>🎯 Real-time ramp orchestration with fewer delays</li>
+</ul>
+</section>
+<section class="slide level3">
+
+<h4 id="current-datatactics-projects-in-the-airline-industry">Current
+DataTactics Projects in the airline industry</h4>
+<p><img data-src="assets/dT-blue.svg" data-align="right"
+width="200" /></p>
+<ul>
+<li>🔁 Missed Connections</li>
+<li>👥 Passenger Flow<br />
+</li>
+<li>🛰️ Flight Positioning</li>
+<li>⛽ Fueling Duration</li>
+<li>💳 Fuel Purchase Forecasting</li>
 </ul>
 </section>
 <section id="links" class="slide level3">
 <h3>Links</h3>
 <ul>
 <li><a href="https://samueladamsmcguire.github.io">These sides</a></li>
+<li><a href="https://github.com/samueladamsmcguire">My Github</a></li>
 <li><a href="https://www.datatactics.de/">datatactics website</a></li>
 <li><a
 href="https://www.linkedin.com/company/datatactics-gmbh">datatactics
 LinkedIn</a></li>
-<li><a href="https://www.linkedin.com/in/samuel-mcguire/">My Personal
-LinkedIn</a></li>
 </ul>
+</section>
+<section id="lets-connect" class="slide level3">
+<h3>Let’s connect</h3>
+<p><img data-src="assets/linkedin.jpg" style="width:60.0%" /></p>
 </section>
     </div>
   </div>
