@@ -23,7 +23,7 @@ autoPlayMedia: true
 
 --- 
 
-### 💸 Costs of Late Planes
+### 💸 Cause and Costs of Late Planes
 
 ::: incremental
 
