@@ -23,7 +23,18 @@ autoPlayMedia: true
 
 --- 
 
-### 💸 Cause and Costs of Late Planes
+### ✈️ Why Planes Get Delayed
+
+| Cause                  | Description                                 |
+|------------------------|---------------------------------------------|
+| 🚶 Passenger Flow       | Congestion at checkpoints |
+| 🧳 Baggage Loading      | Slow or misplaced luggage                   |
+| 🌧️ Weather              | Storms or low visibility     |
+| ⛽ **Fueling Delays**   | *Common — but solvable!*       |
+
+---
+
+### 💸 Costs of Late Planes
 
 ::: incremental
 
@@ -34,18 +45,6 @@ autoPlayMedia: true
 - [Source: Eurocontrol Performance Review](https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf)
 
 :::
-
-
----
-
-### ✈️ Why Planes Get Delayed
-
-| Cause                  | Description                                 |
-|------------------------|---------------------------------------------|
-| 🚶 Passenger Flow       | Congestion at checkpoints |
-| 🧳 Baggage Loading      | Slow or misplaced luggage                   |
-| 🌧️ Weather              | Storms or low visibility     |
-| ⛽ **Fueling Delays**   | *Common — but solvable!*       |
 
 
 ---
