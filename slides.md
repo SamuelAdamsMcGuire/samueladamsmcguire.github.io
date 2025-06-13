@@ -1,5 +1,5 @@
 ---
-author: Samuel McGuire 
+author: Samuel McGuire - Data Science Lead
 title: Datatactics GmbH
 subtitle: The Surprising Complexity of Fueling an Aircraft
 date: 17-06-2025
