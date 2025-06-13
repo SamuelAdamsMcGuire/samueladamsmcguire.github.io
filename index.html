@@ -73,7 +73,7 @@
 <li class="fragment"><p>27% of delays are due to baggage, boarding, apron (incl. fueling) issues</p></li>
 <li class="fragment"><p>€275 million in airline costs (fuel, crew delays, losses)</p></li>
 <li class="fragment"><p>€650 million in EU261 passenger compensation</p></li>
-<li class="fragment"><p><a href="https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf">Source: Eurocontrol Performance Review</a></p></li>
+<li class="fragment"><p><a href="https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf">Source: 2023 Eurocontrol Performance Review</a></p></li>
 </ul>
 </div>
 </section>
@@ -117,26 +117,9 @@
 </ol>
 <p><strong>Knowing the fueling end time = fewer surprises &amp; smoother handovers</strong></p>
 </section>
-<section id="message-to-prediction-pipeline" class="slide level3">
-<h3>Message to Prediction Pipeline</h3>
-<div>
-<ul>
-<li class="fragment">📨 Queue receives milestone messages</li>
-<li class="fragment">🧠 Parse messages into structured data</li>
-<li class="fragment">🗃️ Insert parsed messages into the database</li>
-<li class="fragment">🔁 Duplicate message for prediction route</li>
-<li class="fragment">🔍 Extract hashkey and message type</li>
-<li class="fragment">❓ Check message type</li>
-<li class="fragment">🧩 Join message with context</li>
-<li class="fragment">📤 Send features to ML model via MLflow</li>
-<li class="fragment">📥 Receive predicted fueling duration</li>
-<li class="fragment">🧾 Concatenate prediction with original message</li>
-<li class="fragment">🛠️ Update database row with prediction</li>
-</ul>
-</div>
-</section>
-<section id="which-features-actually-matter" class="slide level3">
-<h3>🔍 Which Features Actually Matter?</h3>
+<section id="modeling-the-fueling-duration" class="slide level3">
+<h3>🔍 Modeling the Fueling duration</h3>
+<p><strong>Which features were relevant?</strong></p>
 <div>
 <ul>
 <li class="fragment">🛩 Aircraft type captures weight, fuel tank size, engine count — all embedded in a single variable</li>
@@ -145,26 +128,35 @@
 </ul>
 </div>
 </section>
-<section id="techstack" class="slide level3">
-<h3>Techstack</h3>
-<ul>
-<li>🧱 PostgreSQL – Raw flight &amp; fueling data</li>
-<li>🔁 Rahla – Event-driven flight data processor</li>
-<li>🧠 Fueling duration prediction model</li>
-<li>🧪 MLflow – Model versioning / Serving</li>
-<li>☸️ Kubernetes – Deployment platform</li>
-<li>🔁 ArgoCD – Orchestration</li>
-<li>🛠️ Theia – Continual development environment</li>
-</ul>
-</section>
 <section id="model-comparison" class="slide level3">
 <h3>Model comparison</h3>
 <p><img data-src="assets/model_comparison.png" /></p>
 </section>
-<section id="current-results" class="slide level3">
-<h3>Current Results</h3>
+<section id="results-per-aircraft-type" class="slide level3">
+<h3>Results per aircraft type</h3>
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%">
 </iframe>
+</section>
+<section class="slide level3">
+
+</section>
+<section id="message-to-prediction-pipeline" class="slide level3">
+<h3>Message to Prediction Pipeline</h3>
+<div>
+<ul>
+<li class="fragment">📨 Queue receives messages</li>
+<li class="fragment">🧠 Parse messages into structured data</li>
+<li class="fragment">🗃️ Insert parsed messages into the database</li>
+<li class="fragment">🔁 Duplicate message for prediction route</li>
+<li class="fragment">🔍 Extract hashkey and message type</li>
+<li class="fragment">❓ Check message type</li>
+<li class="fragment">🧩 Join message with context</li>
+<li class="fragment">📤 Send features to Mlflow served model</li>
+<li class="fragment">📥 Receive predicted fueling duration</li>
+<li class="fragment">🧾 Concatenate prediction with original message</li>
+<li class="fragment">🛠️ Update database row with prediction</li>
+</ul>
+</div>
 </section>
 <section id="what-is-this-prediction-even-for" class="slide level3">
 <h3>What is this prediction even for?</h3>
@@ -179,20 +171,30 @@ Before departure:
 
 Simple monitoring → Smoother operations → Fewer delays
 
-Currently prediciton is made after the fuel is ordered</code></pre>
+Currently prediciton is made after fueling start message sent</code></pre>
 </section>
 <section id="future-plans" class="slide level3">
 <h3>✈️ Future Plans</h3>
 <ul>
-<li>🔍 Prediction starts after the fuel order is placed</li>
 <li>🚀 Trigger fueling proactively using the prediction</li>
 <li>🕓 Ensure fueling completes before planned takeoff</li>
-<li>🤝 Better coordination</li>
-<li>🎯 Real-time ramp orchestration with fewer delays</li>
+<li>🎯 Better ramp orchestration with fewer delays</li>
 </ul>
 </section>
-<section id="current-datatactics-projects-in-the-airline-industry" class="slide level3">
-<h3>Current DataTactics Projects in the airline industry</h3>
+<section id="completely-open-source-techstack" class="slide level3">
+<h3>Completely Open Source Techstack</h3>
+<ul>
+<li>🧱 PostgreSQL – Raw flight &amp; fueling data</li>
+<li>🔁 Rahla – Event-driven flight data processor</li>
+<li>🧠 SciKit Learn – model</li>
+<li>🧪 MLflow – Model versioning / Serving</li>
+<li>☸️ Kubernetes – Deployment platform</li>
+<li>🔁 ArgoCD – Orchestration</li>
+<li>🛠️ Theia – Continual development environment</li>
+</ul>
+</section>
+<section id="some-dt-projects-in-the-airline-industry" class="slide level3">
+<h3>Some dT Projects in the airline industry</h3>
 <p><img data-src="assets/dT-blue.svg" data-align="right" width="200" /></p>
 <ul>
 <li>🔁 Missed Connections</li>

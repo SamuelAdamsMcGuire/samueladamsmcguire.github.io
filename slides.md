@@ -42,7 +42,7 @@ autoPlayMedia: true
 - €275 million in airline costs (fuel, crew delays, losses)
 - €650 million in EU261 passenger compensation
 
-- [Source: Eurocontrol Performance Review](https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf)
+- [Source: 2023 Eurocontrol Performance Review](https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf)
 
 :::
 
@@ -70,30 +70,13 @@ autoPlayMedia: true
 
 **Knowing the fueling end time = fewer surprises & smoother handovers**
 
----
-
-
-### Message to Prediction Pipeline
-
-::: incremental
-- 📨 Queue receives milestone messages
-- 🧠 Parse messages into structured data
-- 🗃️ Insert parsed messages into the database
-- 🔁 Duplicate message for prediction route
-- 🔍 Extract hashkey and message type
-- ❓ Check message type
-- 🧩 Join message with context
-- 📤 Send features to ML model via MLflow
-- 📥 Receive predicted fueling duration
-- 🧾 Concatenate prediction with original message 
-- 🛠️ Update database row with prediction
-
-:::
 
 
 ---
 
-### 🔍 Which Features Actually Matter?
+### 🔍 Modeling the Fueling duration
+
+**Which features were relevant?**
 
 ::: incremental
 - 🛩 Aircraft type captures weight, fuel tank size, engine count — all embedded in a single variable
@@ -101,17 +84,6 @@ autoPlayMedia: true
 - ⏱ Minutes until takeoff encodes operational urgency: Time pressure, Likelihood of parallel fueling (more trucks dispatched), Typical ramp behavior
 :::
 
----
-
-### Techstack
-
-- 🧱 PostgreSQL – Raw flight & fueling data
-- 🔁 Rahla – Event-driven flight data processor
-- 🧠 Fueling duration prediction model
-- 🧪 MLflow – Model versioning / Serving
-- ☸️ Kubernetes – Deployment platform
-- 🔁 ArgoCD – Orchestration
-- 🛠️ Theia – Continual development environment
 
 ---
 
@@ -121,13 +93,34 @@ autoPlayMedia: true
 
 ---
 
-### Current Results
+### Results per aircraft type
 
 
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%"></iframe>
 
 ---
 
+---
+
+
+### Message to Prediction Pipeline
+
+::: incremental
+- 📨 Queue receives messages
+- 🧠 Parse messages into structured data
+- 🗃️ Insert parsed messages into the database
+- 🔁 Duplicate message for prediction route
+- 🔍 Extract hashkey and message type
+- ❓ Check message type
+- 🧩 Join message with context
+- 📤 Send features to Mlflow served model
+- 📥 Receive predicted fueling duration
+- 🧾 Concatenate prediction with original message 
+- 🛠️ Update database row with prediction
+
+:::
+
+---
 
 ### What is this prediction even for?
 
@@ -142,21 +135,31 @@ autoPlayMedia: true
 
     Simple monitoring → Smoother operations → Fewer delays
 
-    Currently prediciton is made after the fuel is ordered
+    Currently prediciton is made after fueling start message sent
 ---
 
 ### ✈️ Future Plans
 
-- 🔍 Prediction starts after the fuel order is placed
 - 🚀 Trigger fueling proactively using the prediction
-- 🕓 Ensure fueling completes before planned takeoff
-- 🤝 Better coordination 
-- 🎯 Real-time ramp orchestration with fewer delays
+- 🕓 Ensure fueling completes before planned takeoff 
+- 🎯 Better ramp orchestration with fewer delays
   
 
 ---
 
-### Current DataTactics Projects in the airline industry
+### Completely Open Source Techstack
+
+- 🧱 PostgreSQL – Raw flight & fueling data
+- 🔁 Rahla – Event-driven flight data processor
+- 🧠 SciKit Learn – model
+- 🧪 MLflow – Model versioning / Serving
+- ☸️ Kubernetes – Deployment platform
+- 🔁 ArgoCD – Orchestration
+- 🛠️ Theia – Continual development environment
+
+---
+
+### Some dT Projects in the airline industry
 
 ![](assets/dT-blue.svg){ width=200px align=right }
 
@@ -168,13 +171,14 @@ autoPlayMedia: true
 
 --- 
 
-
 ### Links
 
 - [These sides](https://samueladamsmcguire.github.io)
 - [My Github](https://github.com/samueladamsmcguire)
 - [datatactics website](https://www.datatactics.de/)
 - [datatactics LinkedIn](https://www.linkedin.com/company/datatactics-gmbh)
+
+---
 
 ### Let's connect
 
