@@ -15,7 +15,7 @@ autoPlayMedia: true
 
 ---
 
-#### Has Your Flight Ever Been Delayed?
+### Has Your Flight Ever Been Delayed?
 
 ![](assets/airport_delays.png){ width=60% }
 
@@ -23,7 +23,7 @@ autoPlayMedia: true
 
 --- 
 
-#### 💸 Costs of Late Planes
+### 💸 Costs of Late Planes
 
 ::: incremental
 
@@ -38,7 +38,7 @@ autoPlayMedia: true
 
 ---
 
-#### ✈️ Why Planes Get Delayed
+### ✈️ Why Planes Get Delayed
 
 | Cause                  | Description                                 |
 |------------------------|---------------------------------------------|
@@ -51,7 +51,7 @@ autoPlayMedia: true
 ---
 
 
-#### 🛢️ How Pilots Decide Fuel Quantity
+### 🛢️ How Pilots Decide Fuel Quantity
 
 | Factor                  | Impact                                         |
 |--------------------------|------------------------------------------------|
@@ -157,7 +157,7 @@ autoPlayMedia: true
 
 ---
 
-#### Current DataTactics Projects in the airline industry
+### Current DataTactics Projects in the airline industry
 
 ![](assets/dT-blue.svg){ width=200px align=right }
 
