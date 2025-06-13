@@ -12,72 +12,94 @@ slideNumber: true
 hash: true
 navigationMode: linear
 autoPlayMedia: true
+
 ---
 
 #### Has Your Flight Ever Been Delayed?
 
 ![](assets/airport_delays.png){ width=60% }
 
-**Delays happen. But we always blame the weather?**
+**Annoying to pax, expensive for all!**
 
----
-
-#### Why Planes Are Late
-
-::: incremental
-
-- Late incoming aircraft
-- Weather disruptions
-- Technical or maintenance issues
-- Crew availability
-- Catering or baggage loading delays
-- Fueling took too long  -> REALLY?? 
-
-:::
 --- 
 
-
-
-#### Costs of late planes
-
-According to Eurocontrol in 2023 27% of delays were due to maintanence, baggage handling, boarding and fueling issues. This cost airlines 275 million € in fuel burn, crew time, lost opportunity and almost 650 million € in compensation given to customers from EU261.
-
----
-
-#### How Much to Fuel
+#### 💸 Costs of Late Planes
 
 ::: incremental
-- Where the plane is flying to (with reserves taken into account)
-- How much fuel is already in the plane
-- Weight Matters
-- Tankering (Used to Be Common Practice)
-- New EU Tankering Regulations (2024)
+
+- 27% of delays are due to baggage, boarding, apron (incl. fueling) issues
+- €275 million in airline costs (fuel, crew delays, losses)
+- €650 million in EU261 passenger compensation
+
+- [Source: Eurocontrol Performance Review](https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf)
+
 :::
 
 
-### When Will Fueling Actually Finish?
+---
 
-1. Pilot places fuel order  
-2. Fueling starts → Prediction kicks in here  
-3. Fueling ends → Flight departs  
+#### ✈️ Why Planes Get Delayed
+
+| Cause                  | Description                                 |
+|------------------------|---------------------------------------------|
+| 🚶 Passenger Flow       | Congestion at checkpoints |
+| 🧳 Baggage Loading      | Slow or misplaced luggage                   |
+| 🌧️ Weather              | Storms or low visibility     |
+| ⛽ **Fueling Delays**   | *Common — but solvable!*       |
+
 
 ---
 
 
-### Pipeline
+#### 🛢️ How Pilots Decide Fuel Quantity
 
-![](assets/prediction_flow.png){ width=80% }
+| Factor                  | Impact                                         |
+|--------------------------|------------------------------------------------|
+| 🗺️ Route & Reserves       | Distance and more      |
+| ⛽ FOB     | Current tank level               |
+| ⚖️ Aircraft Weight | More weight = more drag    |
+| 🇪🇺 EU Law (2024)        | Restrict excess tankering     |
+
+---
+
+### ⛽ Fueling Timeline: When Will It Be Done?
+
+1. 🧑‍✈️ Pilot places fuel order (Uplift = Block Fuel – FOB)  
+2. 🚛 Fueling starts — predict how long it will take
+3. 🛫 Helps align catering, crew, and departure timing
+4. ✅ Fueling ends → Aircraft ready to depart
+
+**Knowing the fueling end time = fewer surprises & smoother handovers**
 
 ---
 
 
-### Uplift Prediction
-
+### Message to Prediction Pipeline
 
 ::: incremental
-- Uplift = Block Fuel - FOB 
-- This is what the pilot orders
-- the prediction is made using the FOB, aircraft type and minutes to take off
+- 📨 Queue receives milestone messages
+- 🧠 Parse messages into structured data
+- 🗃️ Insert parsed messages into the database
+- 🔁 Duplicate message for prediction route
+- 🔍 Extract hashkey and message type
+- ❓ Check message type
+- 🧩 Join message with context
+- 📤 Send features to ML model via MLflow
+- 📥 Receive predicted fueling duration
+- 🧾 Concatenate prediction with original message 
+- 🛠️ Update database row with prediction
+
+:::
+
+
+---
+
+### 🔍 Which Features Actually Matter?
+
+::: incremental
+- 🛩 Aircraft type captures weight, fuel tank size, engine count — all embedded in a single variable
+- ⛽ Remaining uplift = Block Fuel – Fuel On Board → directly tied to fueling time
+- ⏱ Minutes until takeoff encodes operational urgency: Time pressure, Likelihood of parallel fueling (more trucks dispatched), Typical ramp behavior
 :::
 
 ---
@@ -85,8 +107,8 @@ According to Eurocontrol in 2023 27% of delays were due to maintanence, baggage 
 ### Techstack
 
 - 🧱 PostgreSQL – Raw flight & fueling data
-- 🔁 Rahla – ETL - not in the classic sense
-- 🧠 Linear Regression model – Fueling duration prediction
+- 🔁 Rahla – Event-driven flight data processor
+- 🧠 Fueling duration prediction model
 - 🧪 MLflow – Model versioning / Serving
 - ☸️ Kubernetes – Deployment platform
 - 🔁 ArgoCD – Orchestration
@@ -124,19 +146,39 @@ According to Eurocontrol in 2023 27% of delays were due to maintanence, baggage 
     Currently prediciton is made after the fuel is ordered
 ---
 
-### Future Plans
+### ✈️ Future Plans
 
-- Currently prediciton is made after the fuel is ordered
-- Long term goal is use the preiction to trigger the fueling
-- This will ensure the fueling is done before planned take off
+- 🔍 Prediction starts after the fuel order is placed
+- 🚀 Trigger fueling proactively using the prediction
+- 🕓 Ensure fueling completes before planned takeoff
+- 🤝 Better coordination 
+- 🎯 Real-time ramp orchestration with fewer delays
+  
+
+---
+
+#### Current DataTactics Projects in the airline industry
+
+![](assets/dT-blue.svg){ width=200px align=right }
+
+- 🔁 Missed Connections
+- 👥 Passenger Flow  
+- 🛰️ Flight Positioning 
+- ⛽ Fueling Duration 
+- 💳 Fuel Purchase Forecasting
+
+--- 
 
 
 ### Links
 
 - [These sides](https://samueladamsmcguire.github.io)
+- [My Github](https://github.com/samueladamsmcguire)
 - [datatactics website](https://www.datatactics.de/)
 - [datatactics LinkedIn](https://www.linkedin.com/company/datatactics-gmbh)
-- [My Personal LinkedIn](https://www.linkedin.com/in/samuel-mcguire/)
 
+### Let's connect
+
+![](assets/linkedin.jpg){ width=60% }
 
 

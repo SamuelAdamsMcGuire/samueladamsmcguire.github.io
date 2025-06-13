@@ -11,23 +11,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reset.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.css">
   <style>
-    .reveal .sourceCode {  /* see #7635 */
-      overflow: visible;
-    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
+    ul.task-list{list-style: none;}
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/theme/moon.css" id="theme">
@@ -38,71 +27,125 @@
 
 <section id="title-slide">
   <h1 class="title">Datatactics GmbH</h1>
-  <p class="subtitle">The Surprising Complexity of Fueling an
-Aircraft</p>
+  <p class="subtitle">The Surprising Complexity of Fueling an Aircraft</p>
   <p class="author">Samuel McGuire</p>
   <p class="date">17-06-2025</p>
 </section>
 
 <section class="slide level3">
 
-<h4 id="has-your-flight-ever-been-delayed">Has Your Flight Ever Been
-Delayed?</h4>
+<h4 id="has-your-flight-ever-been-delayed">Has Your Flight Ever Been Delayed?</h4>
 <p><img data-src="assets/airport_delays.png" style="width:60.0%" /></p>
-<p><strong>Delays happen. But have you ever thought about
-why?</strong></p>
+<p><strong>Annoying to pax, expensive for all!</strong></p>
 </section>
 <section class="slide level3">
 
-<h4 id="why-planes-are-late">Why Planes Are Late</h4>
+<h4 id="costs-of-late-planes">💸 Costs of Late Planes</h4>
 <div>
 <ul>
-<li class="fragment">Late incoming aircraft</li>
-<li class="fragment">Weather disruptions</li>
-<li class="fragment">Air traffic congestion</li>
-<li class="fragment">Technical or maintenance issues</li>
-<li class="fragment">Crew availability</li>
-<li class="fragment">Catering or baggage loading delays</li>
-<li class="fragment">Fueling took too long</li>
+<li class="fragment"><p>27% of delays are due to baggage, boarding, apron (incl. fueling) issues</p></li>
+<li class="fragment"><p>€275 million in airline costs (fuel, crew delays, losses)</p></li>
+<li class="fragment"><p>€650 million in EU261 passenger compensation</p></li>
+<li class="fragment"><p><a href="https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf">Source: Eurocontrol Performance Review</a></p></li>
 </ul>
 </div>
 </section>
 <section class="slide level3">
 
-<h4 id="how-much-to-fuel">How Much to Fuel</h4>
-<div>
-<ul>
-<li class="fragment">Where the plane is flying to (with reserves taken
-into account)</li>
-<li class="fragment">How much fuel is already in the plane</li>
-<li class="fragment">Weight Matters</li>
-<li class="fragment">Tankering (Used to Be Common Practice)</li>
-<li class="fragment">New EU Tankering Regulations (2024)</li>
-</ul>
-</div>
+<h4 id="why-planes-get-delayed">✈️ Why Planes Get Delayed</h4>
+<table>
+<thead>
+<tr class="header">
+<th>Cause</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>🚶 Passenger Flow</td>
+<td>Congestion at checkpoints</td>
+</tr>
+<tr class="even">
+<td>🧳 Baggage Loading</td>
+<td>Slow or misplaced luggage</td>
+</tr>
+<tr class="odd">
+<td>🌧️ Weather</td>
+<td>Storms or low visibility</td>
+</tr>
+<tr class="even">
+<td>⛽ <strong>Fueling Delays</strong></td>
+<td><em>Common — but solvable!</em></td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="when-will-fueling-actually-finish" class="slide level3">
-<h3>When Will Fueling Actually Finish?</h3>
+<section class="slide level3">
+
+<h4 id="how-pilots-decide-fuel-quantity">🛢️ How Pilots Decide Fuel Quantity</h4>
+<table>
+<thead>
+<tr class="header">
+<th>Factor</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>🗺️ Route &amp; Reserves</td>
+<td>Distance and more</td>
+</tr>
+<tr class="even">
+<td>⛽ FOB</td>
+<td>Current tank level</td>
+</tr>
+<tr class="odd">
+<td>⚖️ Aircraft Weight</td>
+<td>More weight = more drag</td>
+</tr>
+<tr class="even">
+<td>🇪🇺 EU Law (2024)</td>
+<td>Restrict excess tankering</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fueling-timeline-when-will-it-be-done" class="slide level3">
+<h3>⛽ Fueling Timeline: When Will It Be Done?</h3>
 <ol type="1">
-<li>Pilot places fuel order<br />
+<li>🧑‍✈️ Pilot places fuel order (Uplift = Block Fuel – FOB)<br />
 </li>
-<li>Fueling starts → Prediction kicks in here<br />
-</li>
-<li>Fueling ends → Flight departs</li>
+<li>🚛 Fueling starts — predict how long it will take</li>
+<li>🛫 Helps align catering, crew, and departure timing</li>
+<li>✅ Fueling ends → Aircraft ready to depart</li>
 </ol>
+<p><strong>Knowing the fueling end time = fewer surprises &amp; smoother handovers</strong></p>
 </section>
-<section id="pipeline" class="slide level3">
-<h3>Pipeline</h3>
-<p><img data-src="assets/prediction_flow.png" style="width:80.0%" /></p>
-</section>
-<section id="uplift-prediction" class="slide level3">
-<h3>Uplift Prediction</h3>
+<section id="message-to-prediction-pipeline" class="slide level3">
+<h3>Message to Prediction Pipeline</h3>
 <div>
 <ul>
-<li class="fragment">Uplift = Block Fuel - FOB</li>
-<li class="fragment">This is what the pilot orders</li>
-<li class="fragment">the prediction is made using the FOB, aircraft type
-and minutes to take off</li>
+<li class="fragment">📨 Queue receives milestone messages</li>
+<li class="fragment">🧠 Parse messages into structured data</li>
+<li class="fragment">🗃️ Insert parsed messages into the database</li>
+<li class="fragment">🔁 Duplicate message for prediction route</li>
+<li class="fragment">🔍 Extract hashkey and message type</li>
+<li class="fragment">❓ Check message type</li>
+<li class="fragment">🧩 Join message with context</li>
+<li class="fragment">📤 Send features to ML model via MLflow</li>
+<li class="fragment">📥 Receive predicted fueling duration</li>
+<li class="fragment">🧾 Concatenate prediction with original message</li>
+<li class="fragment">🛠️ Update database row with prediction</li>
+</ul>
+</div>
+</section>
+<section id="which-features-actually-matter" class="slide level3">
+<h3>🔍 Which Features Actually Matter?</h3>
+<div>
+<ul>
+<li class="fragment">🛩 Aircraft type captures weight, fuel tank size, engine count — all embedded in a single variable</li>
+<li class="fragment">⛽ Remaining uplift = Block Fuel – Fuel On Board → directly tied to fueling time</li>
+<li class="fragment">⏱ Minutes until takeoff encodes operational urgency: Time pressure, Likelihood of parallel fueling (more trucks dispatched), Typical ramp behavior</li>
 </ul>
 </div>
 </section>
@@ -110,13 +153,17 @@ and minutes to take off</li>
 <h3>Techstack</h3>
 <ul>
 <li>🧱 PostgreSQL – Raw flight &amp; fueling data</li>
-<li>🔁 Rahla – ETL - not in the classic sense</li>
-<li>🧠 Linear Regression model – Fueling duration prediction</li>
+<li>🔁 Rahla – Event-driven flight data processor</li>
+<li>🧠 Fueling duration prediction model</li>
 <li>🧪 MLflow – Model versioning / Serving</li>
 <li>☸️ Kubernetes – Deployment platform</li>
 <li>🔁 ArgoCD – Orchestration</li>
 <li>🛠️ Theia – Continual development environment</li>
 </ul>
+</section>
+<section id="model-comparison" class="slide level3">
+<h3>Model comparison</h3>
+<p><img data-src="assets/model_comparison.png" /></p>
 </section>
 <section id="current-results" class="slide level3">
 <h3>Current Results</h3>
@@ -139,31 +186,47 @@ Simple monitoring → Smoother operations → Fewer delays
 Currently prediciton is made after the fuel is ordered</code></pre>
 </section>
 <section id="future-plans" class="slide level3">
-<h3>Future Plans</h3>
+<h3>✈️ Future Plans</h3>
 <ul>
-<li>Currently prediciton is made after the fuel is ordered</li>
-<li>Long term goal is use the preiction to trigger the fueling</li>
-<li>This will ensure the fueling is done before planned take off</li>
+<li>🔍 Prediction starts after the fuel order is placed</li>
+<li>🚀 Trigger fueling proactively using the prediction</li>
+<li>🕓 Ensure fueling completes before planned takeoff</li>
+<li>🤝 Better coordination</li>
+<li>🎯 Real-time ramp orchestration with fewer delays</li>
+</ul>
+</section>
+<section class="slide level3">
+
+<h4 id="current-datatactics-projects-in-the-airline-industry">Current DataTactics Projects in the airline industry</h4>
+<p><img data-src="assets/dT-blue.svg" data-align="right" width="200" /></p>
+<ul>
+<li>🔁 Missed Connections</li>
+<li>👥 Passenger Flow<br />
+</li>
+<li>🛰️ Flight Positioning</li>
+<li>⛽ Fueling Duration</li>
+<li>💳 Fuel Purchase Forecasting</li>
 </ul>
 </section>
 <section id="links" class="slide level3">
 <h3>Links</h3>
 <ul>
 <li><a href="https://samueladamsmcguire.github.io">These sides</a></li>
+<li><a href="https://github.com/samueladamsmcguire">My Github</a></li>
 <li><a href="https://www.datatactics.de/">datatactics website</a></li>
-<li><a
-href="https://www.linkedin.com/company/datatactics-gmbh">datatactics
-LinkedIn</a></li>
-<li><a href="https://www.linkedin.com/in/samuel-mcguire/">My Personal
-LinkedIn</a></li>
+<li><a href="https://www.linkedin.com/company/datatactics-gmbh">datatactics LinkedIn</a></li>
 </ul>
+</section>
+<section id="lets-connect" class="slide level3">
+<h3>Let’s connect</h3>
+<p><img data-src="assets/linkedin.jpg" style="width:60.0%" /></p>
 </section>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.js"></script>
 
-  <!-- reveal.js plugins -->
+  // reveal.js plugins
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/notes/notes.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/search/search.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/zoom/zoom.js"></script>
@@ -173,145 +236,25 @@ LinkedIn</a></li>
       // Full list of configuration options available at:
       // https://revealjs.com/config/
       Reveal.initialize({
-        // Display controls in the bottom right corner
-        controls: true,
-
-        // Help the user learn the controls by providing hints, for example by
-        // bouncing the down arrow when they first encounter a vertical slide
-        controlsTutorial: true,
-
-        // Determines where controls appear, "edges" or "bottom-right"
-        controlsLayout: 'bottom-right',
-
-        // Visibility rule for backwards navigation arrows; "faded", "hidden"
-        // or "visible"
-        controlsBackArrows: 'faded',
-
+      
         // Display a presentation progress bar
         progress: true,
-
         // Display the page number of the current slide
         slideNumber: true,
-
-        // 'all', 'print', or 'speaker'
-        showSlideNumber: 'all',
-
         // Add the current slide number to the URL hash so that reloading the
         // page/copying the URL will return you to the same slide
         hash: true,
-
-        // Start with 1 for the hash rather than 0
-        hashOneBasedIndex: false,
-
-        // Flags if we should monitor the hash and change slides accordingly
-        respondToHashChanges: true,
-
         // Push each slide change to the browser history
-        history: false,
-
-        // Enable keyboard shortcuts for navigation
-        keyboard: true,
-
-        // Enable the slide overview mode
-        overview: true,
-
-        // Disables the default reveal.js slide layout (scaling and centering)
-        // so that you can use custom CSS layout
-        disableLayout: false,
-
-        // Vertical centering of slides
-        center: true,
-
-        // Enables touch navigation on devices with touch input
-        touch: true,
-
-        // Loop the presentation
-        loop: false,
-
-        // Change the presentation direction to be RTL
-        rtl: false,
-
+        history: true,
         // see https://revealjs.com/vertical-slides/#navigation-mode
         navigationMode: 'linear',
-
-        // Randomizes the order of slides each time the presentation loads
-        shuffle: false,
-
-        // Turns fragments on and off globally
-        fragments: true,
-
-        // Flags whether to include the current fragment in the URL,
-        // so that reloading brings you to the same fragment position
-        fragmentInURL: true,
-
-        // Flags if the presentation is running in an embedded mode,
-        // i.e. contained within a limited portion of the screen
-        embedded: false,
-
-        // Flags if we should show a help overlay when the questionmark
-        // key is pressed
-        help: true,
-
-        // Flags if it should be possible to pause the presentation (blackout)
-        pause: true,
-
-        // Flags if speaker notes should be visible to all viewers
-        showNotes: false,
-
-        // Global override for autoplaying embedded media (null/true/false)
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
         autoPlayMedia: true,
-
-        // Global override for preloading lazy-loaded iframes (null/true/false)
-        preloadIframes: null,
-
-        // Number of milliseconds between automatically proceeding to the
-        // next slide, disabled when set to 0, this value can be overwritten
-        // by using a data-autoslide attribute on your slides
-        autoSlide: 0,
-
-        // Stop auto-sliding after user input
-        autoSlideStoppable: true,
-
-        // Use this method for navigation when auto-sliding
-        autoSlideMethod: null,
-
-        // Specify the average time in seconds that you think you will spend
-        // presenting each slide. This is used to show a pacing timer in the
-        // speaker view
-        defaultTiming: null,
-
-        // Enable slide navigation via mouse wheel
-        mouseWheel: false,
-
-        // The display mode that will be used to show slides
-        display: 'block',
-
-        // Hide cursor if inactive
-        hideInactiveCursor: true,
-
-        // Time before the cursor is hidden (in ms)
-        hideCursorTime: 5000,
-
-        // Opens links in an iframe preview overlay
-        previewLinks: false,
-
-        // Transition style (none/fade/slide/convex/concave/zoom)
-        transition: 'concave',
-
-        // Transition speed (default/fast/slow)
-        transitionSpeed: 'default',
-
-        // Transition style for full page slide backgrounds
-        // (none/fade/slide/convex/concave/zoom)
-        backgroundTransition: 'fade',
-
-        // Number of slides away from the current that are visible
-        viewDistance: 3,
-
-        // Number of slides away from the current that are visible on mobile
-        // devices. It is advisable to set this to a lower number than
-        // viewDistance in order to save resources.
-        mobileViewDistance: 2,
+        // Transition style
+        transition: 'concave', // none/fade/slide/convex/concave/zoom
 
         // reveal.js plugins
         plugins: [
