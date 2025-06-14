@@ -28,6 +28,7 @@ autoPlayMedia: true
 | Cause                  | Description                                 |
 |------------------------|---------------------------------------------|
 | 🚶 Passenger Flow       | Congestion at checkpoints |
+| 🔁 Late Connex       | Planes wait depending |
 | 🧳 Baggage Loading      | Slow or misplaced luggage                   |
 | 🌧️ Weather              | Storms or low visibility     |
 | ⛽ **Fueling Delays**   | *Common — but solvable!*       |
