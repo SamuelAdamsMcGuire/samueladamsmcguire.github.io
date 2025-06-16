@@ -48,89 +48,125 @@ Aircraft</p>
 <h3>Has Your Flight Ever Been Delayed?</h3>
 <p><img data-src="assets/airport_delays.png" style="width:60.0%" /></p>
 <p><strong>Annoying to pax, expensive for all!</strong></p>
+<p><img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" />
+<!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> --></p>
 </section>
-<section id="why-planes-get-delayed" class="slide level3">
-<h3>✈️ Why Planes Get Delayed</h3>
-<table>
-<colgroup>
-<col style="width: 34%" />
-<col style="width: 65%" />
-</colgroup>
-<thead>
+<section class="slide level3">
+
+<h3>
+✈️ Why Planes Get Delayed
+</h3>
+<table style="width: 100%; font-size: 90%;">
 <tr>
-<th>Cause</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>🚶 Passenger Flow</td>
-<td>Congestion at checkpoints</td>
+<th style="text-align: left;">
+Cause
+</th>
+<th style="text-align: left;">
+Description
+</th>
 </tr>
 <tr>
-<td>🔁 Late Connex</td>
-<td>Planes wait depending</td>
+<td>
+🚶 Passenger Flow
+</td>
+<td>
+Congestion at checkpoints
+</td>
 </tr>
 <tr>
-<td>🧳 Baggage Loading</td>
-<td>Slow or misplaced luggage</td>
+<td>
+🔁 Late Connex
+</td>
+<td>
+Planes wait depending
+</td>
 </tr>
 <tr>
-<td>🌧️ Weather</td>
-<td>Storms or low visibility</td>
+<td>
+🧳 Baggage
+</td>
+<td>
+Slow or misplaced luggage
+</td>
 </tr>
 <tr>
-<td>⛽ <strong>Fueling Delays</strong></td>
-<td><em>Common — but solvable!</em></td>
+<td>
+🌧️ Weather
+</td>
+<td>
+Storms or low visibility
+</td>
 </tr>
-</tbody>
+<tr>
+<td>
+⛽ <strong>Fueling Delays</strong>
+</td>
+<td>
+<em>Common — but solvable!</em>
+</td>
+</tr>
 </table>
 </section>
 <section id="costs-of-late-planes" class="slide level3">
 <h3>💸 Costs of Late Planes</h3>
 <ul>
-<li class="fragment"><p>27% of delays are due to baggage, boarding,
-apron (incl. fueling) issues</p></li>
-<li class="fragment"><p>€275 million in airline costs (fuel, crew
-delays, losses)</p></li>
-<li class="fragment"><p>€650 million in EU261 passenger
-compensation</p></li>
-<li class="fragment"><p><a
-href="https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf">Source:
-2023 Eurocontrol Performance Review</a></p></li>
+<li class="fragment">27% of delays are due to aircraft turnaround
+(incl. fueling) issues</li>
+<li class="fragment">€275 million in airline costs (fuel, crew delays,
+losses)</li>
+<li class="fragment">€650 million in EU261 passenger compensation</li>
 </ul>
+<p><br></p>
+<p><span style="font-size:0.7em; color:gray;">Source:
+<a href="https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf" target="_blank">2023
+Eurocontrol Performance Review</a></span></p>
 </section>
-<section id="how-pilots-decide-fuel-quantity" class="slide level3">
-<h3>🛢️ How Pilots Decide Fuel Quantity</h3>
-<table>
-<colgroup>
-<col style="width: 35%" />
-<col style="width: 64%" />
-</colgroup>
-<thead>
+<section class="slide level3">
+
+<h3>
+🛢️ How Much Fuel Is Needed?
+</h3>
+<table style="width: 110%; font-size: 90%;">
 <tr>
-<th>Factor</th>
-<th>Impact</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>🗺️ Route &amp; Reserves</td>
-<td>Distance and more</td>
+<th style="text-align: left;">
+Factor
+</th>
+<th style="text-align: left;">
+Impact
+</th>
 </tr>
 <tr>
-<td>⛽ FOB</td>
-<td>Current tank level</td>
+<td>
+🗺️ Route &amp; Reserves
+</td>
+<td>
+Distance and more
+</td>
 </tr>
 <tr>
-<td>⚖️ Aircraft Weight</td>
-<td>More weight = more drag</td>
+<td>
+⛽ FOB
+</td>
+<td>
+Current tank level
+</td>
 </tr>
 <tr>
-<td>🇪🇺 EU Law (2024)</td>
-<td>Restrict excess tankering</td>
+<td>
+⚖️ Aircraft Weight and Balance
+</td>
+<td>
+More weight = more drag
+</td>
 </tr>
-</tbody>
+<tr>
+<td>
+🚀 LIDO
+</td>
+<td>
+Makes suggestion – pilot approves or changes
+</td>
+</tr>
 </table>
 </section>
 <section id="fueling-timeline-when-will-it-be-done"
@@ -150,7 +186,7 @@ handovers</strong></p>
 <h3>🔍 Modeling the Fueling duration</h3>
 <p><strong>Which features were relevant?</strong></p>
 <ul>
-<li class="fragment">🛩 Aircraft type captures weight, fuel tank size,
+<li class="fragment">🛩 Aircraft type captures weight, fuel throughput,
 engine count — all embedded in a single variable</li>
 <li class="fragment">⛽ Remaining uplift = Block Fuel – Fuel On Board →
 directly tied to fueling time</li>
@@ -196,17 +232,7 @@ Before departure:
 🍽 Catering must be finished
 👨‍✈️ Crew needs a clear status
 
-Simple monitoring → Smoother operations → Fewer delays
-
-Currently prediciton is made after fueling start message sent</code></pre>
-</section>
-<section id="future-plans" class="slide level3">
-<h3>✈️ Future Plans</h3>
-<ul>
-<li>🚀 Trigger fueling proactively using the prediction</li>
-<li>🕓 Ensure fueling completes before planned takeoff</li>
-<li>🎯 Better ramp orchestration with fewer delays</li>
-</ul>
+Simple monitoring → Smoother operations → Fewer delays</code></pre>
 </section>
 <section id="completely-open-source-techstack" class="slide level3">
 <h3>Completely Open Source Techstack</h3>
@@ -226,7 +252,7 @@ class="slide level3">
 <p><img data-src="assets/dT-blue.svg" data-align="right"
 width="200" /></p>
 <ul>
-<li>🔁 Missed Connections</li>
+<li>🔁 Fuel Emission Forecasting</li>
 <li>👥 Passenger Flow<br />
 </li>
 <li>🛰️ Flight Positioning</li>
@@ -237,7 +263,6 @@ width="200" /></p>
 <section id="links" class="slide level3">
 <h3>Links</h3>
 <ul>
-<li><a href="https://samueladamsmcguire.github.io">These sides</a></li>
 <li><a href="https://github.com/samueladamsmcguire">My Github</a></li>
 <li><a href="https://www.datatactics.de/">datatactics website</a></li>
 <li><a
