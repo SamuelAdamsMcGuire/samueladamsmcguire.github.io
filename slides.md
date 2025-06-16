@@ -102,10 +102,6 @@ autoPlayMedia: true
     <td>🌧️ Weather</td>
     <td>Storms or low visibility</td>
   </tr>
-  <tr>
-    <td>🚀 LIDO</td>
-    <td>Makes suggestion – pilot approves or changes</td>
-  </tr>
 </table>
 
 ---
