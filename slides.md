@@ -184,7 +184,7 @@ autoPlayMedia: true
 ### Completely Open Source Techstack
 
 - 🧱 PostgreSQL – Raw flight & fueling data
-- 🔁 Rahla – Event-driven flight data processor
+- 🔁 Rahla – Event-driven data processing
 - 🧠 SciKit Learn – model
 - 🧪 MLflow – Model versioning / Serving
 - ☸️ Kubernetes – Deployment platform
