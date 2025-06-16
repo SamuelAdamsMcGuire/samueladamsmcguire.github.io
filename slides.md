@@ -21,17 +21,40 @@ autoPlayMedia: true
 
 **Annoying to pax, expensive for all!**
 
+<img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" />
+<!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> -->
+
+
 --- 
 
-### ✈️ Why Planes Get Delayed
+<h3>✈️ Why Planes Get Delayed</h3>
 
-| Cause                  | Description                                 |
-|------------------------|---------------------------------------------|
-| 🚶 Passenger Flow       | Congestion at checkpoints |
-| 🔁 Late Connex       | Planes wait depending |
-| 🧳 Baggage Loading      | Slow or misplaced luggage                   |
-| 🌧️ Weather              | Storms or low visibility     |
-| ⛽ **Fueling Delays**   | *Common — but solvable!*       |
+<table style="width: 100%; font-size: 90%;">
+  <tr>
+    <th style="text-align: left;">Cause</th>
+    <th style="text-align: left;">Description</th>
+  </tr>
+  <tr>
+    <td>🚶 Passenger Flow</td>
+    <td>Congestion at checkpoints</td>
+  </tr>
+  <tr>
+    <td>🔁 Late Connex</td>
+    <td>Planes wait depending</td>
+  </tr>
+  <tr>
+    <td>🧳 Baggage</td>
+    <td>Slow or misplaced luggage</td>
+  </tr>
+  <tr>
+    <td>🌧️ Weather</td>
+    <td>Storms or low visibility</td>
+  </tr>
+  <tr>
+    <td>⛽ <strong>Fueling Delays</strong></td>
+    <td><em>Common — but solvable!</em></td>
+  </tr>
+</table>
 
 ---
 
@@ -39,11 +62,15 @@ autoPlayMedia: true
 
 ::: incremental
 
-- 27% of delays are due to baggage, boarding, apron (incl. fueling) issues
+- 27% of delays are due to aircraft turnaround (incl. fueling) issues
 - €275 million in airline costs (fuel, crew delays, losses)
 - €650 million in EU261 passenger compensation
 
-- [Source: 2023 Eurocontrol Performance Review](https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf)
+
+<br>
+
+<span style="font-size:0.7em; color:gray;">Source: <a href="https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf" target="_blank">2023 Eurocontrol Performance Review</a></span>
+
 
 :::
 
@@ -51,14 +78,30 @@ autoPlayMedia: true
 ---
 
 
-### 🛢️ How Pilots Decide Fuel Quantity
+<h3>🛢️ How Much Fuel Is Needed?</h3>
 
-| Factor                  | Impact                                         |
-|--------------------------|------------------------------------------------|
-| 🗺️ Route & Reserves       | Distance and more      |
-| ⛽ FOB     | Current tank level               |
-| ⚖️ Aircraft Weight | More weight = more drag    |
-| 🇪🇺 EU Law (2024)        | Restrict excess tankering     |
+<table style="width: 110%; font-size: 90%;">
+  <tr>
+    <th style="text-align: left;">Factor</th>
+    <th style="text-align: left;">Impact</th>
+  </tr>
+  <tr>
+    <td>🗺️ Route & Reserves</td>
+    <td>Distance and more</td>
+  </tr>
+  <tr>
+    <td>⛽ FOB</td>
+    <td>Current tank level</td>
+  </tr>
+  <tr>
+    <td>⚖️ Aircraft Weight and Balance</td>
+    <td>More weight = more drag</td>
+  </tr>
+  <tr>
+    <td>🚀 LIDO</td>
+    <td>Makes suggestion – pilot approves or changes</td>
+  </tr>
+</table>
 
 ---
 
@@ -80,7 +123,7 @@ autoPlayMedia: true
 **Which features were relevant?**
 
 ::: incremental
-- 🛩 Aircraft type captures weight, fuel tank size, engine count — all embedded in a single variable
+- 🛩 Aircraft type captures weight, fuel throughput, engine count — all embedded in a single variable
 - ⛽ Remaining uplift = Block Fuel – Fuel On Board → directly tied to fueling time
 - ⏱ Minutes until takeoff encodes operational urgency: Time pressure, Likelihood of parallel fueling (more trucks dispatched), Typical ramp behavior
 :::
@@ -134,17 +177,8 @@ autoPlayMedia: true
 
     Simple monitoring → Smoother operations → Fewer delays
 
-    Currently prediciton is made after fueling start message sent
 ---
 
-### ✈️ Future Plans
-
-- 🚀 Trigger fueling proactively using the prediction
-- 🕓 Ensure fueling completes before planned takeoff 
-- 🎯 Better ramp orchestration with fewer delays
-  
-
----
 
 ### Completely Open Source Techstack
 
@@ -162,7 +196,7 @@ autoPlayMedia: true
 
 ![](assets/dT-blue.svg){ width=200px align=right }
 
-- 🔁 Missed Connections
+- 🔁 Fuel Emission Forecasting 
 - 👥 Passenger Flow  
 - 🛰️ Flight Positioning 
 - ⛽ Fueling Duration 
@@ -172,7 +206,6 @@ autoPlayMedia: true
 
 ### Links
 
-- [These sides](https://samueladamsmcguire.github.io)
 - [My Github](https://github.com/samueladamsmcguire)
 - [datatactics website](https://www.datatactics.de/)
 - [datatactics LinkedIn](https://www.linkedin.com/company/datatactics-gmbh)
