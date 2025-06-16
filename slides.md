@@ -2,7 +2,7 @@
 author: Samuel McGuire - Data Science Lead
 title: Datatactics GmbH
 subtitle: The Surprising Complexity of Fueling an Aircraft
-date: Data Science Week Amsterdam 17-06-2025
+date: 17-06-2025
 theme: moon # https://revealjs.com/themes/
 transition: concave # https://revealjs.com/transitions/
 # see all the options here: https://revealjs.com/config/
@@ -12,6 +12,7 @@ slideNumber: true
 hash: true
 navigationMode: linear
 autoPlayMedia: true
+
 
 ---
 
@@ -86,7 +87,7 @@ autoPlayMedia: true
     <th style="text-align: left;">Impact</th>
   </tr>
   <tr>
-    <td>🗺️ Route & Reserves</td>
+    <td>🗺️ Route</td>
     <td>Distance and more</td>
   </tr>
   <tr>
@@ -94,8 +95,12 @@ autoPlayMedia: true
     <td>Current tank level</td>
   </tr>
   <tr>
-    <td>⚖️ Aircraft Weight and Balance</td>
+    <td>⚖️ Weight</td>
     <td>More weight = more drag</td>
+  </tr>
+    <tr>
+    <td>🌧️ Weather</td>
+    <td>Storms or low visibility</td>
   </tr>
   <tr>
     <td>🚀 LIDO</td>
