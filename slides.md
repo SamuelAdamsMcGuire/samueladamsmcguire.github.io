@@ -91,12 +91,12 @@ autoPlayMedia: true
     <td>Distance and more</td>
   </tr>
   <tr>
-    <td>⛽ FOB</td>
-    <td>Current tank level</td>
+    <td>✈️ Aircraft</td>
+    <td>Type Specification</td>
   </tr>
   <tr>
-    <td>⚖️ Weight</td>
-    <td>More weight = more drag</td>
+    <td>⛽ FOB</td>
+    <td>Current tank level</td>
   </tr>
     <tr>
     <td>🌬️ Weather</td>
