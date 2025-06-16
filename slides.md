@@ -99,8 +99,8 @@ autoPlayMedia: true
     <td>More weight = more drag</td>
   </tr>
     <tr>
-    <td>🌧️ Weather</td>
-    <td>Storms or low visibility</td>
+    <td>🌬️ Weather</td>
+    <td>Headwinds</td>
   </tr>
 </table>
 
