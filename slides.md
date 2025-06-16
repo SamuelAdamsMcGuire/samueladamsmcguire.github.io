@@ -171,26 +171,16 @@ autoPlayMedia: true
 
     The answer: to improve visibility and coordination
 
-    ✅ Before departure, everything must come together:
-
-    🛫 Fueling must be completed
-
+    Before departure:
+    🛫 Fueling must be done
     🧳 Baggage loading must be finished
-
-    🍽 Catering must be delivered and stowed
-
-    👨‍✈️ Crew needs a go/no-go status
-
-    🧼 Cabin cleaning must be done
-
-    🧾 Paperwork (flight plan, fuel slip, clearance) must be signed off
-
-    📦 Cargo (if any) must be secured
-
-    🚪 Boarding can only begin once it’s safe to do so
+    🍽 Catering must be finished
+    👨‍✈️ Crew needs a clear status
 
     Simple monitoring → Smoother operations → Fewer delays
+
     
+
 ---
 
 
