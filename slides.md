@@ -2,7 +2,7 @@
 author: Samuel McGuire - Data Science Lead
 title: Datatactics GmbH
 subtitle: The Surprising Complexity of Fueling an Aircraft
-date: 17-06-2025
+date: 18-06-2025
 theme: moon # https://revealjs.com/themes/
 transition: concave # https://revealjs.com/transitions/
 # see all the options here: https://revealjs.com/config/
