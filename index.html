@@ -113,8 +113,8 @@ Storms or low visibility
 <ul>
 <li class="fragment">27% of delays are due to aircraft turnaround
 (incl. fueling) issues</li>
-<li class="fragment">€275 million in airline costs (fuel, crew delays,
-losses)</li>
+<li class="fragment">€275 million in airline costs (fuel, overtime,
+parking)</li>
 <li class="fragment">€650 million in EU261 passenger compensation</li>
 </ul>
 <p><br></p>
@@ -129,14 +129,6 @@ Eurocontrol Performance Review</a></span></p>
 🛢️ How Much Fuel Is Needed?
 </h3>
 <table style="width: 110%; font-size: 90%;">
-<tr>
-<th style="text-align: left;">
-Factor
-</th>
-<th style="text-align: left;">
-Impact
-</th>
-</tr>
 <tr>
 <td>
 🗺️ Route
@@ -175,10 +167,9 @@ Headwinds
 class="slide level3">
 <h3>⛽ Fueling Timeline: When Will It Be Done?</h3>
 <ol type="1">
-<li>🧑‍✈️ Pilot places fuel order (Uplift = Block Fuel – FOB)<br />
-</li>
+<li>🧑‍✈️ Pilot places fuel order</li>
 <li>🚛 Fueling starts — predict how long it will take</li>
-<li>🛫 Helps align catering, crew, and departure timing</li>
+<li>🛫 Helps align various processes</li>
 <li>✅ Fueling ends → Aircraft ready to depart</li>
 </ol>
 <p><strong>Knowing the fueling end time = fewer surprises &amp; smoother
@@ -221,17 +212,14 @@ dispatched), Typical ramp behavior</li>
 <li class="fragment">🧩 Join message with context</li>
 <li class="fragment">📤 Send features to Mlflow served model</li>
 <li class="fragment">📥 Receive predicted fueling duration</li>
-<li class="fragment">🧾 Concatenate prediction with original
-message</li>
-<li class="fragment">🛠️ Update database row with prediction</li>
+<li class="fragment">🛠️ Update fuel milstones table with prediction</li>
 </ul>
 </div>
 </section>
-<section id="what-is-this-prediction-even-for" class="slide level3">
-<h3>What is this prediction even for?</h3>
-<pre><code>We asked: “What’s the real point of the prediction?”
-
-The answer: to improve visibility and coordination
+<section id="how-does-this-prediction-help-avoid-delays"
+class="slide level3">
+<h3>How does this prediction help avoid delays?</h3>
+<pre><code>The answer: to improve transparency and coordination
 
 Before departure:
 🛫 Fueling must be done

@@ -64,7 +64,7 @@ autoPlayMedia: true
 ::: incremental
 
 - 27% of delays are due to aircraft turnaround (incl. fueling) issues
-- €275 million in airline costs (fuel, crew delays, losses)
+- €275 million in airline costs (fuel, overtime, parking)
 - €650 million in EU261 passenger compensation
 
 
@@ -82,10 +82,6 @@ autoPlayMedia: true
 <h3>🛢️ How Much Fuel Is Needed?</h3>
 
 <table style="width: 110%; font-size: 90%;">
-  <tr>
-    <th style="text-align: left;">Factor</th>
-    <th style="text-align: left;">Impact</th>
-  </tr>
   <tr>
     <td>🗺️ Route</td>
     <td>Distance and more</td>
@@ -108,9 +104,9 @@ autoPlayMedia: true
 
 ### ⛽ Fueling Timeline: When Will It Be Done?
 
-1. 🧑‍✈️ Pilot places fuel order (Uplift = Block Fuel – FOB)  
+1. 🧑‍✈️ Pilot places fuel order
 2. 🚛 Fueling starts — predict how long it will take
-3. 🛫 Helps align catering, crew, and departure timing
+3. 🛫 Helps align various processes
 4. ✅ Fueling ends → Aircraft ready to depart
 
 **Knowing the fueling end time = fewer surprises & smoother handovers**
@@ -158,18 +154,15 @@ autoPlayMedia: true
 - 🧩 Join message with context
 - 📤 Send features to Mlflow served model
 - 📥 Receive predicted fueling duration
-- 🧾 Concatenate prediction with original message 
-- 🛠️ Update database row with prediction
+- 🛠️ Update fuel milstones table with prediction
 
 :::
 
 ---
 
-### What is this prediction even for?
+### How does this prediction help avoid delays?
 
-    We asked: “What’s the real point of the prediction?”
-
-    The answer: to improve visibility and coordination
+    The answer: to improve transparency and coordination
 
     Before departure:
     🛫 Fueling must be done
