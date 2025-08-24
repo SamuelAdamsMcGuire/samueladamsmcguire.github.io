@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="author" content="Samuel McGuire - Steven Williams">
-  <title>Burnoff Prediction</title>
+  <title>Uplift Prediction</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -37,20 +37,27 @@
     <div class="slides">
 
 <section id="title-slide">
-  <h1 class="title">Burnoff Prediction</h1>
+  <h1 class="title">Uplift Prediction</h1>
   <p class="subtitle">DataTactics GmbH</p>
   <p class="author">Samuel McGuire - Steven Williams</p>
   <p class="date">26-08-2025</p>
 </section>
 
-<section id="goal-more-efficient-fuel-burnoff-forecast"
+<section id="goal-more-efficient-fuel-uplift-forecast"
 class="slide level3">
-<h3>Goal: More efficient fuel burnoff forecast</h3>
+<h3>Goal: More efficient fuel Uplift forecast</h3>
 <p>Staus Quo: The current tool assigns the average uplift from the last
 three full calendar months for the city pair and aircraft type to each
 event in the schedule and sums everything up.</p>
 <!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" /> -->
 <!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> -->
+</section>
+<section class="slide level3">
+
+<p>assumptions problems</p>
+</section>
+<section id="schedule-behaviour-charts" class="slide level3">
+<h3>schedule behaviour chart(s)</h3>
 </section>
 <section id="our-idea-model-1" class="slide level3">
 <h3>Our Idea Model 1</h3>
@@ -71,6 +78,10 @@ model</li>
 </ul>
 </div>
 </section>
+<section id="model-1-input-features" class="slide level3">
+<h3>Model 1 input features</h3>
+<p><img data-src="assets/model_1_features.png" /></p>
+</section>
 <section id="our-idea-model-2" class="slide level3">
 <h3>Our Idea Model 2</h3>
 <div>
@@ -82,6 +93,10 @@ burnoff</li>
 burnoff</li>
 </ul>
 </div>
+</section>
+<section id="model-2-input-features" class="slide level3">
+<h3>Model 2 input features</h3>
+<p><img data-src="assets/model_2_inputs.png" /></p>
 </section>
 <section id="assumptions" class="slide level3">
 <h3>Assumptions</h3>
@@ -98,35 +113,30 @@ accurate forecasts</li>
 <h3>Model Flow Chart</h3>
 <p><img data-src="assets/pipeline.png" /></p>
 </section>
-<section id="model-comparison" class="slide level3">
-<h3>Model comparison</h3>
-<p><img data-src="assets/model_comparison.png" /></p>
-</section>
-<section id="results-per-aircraft-type" class="slide level3">
-<h3>Results per aircraft type</h3>
+<section id="general-results-model-1" class="slide level3">
+<h3>General Results Model 1</h3>
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%">
 </iframe>
 </section>
-<section id="message-to-prediction-pipeline" class="slide level3">
-<h3>Message to Prediction Pipeline</h3>
-<div>
-<ul>
-<li class="fragment">📨 Queue receives messages</li>
-<li class="fragment">🧠 Parse messages into structured data</li>
-<li class="fragment">🗃️ Insert parsed messages into the database</li>
-<li class="fragment">🔁 Duplicate message for prediction route</li>
-<li class="fragment">🔍 Extract hashkey and message type</li>
-<li class="fragment">❓ Check message type</li>
-<li class="fragment">🧩 Join message with context</li>
-<li class="fragment">📤 Send features to Mlflow served model</li>
-<li class="fragment">📥 Receive predicted fueling duration</li>
-<li class="fragment">🛠️ Update fuel milstones table with prediction</li>
-</ul>
-</div>
+<section id="general-results-model-2" class="slide level3">
+<h3>General Results Model 2</h3>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%">
+</iframe>
 </section>
-<section id="how-does-this-prediction-help-avoid-delays"
-class="slide level3">
-<h3>How does this prediction help avoid delays?</h3>
+<section id="case-1-results" class="slide level3">
+<h3>Case 1 results</h3>
+</section>
+<section id="case-2-results" class="slide level3">
+<h3>Case 2 results</h3>
+</section>
+<section id="case-3-results" class="slide level3">
+<h3>Case 3 results</h3>
+</section>
+<section id="case-dtacs-results" class="slide level3">
+<h3>Case dtacs results</h3>
+</section>
+<section id="how-does-our-model-compare-to-yours" class="slide level3">
+<h3>HOw does our model compare to yours?</h3>
 <pre><code>The answer: to improve transparency and coordination
 
 Before departure:
@@ -137,8 +147,9 @@ Before departure:
 
 Simple monitoring → Smoother operations → Fewer delays</code></pre>
 </section>
-<section id="completely-open-source-techstack" class="slide level3">
-<h3>Completely Open Source Techstack</h3>
+<section id="improvements-to-our-model-that-will-make-it-even-better"
+class="slide level3">
+<h3>Improvements to our model that will make it even better</h3>
 <ul>
 <li>🧱 PostgreSQL – Raw flight &amp; fueling data</li>
 <li>🔁 Rahla – Event-driven data processing</li>

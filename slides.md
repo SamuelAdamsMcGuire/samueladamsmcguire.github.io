@@ -1,6 +1,6 @@
 ---
 author: Samuel McGuire - Steven Williams
-title: Burnoff Prediction
+title: Uplift Prediction
 subtitle: DataTactics GmbH
 date: 26-08-2025
 theme: moon # https://revealjs.com/themes/
@@ -16,7 +16,7 @@ autoPlayMedia: true
 
 ---
 
-### Goal: More efficient fuel burnoff forecast
+### Goal: More efficient fuel Uplift forecast
 
 Staus Quo: The current tool assigns the average uplift from the last three full calendar months for the city pair and aircraft type to each event in the schedule and sums everything up.
 
@@ -52,6 +52,12 @@ problems
 
 ---
 
+### Model 1 input features
+
+![](assets/model_1_features.png)
+
+---
+
 ### Our Idea Model 2
 
 ::: incremental
@@ -64,6 +70,11 @@ problems
 :::
 
 
+---
+
+### Model 2 input features
+
+![](assets/model_2_inputs.png)
 
 ---
 
