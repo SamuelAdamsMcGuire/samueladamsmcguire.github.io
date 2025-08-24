@@ -31,7 +31,9 @@ problems
 
 --- 
 
-### schedule behaviour chart(s)
+### Schedule behavior analysis
+
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/weeks_to_event_analysis_by_airline_designator.html" height="450" width="100%"></iframe>
 
 ---
 
