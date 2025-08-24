@@ -1,8 +1,8 @@
 ---
-author: Samuel McGuire - Data Science Lead
-title: Datatactics GmbH
-subtitle: The Surprising Complexity of Fueling an Aircraft
-date: 18-06-2025
+author: Samuel McGuire - Steven Williams
+title: Burnoff Prediction
+subtitle: DataTactics GmbH
+date: 26-08-2025
 theme: moon # https://revealjs.com/themes/
 transition: concave # https://revealjs.com/transitions/
 # see all the options here: https://revealjs.com/config/
@@ -16,151 +16,108 @@ autoPlayMedia: true
 
 ---
 
-### Has Your Flight Ever Been Delayed?
+### Goal: More efficient fuel burnoff forecast
 
-![](assets/airport_delays.png){ width=60% }
+Staus Quo: The current tool assigns the average uplift from the last three full calendar months for the city pair and aircraft type to each event in the schedule and sums everything up.
 
-**Annoying to pax, expensive for all!**
-
-<img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" />
+<!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" /> -->
 <!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> -->
 
 
+---
+
+assumptions
+problems
+
 --- 
 
-<h3>✈️ Why Planes Get Delayed</h3>
-
-<table style="width: 100%; font-size: 90%;">
-  <tr>
-    <th style="text-align: left;">Cause</th>
-    <th style="text-align: left;">Description</th>
-  </tr>
-  <tr>
-    <td>🚶 Passenger Flow</td>
-    <td>Congestion at checkpoints</td>
-  </tr>
-  <tr>
-    <td>🔁 Late Connex</td>
-    <td>Planes wait depending</td>
-  </tr>
-  <tr>
-    <td>🧳 Baggage</td>
-    <td>Slow or misplaced luggage</td>
-  </tr>
-  <tr>
-    <td>🌧️ Weather</td>
-    <td>Storms or low visibility</td>
-  </tr>
-  <tr>
-    <td>⛽ <strong>Fueling Delays</strong></td>
-    <td><em>Common — but solvable!</em></td>
-  </tr>
-</table>
+### schedule behaviour chart(s)
 
 ---
 
-### 💸 Costs of Late Planes
+### Our Idea Model 1
 
 ::: incremental
 
-- 27% of delays are due to aircraft turnaround (incl. fueling) issues
-- €275 million in airline costs (fuel, overtime, parking)
-- €650 million in EU261 passenger compensation
+- Scheduled and actual flights are rarely the same
+- Model difference between scheduled and actual flights
+- Features used:
+- Aircraft type, Airport, Airline 
+- Time based trends and seasonal features
+- Days from current schedule until flight
+- Forecast: Number of departures, Number of minutes flown
+- Take these values and feed them to a second model
 
+:::
 
-<br>
+---
 
-<span style="font-size:0.7em; color:gray;">Source: <a href="https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf" target="_blank">2023 Eurocontrol Performance Review</a></span>
+### Our Idea Model 2
+
+::: incremental
+
+- Use output of model 1 as input to predict total burnoff
+- Instead of using avg try other ML based models 
+- Compare the results to status quo as well as actual burnoff
 
 
 :::
 
 
----
-
-
-<h3>🛢️ How Much Fuel Is Needed?</h3>
-
-<table style="width: 110%; font-size: 90%;">
-  <tr>
-    <td>🗺️ Route</td>
-    <td>Distance and more</td>
-  </tr>
-  <tr>
-    <td>✈️ Aircraft</td>
-    <td>Type Specification</td>
-  </tr>
-  <tr>
-    <td>⛽ FOB</td>
-    <td>Current tank level</td>
-  </tr>
-    <tr>
-    <td>🌬️ Weather</td>
-    <td>Headwinds</td>
-  </tr>
-</table>
 
 ---
 
-### ⛽ Fueling Timeline: When Will It Be Done?
+### Assumptions
 
-1. 🧑‍✈️ Pilot places fuel order
-2. 🚛 Fueling starts — predict how long it will take
-3. 🛫 Helps align various processes
-4. ✅ Fueling ends → Aircraft ready to depart
-
-**Knowing the fueling end time = fewer surprises & smoother handovers**
+1. Using a seasonal avg of mins flown will be better than the scheduled min
+2. Minutes flown and total departures is a good indicator of fuel burnoff 
+3. Due to scheduling flux modeling schedule changes will lead to more accurate forecasts
 
 
 
 ---
 
-### 🔍 Modeling the Fueling duration
+### Model Flow Chart
 
-**Which features were relevant?**
 
-::: incremental
-- 🛩 Aircraft type captures weight, fuel throughput, engine count — all embedded in a single variable
-- ⛽ Remaining uplift = Block Fuel – Fuel On Board → directly tied to fueling time
-- ⏱ Minutes until takeoff encodes operational urgency: Time pressure, Likelihood of parallel fueling (more trucks dispatched), Typical ramp behavior
-:::
-
+![](assets/pipeline.png)
 
 ---
 
-### Model comparison
 
-![](assets/model_comparison.png)
+### General Results Model 1
 
----
 
-### Results per aircraft type
 
 
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%"></iframe>
 
 ---
 
+### General Results Model 2
 
-### Message to Prediction Pipeline
 
-::: incremental
-- 📨 Queue receives messages
-- 🧠 Parse messages into structured data
-- 🗃️ Insert parsed messages into the database
-- 🔁 Duplicate message for prediction route
-- 🔍 Extract hashkey and message type
-- ❓ Check message type
-- 🧩 Join message with context
-- 📤 Send features to Mlflow served model
-- 📥 Receive predicted fueling duration
-- 🛠️ Update fuel milstones table with prediction
-
-:::
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%"></iframe>
 
 ---
 
-### How does this prediction help avoid delays?
+### Case 1 results
+
+---
+
+### Case 2 results
+
+---
+
+### Case 3 results
+
+---
+
+### Case dtacs results
+
+---
+
+### HOw does our model compare to yours?
 
     The answer: to improve transparency and coordination
 
@@ -177,7 +134,7 @@ autoPlayMedia: true
 ---
 
 
-### Completely Open Source Techstack
+### Improvements to our model that will make it even better
 
 - 🧱 PostgreSQL – Raw flight & fueling data
 - 🔁 Rahla – Event-driven data processing
