@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <meta name="author" content="Samuel McGuire - Data Science Lead">
-  <title>Datatactics GmbH</title>
+  <meta name="author" content="Samuel McGuire - Steven Williams">
+  <title>Burnoff Prediction</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -37,182 +37,94 @@
     <div class="slides">
 
 <section id="title-slide">
-  <h1 class="title">Datatactics GmbH</h1>
-  <p class="subtitle">The Surprising Complexity of Fueling an
-Aircraft</p>
-  <p class="author">Samuel McGuire - Data Science Lead</p>
-  <p class="date">18-06-2025</p>
+  <h1 class="title">Burnoff Prediction</h1>
+  <p class="subtitle">DataTactics GmbH</p>
+  <p class="author">Samuel McGuire - Steven Williams</p>
+  <p class="date">26-08-2025</p>
 </section>
 
-<section id="has-your-flight-ever-been-delayed" class="slide level3">
-<h3>Has Your Flight Ever Been Delayed?</h3>
-<p><img data-src="assets/airport_delays.png" style="width:60.0%" /></p>
-<p><strong>Annoying to pax, expensive for all!</strong></p>
-<p><img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" />
-<!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> --></p>
-</section>
-<section class="slide level3">
-
-<h3>
-✈️ Why Planes Get Delayed
-</h3>
-<table style="width: 100%; font-size: 90%;">
-<tr>
-<th style="text-align: left;">
-Cause
-</th>
-<th style="text-align: left;">
-Description
-</th>
-</tr>
-<tr>
-<td>
-🚶 Passenger Flow
-</td>
-<td>
-Congestion at checkpoints
-</td>
-</tr>
-<tr>
-<td>
-🔁 Late Connex
-</td>
-<td>
-Planes wait depending
-</td>
-</tr>
-<tr>
-<td>
-🧳 Baggage
-</td>
-<td>
-Slow or misplaced luggage
-</td>
-</tr>
-<tr>
-<td>
-🌧️ Weather
-</td>
-<td>
-Storms or low visibility
-</td>
-</tr>
-<tr>
-<td>
-⛽ <strong>Fueling Delays</strong>
-</td>
-<td>
-<em>Common — but solvable!</em>
-</td>
-</tr>
-</table>
-</section>
-<section id="costs-of-late-planes" class="slide level3">
-<h3>💸 Costs of Late Planes</h3>
-<ul>
-<li class="fragment">27% of delays are due to aircraft turnaround
-(incl. fueling) issues</li>
-<li class="fragment">€275 million in airline costs (fuel, overtime,
-parking)</li>
-<li class="fragment">€650 million in EU261 passenger compensation</li>
-</ul>
-<p><br></p>
-<p><span style="font-size:0.7em; color:gray;">Source:
-<a href="https://www.eurocontrol.int/sites/default/files/2024-06/eurocontrol-performance-review-report-2023.pdf" target="_blank">2023
-Eurocontrol Performance Review</a></span></p>
-</section>
-<section class="slide level3">
-
-<h3>
-🛢️ How Much Fuel Is Needed?
-</h3>
-<table style="width: 110%; font-size: 90%;">
-<tr>
-<td>
-🗺️ Route
-</td>
-<td>
-Distance and more
-</td>
-</tr>
-<tr>
-<td>
-✈️ Aircraft
-</td>
-<td>
-Type Specification
-</td>
-</tr>
-<tr>
-<td>
-⛽ FOB
-</td>
-<td>
-Current tank level
-</td>
-</tr>
-<tr>
-<td>
-🌬️ Weather
-</td>
-<td>
-Headwinds
-</td>
-</tr>
-</table>
-</section>
-<section id="fueling-timeline-when-will-it-be-done"
+<section id="goal-more-efficient-fuel-burnoff-forecast"
 class="slide level3">
-<h3>⛽ Fueling Timeline: When Will It Be Done?</h3>
-<ol type="1">
-<li>🧑‍✈️ Pilot places fuel order</li>
-<li>🚛 Fueling starts — predict how long it will take</li>
-<li>🛫 Helps align various processes</li>
-<li>✅ Fueling ends → Aircraft ready to depart</li>
-</ol>
-<p><strong>Knowing the fueling end time = fewer surprises &amp; smoother
-handovers</strong></p>
+<h3>Goal: More efficient fuel burnoff forecast</h3>
+<p>Staus Quo: The current tool assigns the average uplift from the last
+three full calendar months for the city pair and aircraft type to each
+event in the schedule and sums everything up.</p>
+<!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" /> -->
+<!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> -->
 </section>
-<section id="modeling-the-fueling-duration" class="slide level3">
-<h3>🔍 Modeling the Fueling duration</h3>
-<p><strong>Which features were relevant?</strong></p>
+<section class="slide level3">
+
+<p>assumptions problems</p>
+</section>
+<section id="schedule-behaviour-charts" class="slide level3">
+<h3>schedule behaviour chart(s)</h3>
+</section>
+<section id="our-idea-model-1" class="slide level3">
+<h3>Our Idea Model 1</h3>
 <ul>
-<li class="fragment">🛩 Aircraft type captures weight, fuel throughput,
-engine count — all embedded in a single variable</li>
-<li class="fragment">⛽ Remaining uplift = Block Fuel – Fuel On Board →
-directly tied to fueling time</li>
-<li class="fragment">⏱ Minutes until takeoff encodes operational
-urgency: Time pressure, Likelihood of parallel fueling (more trucks
-dispatched), Typical ramp behavior</li>
+<li class="fragment">Scheduled and actual flights are rarely the
+same</li>
+<li class="fragment">Model difference between scheduled and actual
+flights</li>
+<li class="fragment">Features used:</li>
+<li class="fragment">Aircraft type, Airport, Airline</li>
+<li class="fragment">Time based trends and seasonal features</li>
+<li class="fragment">Days from current schedule until flight</li>
+<li class="fragment">Forecast: Number of departures, Number of minutes
+flown</li>
+<li class="fragment">Take these values and feed them to a second
+model</li>
 </ul>
 </section>
-<section id="model-comparison" class="slide level3">
-<h3>Model comparison</h3>
-<p><img data-src="assets/model_comparison.png" /></p>
+<section id="our-idea-model-2" class="slide level3">
+<h3>Our Idea Model 2</h3>
+<ul>
+<li class="fragment">Use output of model 1 as input to predict total
+burnoff</li>
+<li class="fragment">Instead of using avg try other ML based models</li>
+<li class="fragment">Compare the results to status quo as well as actual
+burnoff</li>
+</ul>
 </section>
-<section id="results-per-aircraft-type" class="slide level3">
-<h3>Results per aircraft type</h3>
+<section id="assumptions" class="slide level3">
+<h3>Assumptions</h3>
+<ol type="1">
+<li>Using a seasonal avg of mins flown will be better than the scheduled
+min</li>
+<li>Minutes flown and total departures is a good indicator of fuel
+burnoff</li>
+<li>Due to scheduling flux modeling schedule changes will lead to more
+accurate forecasts</li>
+</ol>
+</section>
+<section id="model-flow-chart" class="slide level3">
+<h3>Model Flow Chart</h3>
+<p><img data-src="assets/pipeline.png" /></p>
+</section>
+<section id="general-results-model-1" class="slide level3">
+<h3>General Results Model 1</h3>
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%">
 </iframe>
 </section>
-<section id="message-to-prediction-pipeline" class="slide level3">
-<h3>Message to Prediction Pipeline</h3>
-<ul>
-<li class="fragment">📨 Queue receives messages</li>
-<li class="fragment">🧠 Parse messages into structured data</li>
-<li class="fragment">🗃️ Insert parsed messages into the database</li>
-<li class="fragment">🔁 Duplicate message for prediction route</li>
-<li class="fragment">🔍 Extract hashkey and message type</li>
-<li class="fragment">❓ Check message type</li>
-<li class="fragment">🧩 Join message with context</li>
-<li class="fragment">📤 Send features to Mlflow served model</li>
-<li class="fragment">📥 Receive predicted fueling duration</li>
-<li class="fragment">🛠️ Update fuel milstones table with prediction</li>
-</ul>
+<section id="general-results-model-2" class="slide level3">
+<h3>General Results Model 2</h3>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%">
+</iframe>
 </section>
-<section id="how-does-this-prediction-help-avoid-delays"
-class="slide level3">
-<h3>How does this prediction help avoid delays?</h3>
+<section id="case-1-results" class="slide level3">
+<h3>Case 1 results</h3>
+</section>
+<section id="case-2-results" class="slide level3">
+<h3>Case 2 results</h3>
+</section>
+<section id="case-3-results" class="slide level3">
+<h3>Case 3 results</h3>
+</section>
+<section id="case-dtacs-results" class="slide level3">
+<h3>Case dtacs results</h3>
+</section>
+<section id="how-does-our-model-compare-to-yours" class="slide level3">
+<h3>HOw does our model compare to yours?</h3>
 <pre><code>The answer: to improve transparency and coordination
 
 Before departure:
@@ -223,8 +135,9 @@ Before departure:
 
 Simple monitoring → Smoother operations → Fewer delays</code></pre>
 </section>
-<section id="completely-open-source-techstack" class="slide level3">
-<h3>Completely Open Source Techstack</h3>
+<section id="improvements-to-our-model-that-will-make-it-even-better"
+class="slide level3">
+<h3>Improvements to our model that will make it even better</h3>
 <ul>
 <li>🧱 PostgreSQL – Raw flight &amp; fueling data</li>
 <li>🔁 Rahla – Event-driven data processing</li>
