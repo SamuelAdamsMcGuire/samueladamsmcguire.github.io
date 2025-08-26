@@ -80,7 +80,7 @@ Taking a different approach we will try to model the changes in the plan flight 
 
 ::: incremental
 
-- Use output of model 1 as input to predict total burnoff
+- Use output of model 1 as input to predict total uplift
 - Instead of using avg try other ML based models 
 - Compare the results to status quo as well as actual burnoff
 
@@ -94,6 +94,13 @@ Taking a different approach we will try to model the changes in the plan flight 
 ![](assets/model_2_input.png)
 
 ---
+
+### Model 2 General results
+
+![](assets/lightgbm_uplift_error_distribution.png)
+
+--- 
+
 
 ### Model Flow Chart
 
