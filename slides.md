@@ -26,12 +26,8 @@ Staus Quo: The current tool assigns the average uplift from the last three full 
 
 ---
 
-### Assumptions
-
-
----
-
-### Problems
+Assumptions
+Problems
 
 
 --- 
@@ -75,9 +71,9 @@ Staus Quo: The current tool assigns the average uplift from the last three full 
 
 ::: incremental
 
-- Use output of model 1 as input to predict total burnoff
+- Use output of model 1 as input to predict total uplift
 - Instead of using avg try other ML based models 
-- Compare the results to status quo as well as actual burnoff
+- Compare the results to status quo as well as actual uplift
 
 
 :::
@@ -94,7 +90,7 @@ Staus Quo: The current tool assigns the average uplift from the last three full 
 ### Assumptions
 
 1. Using a seasonal avg of mins flown will be better than the scheduled min
-2. Minutes flown and total departures is a good indicator of fuel burnoff 
+2. Minutes flown and total departures is a good indicator of fuel uplift
 3. Due to scheduling flux modeling schedule changes will lead to more accurate forecasts
 
 
