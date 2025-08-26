@@ -120,7 +120,7 @@ Taking a different approach we will try to model the changes in the plan flight 
 ### General Results Model 2
 
 
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%"></iframe>
+![](assets/lightgbm_uplift_error_distribution.png)
 
 ---
 
