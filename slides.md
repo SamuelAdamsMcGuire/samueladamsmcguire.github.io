@@ -18,7 +18,7 @@ autoPlayMedia: true
 
 ### Goal: More efficient fuel Uplift forecast
 
-Staus Quo: The current tool assigns the average uplift from the last three full calendar months for the city pair and aircraft type to each event in the schedule and sums everything up.
+Staus Quo: The current tool assigns the average uplift from the last three full calendar months for the city pair, airline and aircraft type to each event in the schedule and sums everything up.
 
 <!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" /> -->
 <!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> -->
@@ -26,14 +26,25 @@ Staus Quo: The current tool assigns the average uplift from the last three full 
 
 ---
 
-assumptions
-problems
+### Assumptions
+
+
+---
+
+### Problems
+
 
 --- 
 
 ### Schedule behavior analysis
 
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/weeks_to_event_analysis_by_airline_designator.html" height="450" width="100%"></iframe>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/schedule_change_analysis_by_airline_designator.html" height="450" width="100%"></iframe>
+
+---
+
+### Schedule behavior analysis
+
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/schedule_change_analysis_by_departure_station.html" height="450" width="100%"></iframe>
 
 ---
 
