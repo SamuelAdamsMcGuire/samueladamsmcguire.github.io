@@ -97,6 +97,13 @@ Problems
 
 ---
 
+### Model 2 General results
+
+![](assets/lightgbm_uplift_error_distribution.png)
+
+--- 
+
+
 ### Model Flow Chart
 
 
