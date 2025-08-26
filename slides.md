@@ -1,6 +1,5 @@
 ---
-author: Samuel McGuire - Steven Williams
-title: Uplift Prediction
+title: Uplift Forecast
 subtitle: DataTactics GmbH
 date: 26-08-2025
 theme: moon # https://revealjs.com/themes/
@@ -16,9 +15,15 @@ autoPlayMedia: true
 
 ---
 
+### Staus Quo 
+
+The current tool assigns the average uplift from the last three full calendar months for the city pair and aircraft type to each event in the schedule and sums everything up.
+
+---
+
 ### Goal: More efficient fuel Uplift forecast
 
-Staus Quo: The current tool assigns the average uplift from the last three full calendar months for the city pair and aircraft type to each event in the schedule and sums everything up.
+Taking a different approach we will try to model the changes in the plan flight from schedule to actual in order to have a more precise flight plan that can be used to calculate the uplift needed.
 
 <!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" /> -->
 <!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> -->
@@ -26,14 +31,30 @@ Staus Quo: The current tool assigns the average uplift from the last three full 
 
 ---
 
-assumptions
-problems
+### Assumptions
+
+1. Using a seasonal avg of mins flown will be better than the scheduled min
+2. Minutes flown and total departures have a direct relationship with uplift
+3. Due to scheduling flux modeling schedule changes will lead to more accurate forecasts
+
+
+
+---
+
+### Problems that could hurt forecast
+
+1. Uplift values to train model 2 can only be used from 2025 due to new tankering regulations 
+2. Fueling is still adjusting to the tankering regulations
+3. Anolomies such as weather events and econmic changes could affect the forecast
+
 
 --- 
 
+
+
 ### Schedule behavior analysis
 
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/weeks_to_event_analysis_by_airline_designator.html" height="450" width="100%"></iframe>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/schedule_change_analysis_by_airline_designator.html" height="450" width="100%"></iframe>
 
 ---
 
@@ -41,14 +62,9 @@ problems
 
 ::: incremental
 
-- Scheduled and actual flights are rarely the same
+- Scheduled and actual flight plan aree rarely the same
 - Model difference between scheduled and actual flights
-- Features used:
-- Aircraft type, Airport, Airline 
-- Time based trends and seasonal features
-- Days from current schedule until flight
-- Forecast: Number of departures, Number of minutes flown
-- Take these values and feed them to a second model
+- Forecast: Number of departures and minutes flown
 
 :::
 
@@ -68,7 +84,6 @@ problems
 - Instead of using avg try other ML based models 
 - Compare the results to status quo as well as actual burnoff
 
-
 :::
 
 
@@ -76,17 +91,7 @@ problems
 
 ### Model 2 input features
 
-![](assets/model_2_inputs.png)
-
----
-
-### Assumptions
-
-1. Using a seasonal avg of mins flown will be better than the scheduled min
-2. Minutes flown and total departures is a good indicator of fuel burnoff 
-3. Due to scheduling flux modeling schedule changes will lead to more accurate forecasts
-
-
+![](assets/model_2_input.png)
 
 ---
 
@@ -101,9 +106,7 @@ problems
 ### General Results Model 1
 
 
-
-
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%"></iframe>
+![](assets/july_preds.png)
 
 ---
 
@@ -114,73 +117,17 @@ problems
 
 ---
 
-### Case 1 results
+### Current Status
 
----
-
-### Case 2 results
-
----
-
-### Case 3 results
-
----
-
-### Case dtacs results
-
----
-
-### HOw does our model compare to yours?
-
-    The answer: to improve transparency and coordination
-
-    Before departure:
-    🛫 Fueling must be done
-    🧳 Baggage loading must be finished
-    🍽 Catering must be finished
-    👨‍✈️ Crew needs a clear status
-
-    Simple monitoring → Smoother operations → Fewer delays
-
-    
-
----
+The model pipeline has been set. However the comparison with the actual uplift is still not matching up. 
+We plan on improving model 1 while getting model 2 to a place where the uplift forecast is more accurate and eventually better than the status quo.
 
 
-### Improvements to our model that will make it even better
+### Next Steps
 
-- 🧱 PostgreSQL – Raw flight & fueling data
-- 🔁 Rahla – Event-driven data processing
-- 🧠 SciKit Learn – model
-- 🧪 MLflow – Model versioning / Serving
-- ☸️ Kubernetes – Deployment platform
-- 🔁 ArgoCD – Orchestration
-- 🛠️ Theia – Continual development environment
-
----
-
-### Some dT Projects in the airline industry
-
-![](assets/dT-blue.svg){ width=200px align=right }
-
-- 🔁 Fuel Emission Forecasting 
-- 👥 Passenger Flow  
-- 🛰️ Flight Positioning 
-- ⛽ Fueling Duration 
-- 💳 Fuel Purchase Forecasting
-
---- 
-
-### Links
-
-- [My Github](https://github.com/samueladamsmcguire)
-- [datatactics website](https://www.datatactics.de/)
-- [datatactics LinkedIn](https://www.linkedin.com/company/datatactics-gmbh)
-
----
-
-### Let's connect
-
-![](assets/linkedin.jpg){ width=60% }
+- Model 2: get reasonable results from the forecast
+- Model 1: improve, add more features such as enconmic impact, waeather and so on
+- Set up in test environment for rigorous testing 
+- comparing with current forecast and actual uplift
 
 

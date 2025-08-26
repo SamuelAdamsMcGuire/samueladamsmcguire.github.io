@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <meta name="author" content="Samuel McGuire - Steven Williams">
-  <title>Uplift Prediction</title>
+  <title>Uplift Forecast</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -37,46 +36,52 @@
     <div class="slides">
 
 <section id="title-slide">
-  <h1 class="title">Uplift Prediction</h1>
+  <h1 class="title">Uplift Forecast</h1>
   <p class="subtitle">DataTactics GmbH</p>
-  <p class="author">Samuel McGuire - Steven Williams</p>
   <p class="date">26-08-2025</p>
 </section>
 
+<section id="staus-quo" class="slide level3">
+<h3>Staus Quo</h3>
+<p>The current tool assigns the average uplift from the last three full
+calendar months for the city pair and aircraft type to each event in the
+schedule and sums everything up.</p>
+</section>
 <section id="goal-more-efficient-fuel-uplift-forecast"
 class="slide level3">
 <h3>Goal: More efficient fuel Uplift forecast</h3>
-<p>Staus Quo: The current tool assigns the average uplift from the last
-three full calendar months for the city pair and aircraft type to each
-event in the schedule and sums everything up.</p>
+<p>Taking a different approach we will try to model the changes in the
+plan flight from schedule to actual in order to have a more precise
+flight plan that can be used to calculate the uplift needed.</p>
 <!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" /> -->
 <!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> -->
 </section>
-<section class="slide level3">
-
-<p>assumptions problems</p>
+<section id="assumptions" class="slide level3">
+<h3>Assumptions</h3>
+<ol type="1">
+<li>Using a seasonal avg of mins flown will be better than the scheduled
+min</li>
+<li>Minutes flown and total departures have a direct relationship with
+uplift</li>
+<li>Due to scheduling flux modeling schedule changes will lead to more
+accurate forecasts</li>
+</ol>
 </section>
 <section id="schedule-behavior-analysis" class="slide level3">
 <h3>Schedule behavior analysis</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/weeks_to_event_analysis_by_airline_designator.html" height="450" width="100%">
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/schedule_change_analysis_by_airline_designator.html" height="450" width="100%">
 </iframe>
 </section>
 <section id="our-idea-model-1" class="slide level3">
 <h3>Our Idea Model 1</h3>
 <div>
 <ul>
-<li class="fragment">Scheduled and actual flights are rarely the
+<li class="fragment">Scheduled and actual flight plan aree rarely the
 same</li>
 <li class="fragment">Model difference between scheduled and actual
 flights</li>
-<li class="fragment">Features used:</li>
-<li class="fragment">Aircraft type, Airport, Airline</li>
-<li class="fragment">Time based trends and seasonal features</li>
-<li class="fragment">Days from current schedule until flight</li>
-<li class="fragment">Forecast: Number of departures, Number of minutes
+<li class="fragment">Forecast: Number of departures and minutes
 flown</li>
-<li class="fragment">Take these values and feed them to a second
-model</li>
 </ul>
 </div>
 </section>
@@ -98,18 +103,7 @@ burnoff</li>
 </section>
 <section id="model-2-input-features" class="slide level3">
 <h3>Model 2 input features</h3>
-<p><img data-src="assets/model_2_inputs.png" /></p>
-</section>
-<section id="assumptions" class="slide level3">
-<h3>Assumptions</h3>
-<ol type="1">
-<li>Using a seasonal avg of mins flown will be better than the scheduled
-min</li>
-<li>Minutes flown and total departures is a good indicator of fuel
-burnoff</li>
-<li>Due to scheduling flux modeling schedule changes will lead to more
-accurate forecasts</li>
-</ol>
+<p><img data-src="assets/model_2_input.png" /></p>
 </section>
 <section id="model-flow-chart" class="slide level3">
 <h3>Model Flow Chart</h3>
@@ -117,78 +111,19 @@ accurate forecasts</li>
 </section>
 <section id="general-results-model-1" class="slide level3">
 <h3>General Results Model 1</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%">
-</iframe>
+<p><img data-src="assets/july_preds.png" /></p>
 </section>
 <section id="general-results-model-2" class="slide level3">
 <h3>General Results Model 2</h3>
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/absolute_error_quantiles.html" height="450" width="100%">
 </iframe>
 </section>
-<section id="case-1-results" class="slide level3">
-<h3>Case 1 results</h3>
-</section>
-<section id="case-2-results" class="slide level3">
-<h3>Case 2 results</h3>
-</section>
-<section id="case-3-results" class="slide level3">
-<h3>Case 3 results</h3>
-</section>
-<section id="case-dtacs-results" class="slide level3">
-<h3>Case dtacs results</h3>
-</section>
-<section id="how-does-our-model-compare-to-yours" class="slide level3">
-<h3>HOw does our model compare to yours?</h3>
-<pre><code>The answer: to improve transparency and coordination
-
-Before departure:
-🛫 Fueling must be done
-🧳 Baggage loading must be finished
-🍽 Catering must be finished
-👨‍✈️ Crew needs a clear status
-
-Simple monitoring → Smoother operations → Fewer delays</code></pre>
-</section>
-<section id="improvements-to-our-model-that-will-make-it-even-better"
-class="slide level3">
-<h3>Improvements to our model that will make it even better</h3>
-<ul>
-<li>🧱 PostgreSQL – Raw flight &amp; fueling data</li>
-<li>🔁 Rahla – Event-driven data processing</li>
-<li>🧠 SciKit Learn – model</li>
-<li>🧪 MLflow – Model versioning / Serving</li>
-<li>☸️ Kubernetes – Deployment platform</li>
-<li>🔁 ArgoCD – Orchestration</li>
-<li>🛠️ Theia – Continual development environment</li>
-</ul>
-</section>
-<section id="some-dt-projects-in-the-airline-industry"
-class="slide level3">
-<h3>Some dT Projects in the airline industry</h3>
-<p><img data-src="assets/dT-blue.svg" data-align="right"
-width="200" /></p>
-<ul>
-<li>🔁 Fuel Emission Forecasting</li>
-<li>👥 Passenger Flow<br />
-</li>
-<li>🛰️ Flight Positioning</li>
-<li>⛽ Fueling Duration</li>
-<li>💳 Fuel Purchase Forecasting</li>
-</ul>
-</section>
-<section id="links" class="slide level3">
-<h3>Links</h3>
-<ul>
-<li><a href="https://github.com/samueladamsmcguire">My Github</a></li>
-<li><a href="https://www.datatactics.de/">datatactics website</a></li>
-<li><a
-href="https://www.linkedin.com/company/datatactics-gmbh">datatactics
-LinkedIn</a></li>
-</ul>
-</section>
-<section id="lets-connect" class="slide level3">
-<h3>Let’s connect</h3>
-<p><img data-src="assets/linkedin.jpg" style="width:60.0%" /></p>
+<section id="current-status" class="slide level3">
+<h3>Current Status</h3>
+<p>The model pipeline has been set. However the comparison with the
+actual uplift is still not matching up. We plan on improving model 1
+while getting model 2 to a place where the uplift forecast is more
+accurate and eventually better than the status quo.</p>
 </section>
     </div>
   </div>
