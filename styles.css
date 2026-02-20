@@ -8,8 +8,26 @@
 
 /*change the font size of the title on the first slide*/
 .title {
-  font-size: 2.5em !important; /*important makes this first priority */
+  font-size: 1.6em !important;
+  line-height: 1.2 !important;
 }
 
+/* ensure iframes fill the slide and aren't clipped */
+.reveal iframe {
+  max-width: 100%;
+  max-height: 70vh;
+}
 
- 
+/* slide padding */
+.reveal .slides section {
+  padding: 10px 20px;
+}
+
+/* let tables auto-size columns instead of pandoc fixed widths */
+.reveal table col {
+  width: auto !important;
+}
+
+.reveal table {
+  width: 100%;
+}
