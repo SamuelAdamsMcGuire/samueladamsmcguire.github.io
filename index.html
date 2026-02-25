@@ -143,48 +143,47 @@ flowchart LR
 leading to growing errors the further out the forecast.</p>
 </div>
 </section>
-<section id="the-flt-pipeline" class="slide level3">
-<h3>The FLT Pipeline</h3>
-<div class="mermaid">
-%%{init: {'theme': 'dark', 'flowchart': {'useMaxWidth': false, 'nodeSpacing': 35, 'rankSpacing': 45}}}%%
-flowchart TB
-    subgraph input["Input"]
-        S["Schedule (SSIM)"]
-    end
-    subgraph phase1["Phase 1: Schedule Correction"]
-        direction LR
-        P1A["Departure Delta Model"]
-        P1B["Flight Minutes Delta Model"]
-    end
-    subgraph phase2["Phase 2: Uplift Prediction"]
-        direction TB
-        RM["Recency-Weighted Rates"]
-        BLEND["Blend kg/dep + kg/min"]
-        FB["Fallback: route / airport / global"]
-        CR["Correction Ratio"]
-    end
-    subgraph output["Output"]
-        FO["Predicted Uplift"]
-    end
-    S --> phase1
-    P1A --> BLEND
-    P1B --> BLEND
-    RM --> BLEND
-    FB -.->|"no history"| BLEND
-    BLEND --> CR
-    CR --> FO
-    style input fill:#1a2a4a,stroke:#4dabf7,color:#fff
-    style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
-    style phase1 fill:#1a3a1a,stroke:#51cf66,color:#fff
-    style P1A fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style P1B fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style phase2 fill:#3a2a1a,stroke:#fcc419,color:#fff
-    style RM fill:#4a3a1a,stroke:#fcc419,color:#fff
-    style BLEND fill:#4a3a1a,stroke:#fcc419,color:#fff
-    style FB fill:#4a3a1a,stroke:#fcc419,color:#fff
-    style CR fill:#3a1a4a,stroke:#cc5de8,color:#fff
-    style output fill:#1a3a3a,stroke:#20c997,color:#fff
-    style FO fill:#1a4a4a,stroke:#20c997,color:#fff
+<section id="how-flt-works" class="slide level3">
+<h3>How FLT Works</h3>
+<p><strong>From route averages → forecasted capacity</strong></p>
+<div style="font-size: 0.75em; margin-top: 0.6em;">
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: right;">Step</th>
+<th>What</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><strong>1a</strong></td>
+<td>Departure delta model</td>
+<td>The schedule is a baseline — correct it, don’t replace it</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>1b</strong></td>
+<td>Flight-minutes delta model</td>
+<td>Captures aircraft swaps and frequency changes</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>2</strong></td>
+<td>Recency-weighted rates + correction ratio</td>
+<td>kg/flight-min by airline + aircraft type + airport; ratio nudges at
+long horizons</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="margin-top: 0.8em; font-size: 0.82em;">
+<p>F+ asks: <em>“How much did this route historically burn?”</em></p>
+<p>FLT asks: <em>“How much will actually fly — and what will those
+aircraft burn?”</em></p>
 </div>
 </section>
 <section id="how-the-model-learns-phase-1" class="slide level3">
@@ -259,80 +258,48 @@ correction trained on <strong>Jan 2024 – Jun 2025</strong> · Grouped by
 airline + aircraft type + departure airport</p>
 </div>
 </section>
-<section id="from-schedule-to-forecast" class="slide level3">
-<h3>From Schedule to Forecast</h3>
+<section id="the-flt-pipeline" class="slide level3">
+<h3>The FLT Pipeline</h3>
 <div class="mermaid">
-%%{init: {'theme': 'dark', 'flowchart': {'nodeSpacing': 18, 'rankSpacing': 52, 'useMaxWidth': true}}}%%
-flowchart LR
-    S["Schedule\nSSIM"]
-    PA["Predicted\nDepartures"]
-    PB["Predicted\nFlight Mins"]
-    BASE["Statistical Base\nkg/dep · kg/min\nby airline+seat_bin+airport"]
-    CR["Correction\nRatio ~1.0"]
-    OUT["Predicted\nUplift"]
-
-    S -->|"days_to_ops\nseat_bin"| PA
-    S --> PB
-    PA -->|"predicted deps"| BASE
-    PB -->|"predicted mins"| BASE
-    PA --> CR
-    PB --> CR
-    BASE -->|"base estimate"| CR
-    CR -->|"base × ratio"| OUT
-
+%%{init: {'theme': 'dark', 'flowchart': {'useMaxWidth': false, 'nodeSpacing': 35, 'rankSpacing': 45}}}%%
+flowchart TB
+    subgraph input["Input"]
+        S["Schedule (SSIM)"]
+    end
+    subgraph phase1["Phase 1: Schedule Correction"]
+        direction LR
+        P1A["Departure Delta Model"]
+        P1B["Flight Minutes Delta Model"]
+    end
+    subgraph phase2["Phase 2: Uplift Prediction"]
+        direction TB
+        RM["Recency-Weighted Rates"]
+        BLEND["Blend kg/dep + kg/min"]
+        FB["Fallback: route / airport / global"]
+        CR["Correction Ratio"]
+    end
+    subgraph output["Output"]
+        FO["Predicted Uplift"]
+    end
+    S --> phase1
+    P1A --> BLEND
+    P1B --> BLEND
+    RM --> BLEND
+    FB -.->|"no history"| BLEND
+    BLEND --> CR
+    CR --> FO
+    style input fill:#1a2a4a,stroke:#4dabf7,color:#fff
     style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
-    style PA fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style PB fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style BASE fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style phase1 fill:#1a3a1a,stroke:#51cf66,color:#fff
+    style P1A fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style P1B fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style phase2 fill:#3a2a1a,stroke:#fcc419,color:#fff
+    style RM fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style BLEND fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style FB fill:#4a3a1a,stroke:#fcc419,color:#fff
     style CR fill:#3a1a4a,stroke:#cc5de8,color:#fff
-    style OUT fill:#1a4a4a,stroke:#20c997,color:#fff
-</div>
-<div style="font-size: 0.78em; margin-top: 0.5em; color: #aaa;">
-<p>Phase 1 corrects the schedule. Phase 2 applies recency-weighted fuel
-rates and a correction ratio for long-horizon accuracy.</p>
-</div>
-</section>
-<section id="how-flt-works" class="slide level3">
-<h3>How FLT Works</h3>
-<p><strong>From route averages → forecasted capacity</strong></p>
-<div style="font-size: 0.75em; margin-top: 0.6em;">
-<table>
-<colgroup>
-<col style="width: 40%" />
-<col style="width: 30%" />
-<col style="width: 30%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: right;">Step</th>
-<th>What</th>
-<th>Why</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;"><strong>1a</strong></td>
-<td>Departure delta model</td>
-<td>The schedule is a baseline — correct it, don’t replace it</td>
-</tr>
-<tr>
-<td style="text-align: right;"><strong>1b</strong></td>
-<td>Flight-minutes delta model</td>
-<td>Captures aircraft swaps and frequency changes</td>
-</tr>
-<tr>
-<td style="text-align: right;"><strong>2</strong></td>
-<td>Recency-weighted rates + correction ratio</td>
-<td>kg/flight-min by airline + aircraft type + airport; ratio nudges at
-long horizons</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div style="margin-top: 0.8em; font-size: 0.82em;">
-<p>F+ asks: <em>“How much did this route historically burn?”</em></p>
-<p>FLT asks: <em>“How much will actually fly — and what will those
-aircraft burn?”</em></p>
+    style output fill:#1a3a3a,stroke:#20c997,color:#fff
+    style FO fill:#1a4a4a,stroke:#20c997,color:#fff
 </div>
 </section>
 <section id="where-we-win-big-unscheduled-flights" class="slide level3">
