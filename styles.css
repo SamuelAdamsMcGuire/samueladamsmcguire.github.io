@@ -31,3 +31,27 @@
 .reveal table {
   width: 100%;
 }
+
+/* prevent content overflowing slide bounds */
+.reveal .slides section {
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Mermaid SVGs must scale to fit — never overflow */
+.reveal .mermaid svg {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Center Mermaid diagrams horizontally */
+.reveal .mermaid {
+  display: flex;
+  justify-content: center;
+}
+
+/* Flex children (two-panel layouts) must not overflow */
+.reveal .slides section .flex-panel {
+  min-width: 0;
+  overflow: hidden;
+}

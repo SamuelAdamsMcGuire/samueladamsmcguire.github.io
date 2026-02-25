@@ -2,15 +2,15 @@ name: Build and deploy
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, feature/flt-c-level-presentation ]
 
 jobs:
   build_deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Setup repo
-        uses: actions/checkout@v2    
-    
+        uses: actions/checkout@v4
+
       - name: Install pandoc
         run: |
           wget https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-1-amd64.deb
@@ -19,15 +19,22 @@ jobs:
 
       - name: Prepare build folder
         run: mkdir public
-    
+
       - name: Build slides
         run: >
           pandoc -t revealjs -s slides.md -o public/index.html
-          --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@4.4.0
-    
+          --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@5
+          --variable width=1200
+          --variable margin=0.04
+          --include-after-body=mermaid-init.html
+
+      - name: Copy supporting files
+        run: |
+          cp styles.css mermaid-init.html public/
+          cp -r assets public/
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
-

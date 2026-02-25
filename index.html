@@ -44,18 +44,16 @@
 
 <section id="the-challenge" class="slide level3">
 <h3>The Challenge</h3>
-<p>Predicting fuel uplift accurately, months ahead, across a constantly
-changing schedule.</p>
 <div>
 <ul>
-<li class="fragment">Schedules change — cancellations, additions, and
-aircraft swaps happen after publication</li>
-<li class="fragment">New and seasonal routes have limited history to
-rely on</li>
-<li class="fragment">The further ahead the forecast, the more the
-schedule diverges from reality</li>
-<li class="fragment">FLT addresses this by predicting <strong>what will
-actually fly</strong>, not what was planned</li>
+<li class="fragment">The published schedule is never what actually flies
+— cancellations, swaps, additions happen constantly</li>
+<li class="fragment">New and seasonal routes have no history to rely
+on</li>
+<li class="fragment">The further out the forecast, the more the schedule
+diverges from reality</li>
+<li class="fragment"><strong>FLT predicts what will actually fly — not
+what was planned.</strong></li>
 </ul>
 </div>
 </section>
@@ -78,7 +76,7 @@ actually fly</strong>, not what was planned</li>
 </tr>
 <tr>
 <td><strong>Airline–Airport combinations</strong></td>
-<td>~64 active</td>
+<td>64 active</td>
 </tr>
 <tr>
 <td><strong>Forecast date</strong></td>
@@ -131,16 +129,6 @@ style="color: #00d4aa;">✓</span></p>
 </table>
 </div>
 </section>
-<section id="month-by-month-head-to-head" class="slide level3">
-<h3>Month-by-Month Head-to-Head</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/01_monthly_bars.html" height="500" width="100%">
-</iframe>
-</section>
-<section id="results-by-airline-airport" class="slide level3">
-<h3>Results by Airline &amp; Airport</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/10_drilldown_bars.html" height="520" width="100%">
-</iframe>
-</section>
 <section id="the-f-approach" class="slide level3">
 <h3>The F+ Approach</h3>
 <div class="mermaid">
@@ -167,16 +155,14 @@ flowchart TB
     end
     subgraph phase1["Phase 1: Schedule Correction"]
         direction LR
-        P1A["Predict Departures"]
-        P1B["Predict Flight Minutes"]
+        P1A["Departure Delta Model"]
+        P1B["Flight Minutes Delta Model"]
     end
-    subgraph phase3["Phase 2: Statistical Uplift"]
+    subgraph phase2["Phase 2: Uplift Prediction"]
         direction TB
-        RM["Recency-Weighted Means"]
-        BLEND["Blend per-flight + per-minute"]
+        RM["Recency-Weighted Rates"]
+        BLEND["Blend kg/dep + kg/min"]
         FB["Fallback: route / airport / global"]
-    end
-    subgraph phase4["Phase 3: ML Correction"]
         CR["Correction Ratio"]
     end
     subgraph output["Output"]
@@ -194,61 +180,118 @@ flowchart TB
     style phase1 fill:#1a3a1a,stroke:#51cf66,color:#fff
     style P1A fill:#1a4a1a,stroke:#51cf66,color:#fff
     style P1B fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style phase3 fill:#3a2a1a,stroke:#fcc419,color:#fff
+    style phase2 fill:#3a2a1a,stroke:#fcc419,color:#fff
     style RM fill:#4a3a1a,stroke:#fcc419,color:#fff
     style BLEND fill:#4a3a1a,stroke:#fcc419,color:#fff
     style FB fill:#4a3a1a,stroke:#fcc419,color:#fff
-    style phase4 fill:#2a1a3a,stroke:#cc5de8,color:#fff
     style CR fill:#3a1a4a,stroke:#cc5de8,color:#fff
     style output fill:#1a3a3a,stroke:#20c997,color:#fff
     style FO fill:#1a4a4a,stroke:#20c997,color:#fff
 </div>
 </section>
-<section id="what-we-train-on" class="slide level3">
-<h3>What We Train On</h3>
-<div style="font-size: 0.78em;">
+<section id="how-the-model-learns-phase-1" class="slide level3">
+<h3>How the Model Learns — Phase 1</h3>
+<p><strong>Schedule Correction: Two Delta Models</strong></p>
+<p>The schedule is the baseline — the models learn <strong>to adjust
+it.</strong></p>
+<div style="text-align: center; font-size: 1.1em; margin: 0.8em 0;">
+<p><code>predicted = scheduled + Δ</code></p>
+</div>
+<div style="font-size: 0.85em; margin-top: 0.6em;">
 <table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
 <thead>
 <tr>
-<th>Model</th>
-<th>Predicts</th>
-<th>Training Data</th>
+<th></th>
+<th>Departures</th>
+<th>Flight Minutes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Departure model</strong></td>
-<td>Actual flights vs scheduled</td>
-<td>17 months: published schedule vs actual departures</td>
-</tr>
-<tr>
-<td><strong>Flight minutes model</strong></td>
-<td>Actual block time vs scheduled</td>
-<td>Same — captures aircraft swaps &amp; frequency changes</td>
-</tr>
-<tr>
-<td><strong>Uplift rate model</strong></td>
-<td>kg per flight-minute</td>
-<td>Uplift actuals by airline + aircraft type + airport</td>
-</tr>
-<tr>
-<td><strong>ML correction</strong></td>
-<td>Systematic bias at horizon</td>
-<td>Predicted vs actual uplift over 17 months</td>
+<td><strong>Target (Δ)</strong></td>
+<td>actual − scheduled</td>
+<td>actual − scheduled</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div style="font-size: 0.8em; margin-top: 1em;">
-<p>All models share the same <strong>17-month window (Jan 2024 – Jun
-2025)</strong> — one full year of seasonal patterns.</p>
-<p>Data is grouped by airline, aircraft type, and departure airport —
-not just route.</p>
+<div style="margin-top: 0.8em; font-size: 0.82em; color: #aaa;">
+<p>Δ driven by: <code>days_to_ops</code> · <code>seat_bin</code> ·
+<code>airline</code> · <code>station</code> · historical lags</p>
+</div>
+</section>
+<section id="how-the-model-learns-phase-2" class="slide level3">
+<h3>How the Model Learns — Phase 2</h3>
+<p><strong>Capacity → Uplift</strong></p>
+<div style="font-size: 0.85em; margin-top: 0.8em;">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>What</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fuel rates</strong></td>
+<td>kg/dep · kg/min, recency-weighted by airline, actype, airport</td>
+</tr>
+<tr>
+<td><strong>Estimate</strong></td>
+<td>Blend of per-flight and per-minute signals</td>
+</tr>
+<tr>
+<td><strong>Sparse routes</strong></td>
+<td>Fallback: route → airport → global</td>
+</tr>
+<tr>
+<td><strong>Long horizon</strong></td>
+<td>Correction ratio (≈ 1.0) nudges the estimate</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="font-size: 0.78em; margin-top: 1.2em; color: #aaa;">
+<p>Uplift model trained on <strong>2025 data</strong> · Schedule
+correction trained on <strong>Jan 2024 – Jun 2025</strong> · Grouped by
+airline + aircraft type + departure airport</p>
+</div>
+</section>
+<section id="from-schedule-to-forecast" class="slide level3">
+<h3>From Schedule to Forecast</h3>
+<div class="mermaid">
+%%{init: {'theme': 'dark', 'flowchart': {'nodeSpacing': 18, 'rankSpacing': 52, 'useMaxWidth': true}}}%%
+flowchart LR
+    S["Schedule\nSSIM"]
+    PA["Predicted\nDepartures"]
+    PB["Predicted\nFlight Mins"]
+    BASE["Statistical Base\nkg/dep · kg/min\nby airline+seat_bin+airport"]
+    CR["Correction\nRatio ~1.0"]
+    OUT["Predicted\nUplift"]
+
+    S -->|"days_to_ops\nseat_bin"| PA
+    S --> PB
+    PA -->|"predicted deps"| BASE
+    PB -->|"predicted mins"| BASE
+    PA --> CR
+    PB --> CR
+    BASE -->|"base estimate"| CR
+    CR -->|"base × ratio"| OUT
+
+    style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
+    style PA fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style PB fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style BASE fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style CR fill:#3a1a4a,stroke:#cc5de8,color:#fff
+    style OUT fill:#1a4a4a,stroke:#20c997,color:#fff
+</div>
+<div style="font-size: 0.78em; margin-top: 0.5em; color: #aaa;">
+<p>Phase 1 corrects the schedule. Phase 2 applies recency-weighted fuel
+rates and a correction ratio for long-horizon accuracy.</p>
 </div>
 </section>
 <section id="how-flt-works" class="slide level3">
@@ -271,24 +314,19 @@ not just route.</p>
 <tbody>
 <tr>
 <td style="text-align: right;"><strong>1a</strong></td>
-<td>Predict actual departures</td>
-<td>Schedule is never perfectly right</td>
+<td>Departure delta model</td>
+<td>The schedule is a baseline — correct it, don’t replace it</td>
 </tr>
 <tr>
 <td style="text-align: right;"><strong>1b</strong></td>
-<td>Predict actual flight minutes</td>
-<td>Captures aircraft swaps &amp; frequency changes</td>
+<td>Flight-minutes delta model</td>
+<td>Captures aircraft swaps and frequency changes</td>
 </tr>
 <tr>
 <td style="text-align: right;"><strong>2</strong></td>
-<td>Uplift rate × predicted capacity</td>
-<td>Recency-weighted kg/flight-min, by airline + aircraft type +
-airport</td>
-</tr>
-<tr>
-<td style="text-align: right;"><strong>3</strong></td>
-<td>ML correction</td>
-<td>Fine-tunes the formula at far horizons</td>
+<td>Recency-weighted rates + correction ratio</td>
+<td>kg/flight-min by airline + aircraft type + airport; ratio nudges at
+long horizons</td>
 </tr>
 </tbody>
 </table>
@@ -297,24 +335,6 @@ airport</td>
 <p>F+ asks: <em>“How much did this route historically burn?”</em></p>
 <p>FLT asks: <em>“How much will actually fly — and what will those
 aircraft burn?”</em></p>
-</div>
-</section>
-<section id="fuel-ordering-impact" class="slide level3">
-<h3>Fuel Ordering Impact</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/08_fuel_savings.html" height="550" width="100%">
-</iframe>
-<div style="font-size: 0.7em;">
-<p><strong>9,700 t less misorder</strong> than F+ over 6 months across
-10 airports</p>
-</div>
-</section>
-<section id="where-we-win-big-lh-fra" class="slide level3">
-<h3>Where We Win Big — LH-FRA</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/06_lh_fra_deep_dive.html" height="500" width="100%">
-</iframe>
-<div style="font-size: 0.7em;">
-<p>LH-FRA alone: <strong>12,700 t less misorder</strong> with FLT vs F+
-over 6 months</p>
 </div>
 </section>
 <section id="where-we-win-big-unscheduled-flights" class="slide level3">
@@ -352,10 +372,47 @@ scheduled.</p>
 <p>FLT caught the unscheduled flights using historical patterns.</p>
 </div>
 </section>
+<section id="month-by-month-head-to-head" class="slide level3">
+<h3>Month-by-Month Head-to-Head</h3>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/10_drilldown_bars.html" height="520" width="100%">
+</iframe>
+</section>
+<section id="built-to-improve" class="slide level3">
+<h3>Built to Improve</h3>
+<div style="font-size: 0.88em; margin-top: 0.6em;">
+<ul>
+<li><strong>17 months</strong> of data — one summer, one winter
+season</li>
+<li>Every new month improves accuracy at every forecast horizon</li>
+<li>Uplift model trained on <strong>2025 data only</strong> due to
+tankering regulations</li>
+<li>More airports = stronger shared patterns</li>
+</ul>
+</div>
+<div style="margin-top: 1em; font-size: 0.85em;">
+<p><strong>These results are our floor, not our ceiling.</strong></p>
+</div>
+<aside class="notes">
+<ul>
+<li>days_to_ops: each new month adds training examples at every horizon
+from 1 to 180+ days out. The model learns more precisely how schedule
+accuracy degrades with distance.</li>
+<li>seat_bin: more routes and airports means richer aircraft-type
+coverage — fewer fallbacks on new or seasonal routes where history is
+sparse.</li>
+<li>Tankering regulations changed how airlines order fuel in 2025,
+making pre-2025 uplift data less relevant as a training signal. Every
+additional month under the new rules directly improves the uplift
+model.</li>
+<li>Adding airports strengthens shared patterns across the network
+without diluting route-level accuracy — the model scales cleanly.</li>
+</ul>
+</aside>
+</section>
 <section id="roadmap" class="slide level3">
 <h3>Roadmap</h3>
 <div class="mermaid">
-%%{init: {'theme': 'dark'}}%%
+%%{init: {'theme': 'dark', 'timeline': {'useMaxWidth': true}}}%%
 timeline
     Now : Proof of Concept : 10 airports validated : 5-1 vs F+
     Phase 1 : Multi-scenario validation
@@ -380,24 +437,6 @@ t</strong> less misorder in 6 months</li>
 <p><strong>More airports. Same model. More impact.</strong></p>
 </div>
 </section>
-<section id="built-to-improve" class="slide level3">
-<h3>Built to Improve</h3>
-<div style="font-size: 0.85em;">
-<ul>
-<li>Trained on just <strong>17 months</strong> of schedule data (Jan
-2024 – Jun 2025)</li>
-<li>The model has only seen <strong>one</strong> summer,
-<strong>one</strong> winter season</li>
-<li>With each additional month, patterns become stronger</li>
-<li>More airports = stronger shared patterns, without affecting existing
-route accuracy</li>
-<li>More data = better seasonal correction = fewer misorders</li>
-</ul>
-</div>
-<div style="margin-top: 1em; font-size: 0.8em;">
-<p><strong>These results are our floor, not our ceiling.</strong></p>
-</div>
-</section>
 <section id="the-ask" class="slide level3">
 <h3>The Ask</h3>
 <div style="font-size: 0.85em;">
@@ -405,7 +444,7 @@ route accuracy</li>
 <ul>
 <li class="fragment"><strong>5 out of 6 months, 15% less
 misorder</strong></li>
-<li class="fragment">10 airports, 11 airlines, ~64 airline–airport
+<li class="fragment">10 airports, 11 airlines, 64 airline–airport
 combinations — 6 months validated</li>
 <li class="fragment">Airline-agnostic: adding airlines = adding
 data</li>
