@@ -136,6 +136,11 @@ style="color: #00d4aa;">✓</span></p>
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/01_monthly_bars.html" height="500" width="100%">
 </iframe>
 </section>
+<section id="results-by-airline-airport" class="slide level3">
+<h3>Results by Airline &amp; Airport</h3>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/10_drilldown_bars.html" height="520" width="100%">
+</iframe>
+</section>
 <section id="the-f-approach" class="slide level3">
 <h3>The F+ Approach</h3>
 <div class="mermaid">
@@ -199,9 +204,57 @@ flowchart TB
     style FO fill:#1a4a4a,stroke:#20c997,color:#fff
 </div>
 </section>
+<section id="what-we-train-on" class="slide level3">
+<h3>What We Train On</h3>
+<div style="font-size: 0.78em;">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Model</th>
+<th>Predicts</th>
+<th>Training Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Departure model</strong></td>
+<td>Actual flights vs scheduled</td>
+<td>17 months: published schedule vs actual departures</td>
+</tr>
+<tr>
+<td><strong>Flight minutes model</strong></td>
+<td>Actual block time vs scheduled</td>
+<td>Same — captures aircraft swaps &amp; frequency changes</td>
+</tr>
+<tr>
+<td><strong>Uplift rate model</strong></td>
+<td>kg per flight-minute</td>
+<td>Uplift actuals by airline + aircraft type + airport</td>
+</tr>
+<tr>
+<td><strong>ML correction</strong></td>
+<td>Systematic bias at horizon</td>
+<td>Predicted vs actual uplift over 17 months</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="font-size: 0.8em; margin-top: 1em;">
+<p>All models share the same <strong>17-month window (Jan 2024 – Jun
+2025)</strong> — one full year of seasonal patterns.</p>
+<p>Data is grouped by airline, aircraft type, and departure airport —
+not just route.</p>
+</div>
+</section>
 <section id="how-flt-works" class="slide level3">
 <h3>How FLT Works</h3>
-<div style="font-size: 0.7em;">
+<p><strong>From route averages → forecasted capacity</strong></p>
+<div style="font-size: 0.75em; margin-top: 0.6em;">
 <table>
 <colgroup>
 <col style="width: 40%" />
@@ -228,8 +281,9 @@ flowchart TB
 </tr>
 <tr>
 <td style="text-align: right;"><strong>2</strong></td>
-<td>Statistical uplift formula</td>
-<td>Recency-weighted route means × predicted volume</td>
+<td>Uplift rate × predicted capacity</td>
+<td>Recency-weighted kg/flight-min, by airline + aircraft type +
+airport</td>
 </tr>
 <tr>
 <td style="text-align: right;"><strong>3</strong></td>
@@ -239,10 +293,10 @@ flowchart TB
 </tbody>
 </table>
 </div>
-<div style="margin-top: 0.8em; font-size: 0.8em;">
-<p><strong>Key insight:</strong> We predict by airline, aircraft type,
-and airport — shifting from fixed route averages to forecasted
-capacity.</p>
+<div style="margin-top: 0.8em; font-size: 0.82em;">
+<p>F+ asks: <em>“How much did this route historically burn?”</em></p>
+<p>FLT asks: <em>“How much will actually fly — and what will those
+aircraft burn?”</em></p>
 </div>
 </section>
 <section id="fuel-ordering-impact" class="slide level3">
@@ -349,7 +403,7 @@ route accuracy</li>
 <div style="font-size: 0.85em;">
 <div>
 <ul>
-<li class="fragment"><strong>5 out of 6 months, 15% less uplift
+<li class="fragment"><strong>5 out of 6 months, 15% less
 misorder</strong></li>
 <li class="fragment">10 airports, 11 airlines, ~64 airline–airport
 combinations — 6 months validated</li>

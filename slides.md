@@ -72,7 +72,7 @@ Predicting fuel uplift accurately, months ahead, across a constantly changing sc
 
 ### Month-by-Month Head-to-Head
 
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/01_monthly_bars.html" height="500" width="100%"></iframe>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/10_drilldown_bars.html" height="520" width="100%"></iframe>
 
 ---
 
@@ -149,22 +149,49 @@ flowchart TB
 
 ---
 
+### What We Train On
+
+<div style="font-size: 0.78em;">
+
+| Model | Predicts | Training Data |
+|---|---|---|
+| **Departure model** | Actual flights vs scheduled | 17 months: published schedule vs actual departures |
+| **Flight minutes model** | Actual block time vs scheduled | Same — captures aircraft swaps & frequency changes |
+| **Uplift rate model** | kg per flight-minute | Uplift actuals by airline + aircraft type + airport |
+| **ML correction** | Systematic bias at horizon | Predicted vs actual uplift over 17 months |
+
+</div>
+
+<div style="font-size: 0.8em; margin-top: 1em;">
+
+All models share the same **17-month window (Jan 2024 – Jun 2025)** — one full year of seasonal patterns.
+
+Data is grouped by airline, aircraft type, and departure airport — not just route.
+
+</div>
+
+---
+
 ### How FLT Works
 
-<div style="font-size: 0.7em;">
+**From route averages → forecasted capacity**
+
+<div style="font-size: 0.75em; margin-top: 0.6em;">
 
 | Step | What | Why |
 |---:|---|---|
 | **1a** | Predict actual departures | Schedule is never perfectly right |
 | **1b** | Predict actual flight minutes | Captures aircraft swaps & frequency changes |
-| **2** | Statistical uplift formula | Recency-weighted route means × predicted volume |
+| **2** | Uplift rate × predicted capacity | Recency-weighted kg/flight-min, by airline + aircraft type + airport |
 | **3** | ML correction | Fine-tunes the formula at far horizons |
 
 </div>
 
-<div style="margin-top: 0.8em; font-size: 0.8em;">
+<div style="margin-top: 0.8em; font-size: 0.82em;">
 
-**Key insight:** We predict by airline, aircraft type, and airport — shifting from fixed route averages to forecasted capacity.
+F+ asks: *"How much did this route historically burn?"*
+
+FLT asks: *"How much will actually fly — and what will those aircraft burn?"*
 
 </div>
 
@@ -279,7 +306,7 @@ timeline
 
 ::: incremental
 
-- **5 out of 6 months, 15% less uplift misorder**
+- **5 out of 6 months, 15% less misorder**
 - 10 airports, 11 airlines, ~64 airline–airport combinations — 6 months validated
 - Airline-agnostic: adding airlines = adding data
 - Continue the project and expand coverage
