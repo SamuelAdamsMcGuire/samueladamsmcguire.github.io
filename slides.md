@@ -153,7 +153,7 @@ The schedule is the baseline — the models learn **to adjust it.**
 | **Fuel rates** | kg/dep · kg/min, recency-weighted by airline, actype, airport |
 | **Estimate** | Blend of per-flight and per-minute signals |
 | **Sparse routes** | Fallback: route → airport → global |
-| **Long horizon** | Correction ratio (≈ 1.0) nudges the estimate |
+| **ML Calibration** | Correction ratio (≈ 1.0) nudges the estimate |
 
 </div>
 
