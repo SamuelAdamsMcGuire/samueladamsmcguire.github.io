@@ -42,16 +42,22 @@
   <p class="date">February 2026</p>
 </section>
 
-<section id="the-problem" class="slide level3">
-<h3>The Problem</h3>
-<p>F+ forecasts fuel uplift by averaging the <strong>last 3
-months</strong> of actual uplift per route.</p>
+<section id="the-challenge" class="slide level3">
+<h3>The Challenge</h3>
+<p>Predicting fuel uplift accurately, months ahead, across a constantly
+changing schedule.</p>
+<div>
 <ul>
-<li>Ignores schedule changes (cancellations, added flights)</li>
-<li>Can’t predict new or seasonal routes</li>
-<li>Gets worse the further into the future it forecasts</li>
+<li class="fragment">Schedules change — cancellations, additions, and
+aircraft swaps happen after publication</li>
+<li class="fragment">New and seasonal routes have limited history to
+rely on</li>
+<li class="fragment">The further ahead the forecast, the more the
+schedule diverges from reality</li>
+<li class="fragment">FLT addresses this by predicting <strong>what will
+actually fly</strong>, not what was planned</li>
 </ul>
-<p><strong>Can we do better?</strong></p>
+</div>
 </section>
 <section id="validation-setup" class="slide level3">
 <h3>Validation Setup</h3>
@@ -71,16 +77,17 @@ months</strong> of actual uplift per route.</p>
 <td>LH, OS, LX, SN, EW, EN, WK, 4Y, YF, XQ, 3S</td>
 </tr>
 <tr>
-<td><strong>Routes</strong></td>
+<td><strong>Airline–Airport combinations</strong></td>
 <td>~64 active</td>
 </tr>
 <tr>
-<td><strong>Forecast Horizon</strong></td>
-<td>6 months (Jul–Dec 2025)</td>
+<td><strong>Forecast date</strong></td>
+<td>12 June 2025 — as if today is June 12th and we forecast Jul–Dec
+2025</td>
 </tr>
 <tr>
-<td><strong>Total Volume</strong></td>
-<td>1,610M kg fuel</td>
+<td><strong>Total Uplift Volume</strong></td>
+<td>1.61M t</td>
 </tr>
 </tbody>
 </table>
@@ -116,9 +123,9 @@ style="color: #00d4aa;">✓</span></p>
 <td>3.9%</td>
 </tr>
 <tr>
-<td><strong>6-Month Misorder</strong></td>
-<td>53,800t</td>
-<td>63,500t</td>
+<td><strong>6-Month Total Misorder</strong></td>
+<td>53,800 t</td>
+<td>63,500 t</td>
 </tr>
 </tbody>
 </table>
@@ -129,70 +136,52 @@ style="color: #00d4aa;">✓</span></p>
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/01_monthly_bars.html" height="500" width="100%">
 </iframe>
 </section>
-<section id="the-further-out-we-forecast-the-bigger-our-edge"
-class="slide level3">
-<h3>The Further Out We Forecast, the Bigger Our Edge</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/02_error_trend.html" height="500" width="100%">
-</iframe>
-</section>
-<section id="why-f-struggles-at-long-horizons" class="slide level3">
-<h3>Why F+ Struggles at Long Horizons</h3>
-<div>
-<ul>
-<li class="fragment">F+ depends on the schedule and the previous 3
-months uplift average</li>
-<li class="fragment">When the schedule changes, F+ doesn’t know</li>
-<li class="fragment">FLT <strong>corrects the schedule first</strong>,
-then predicts fuel using ML</li>
-<li class="fragment">Seasonal shifts, cancellations, and new routes are
-captured</li>
-</ul>
-</div>
-</section>
-<section id="the-f-pipeline" class="slide level3">
-<h3>The F+ Pipeline</h3>
+<section id="the-f-approach" class="slide level3">
+<h3>The F+ Approach</h3>
 <div class="mermaid">
-flowchart TB
-    A1["Schedule departures"]
-    A2["Historical Uplift<br/>(last 3 months)"]
-    A3["Simple Average<br/>per Route"]
-    A4["Fuel Order<br/>Prediction"]
-    A1 --> A2 --> A3 --> A4
-    style A1 fill:#662222,stroke:#ff6b6b,color:#fff
-    style A2 fill:#662222,stroke:#ff6b6b,color:#fff
-    style A3 fill:#662222,stroke:#ff6b6b,color:#fff
-    style A4 fill:#662222,stroke:#ff6b6b,color:#fff
+%%{init: {'theme': 'dark', 'flowchart': {'nodeSpacing': 40, 'rankSpacing': 50}}}%%
+flowchart LR
+    A1["Published Schedule"] --> A2["Last 3 months avg"] --> A3["Route Average"] --> A4["Predicted Uplift"]
+    style A1 fill:#2a2a2a,stroke:#888,color:#fff
+    style A2 fill:#2a2a2a,stroke:#888,color:#fff
+    style A3 fill:#2a2a2a,stroke:#888,color:#fff
+    style A4 fill:#2a2a2a,stroke:#888,color:#fff
+</div>
+<div style="font-size: 0.8em; margin-top: 1em;">
+<p>When the schedule changes, the historical average doesn’t adjust —
+leading to growing errors the further out the forecast.</p>
 </div>
 </section>
 <section id="the-flt-pipeline" class="slide level3">
 <h3>The FLT Pipeline</h3>
 <div class="mermaid">
+%%{init: {'theme': 'dark', 'flowchart': {'useMaxWidth': false, 'nodeSpacing': 35, 'rankSpacing': 45}}}%%
 flowchart TB
-    subgraph input["Inputs"]
-        S["Published Schedule<br/>(SSIM)"]
+    subgraph input["Input"]
+        S["Schedule (SSIM)"]
     end
     subgraph phase1["Phase 1: Schedule Correction"]
         direction LR
-        P1A["1a: Predict<br/>Actual Departures"]
-        P1B["1b: Predict<br/>Actual Flight Minutes"]
+        P1A["Predict Departures"]
+        P1B["Predict Flight Minutes"]
     end
     subgraph phase3["Phase 2: Statistical Uplift"]
         direction TB
-        RM["Recency-Weighted<br/>Route Means"]
-        BLEND["Blend Formula<br/>(per-flight + per-minute) / 2"]
-        FB["3-Level Fallback<br/>route → airport → global"]
+        RM["Recency-Weighted Means"]
+        BLEND["Blend per-flight + per-minute"]
+        FB["Fallback: route / airport / global"]
     end
     subgraph phase4["Phase 3: ML Correction"]
-        CR["Correction Ratio<br/>(HistGradientBoosting)"]
+        CR["Correction Ratio"]
     end
     subgraph output["Output"]
-        FO["Fuel Order<br/>Prediction"]
+        FO["Predicted Uplift"]
     end
     S --> phase1
     P1A --> BLEND
     P1B --> BLEND
     RM --> BLEND
-    FB -.->|"no history?"| BLEND
+    FB -.->|"no history"| BLEND
     BLEND --> CR
     CR --> FO
     style input fill:#1a2a4a,stroke:#4dabf7,color:#fff
@@ -240,7 +229,7 @@ flowchart TB
 <tr>
 <td style="text-align: right;"><strong>2</strong></td>
 <td>Statistical uplift formula</td>
-<td>Recency-weighted route means x predicted volume</td>
+<td>Recency-weighted route means × predicted volume</td>
 </tr>
 <tr>
 <td style="text-align: right;"><strong>3</strong></td>
@@ -251,8 +240,9 @@ flowchart TB
 </table>
 </div>
 <div style="margin-top: 0.8em; font-size: 0.8em;">
-<p><strong>Key insight:</strong> We don’t trust the schedule. We predict
-what will actually fly.</p>
+<p><strong>Key insight:</strong> We predict by airline, aircraft type,
+and airport — shifting from fixed route averages to forecasted
+capacity.</p>
 </div>
 </section>
 <section id="fuel-ordering-impact" class="slide level3">
@@ -260,8 +250,8 @@ what will actually fly.</p>
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/08_fuel_savings.html" height="550" width="100%">
 </iframe>
 <div style="font-size: 0.7em;">
-<p><strong>~9,700 tonnes less misorder</strong> than F+ over 6 months
-across 10 airports</p>
+<p><strong>9,700 t less misorder</strong> than F+ over 6 months across
+10 airports</p>
 </div>
 </section>
 <section id="where-we-win-big-lh-fra" class="slide level3">
@@ -269,8 +259,8 @@ across 10 airports</p>
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/06_lh_fra_deep_dive.html" height="500" width="100%">
 </iframe>
 <div style="font-size: 0.7em;">
-<p>Even small % improvements on high-volume routes = large kg
-savings</p>
+<p>LH-FRA alone: <strong>12,700 t less misorder</strong> with FLT vs F+
+over 6 months</p>
 </div>
 </section>
 <section id="where-we-win-big-unscheduled-flights" class="slide level3">
@@ -283,7 +273,7 @@ savings</p>
 <th></th>
 <th>Scheduled</th>
 <th>Actual</th>
-<th>Predicted</th>
+<th>FLT Predicted</th>
 </tr>
 </thead>
 <tbody>
@@ -294,10 +284,10 @@ savings</p>
 <td>2</td>
 </tr>
 <tr>
-<td>Uplift (kg)</td>
+<td>Uplift</td>
 <td>—</td>
-<td>15,854</td>
-<td>18,915</td>
+<td>15,854 kg</td>
+<td>18,915 kg</td>
 </tr>
 </tbody>
 </table>
@@ -308,83 +298,17 @@ scheduled.</p>
 <p>FLT caught the unscheduled flights using historical patterns.</p>
 </div>
 </section>
-<section id="current-scope" class="slide level3">
-<h3>Current Scope</h3>
-<div style="font-size: 0.85em;">
-<table>
-<tbody>
-<tr>
-<td><strong>Airports</strong></td>
-<td>BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td>
-</tr>
-<tr>
-<td><strong>Airlines</strong></td>
-<td>11 across Lufthansa Group</td>
-</tr>
-<tr>
-<td><strong>Horizon</strong></td>
-<td>6 months (Jul-Dec 2025 validated)</td>
-</tr>
-<tr>
-<td><strong>Routes</strong></td>
-<td>~64 active</td>
-</tr>
-<tr>
-<td><strong>Total Volume</strong></td>
-<td>1,610M kg fuel over validation period</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div style="margin-top: 1em;">
-<p>This is our proof of concept. <strong>The model is ready to
-scale.</strong></p>
-</div>
-</section>
 <section id="roadmap" class="slide level3">
 <h3>Roadmap</h3>
-<div style="font-size: 0.7em;">
-<table>
-<colgroup>
-<col style="width: 40%" />
-<col style="width: 30%" />
-<col style="width: 30%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: right;">Next Steps</th>
-<th>What</th>
-<th>Deliverable</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">1</td>
-<td>Multi-scenario validation</td>
-<td>Models validated across diverse periods</td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td>Full airport expansion + ML pipeline</td>
-<td>Complete coverage, automated training</td>
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
-<td>Short-term production deployment</td>
-<td>4-6 month predictions live, parallel with F+</td>
-</tr>
-<tr>
-<td style="text-align: right;">4</td>
-<td>Long-term model development</td>
-<td>15-18 month predictions validated</td>
-</tr>
-<tr>
-<td style="text-align: right;">5</td>
-<td>Full system launch</td>
-<td>All airports, all horizons, user interface</td>
-</tr>
-</tbody>
-</table>
+<div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+timeline
+    Now : Proof of Concept : 10 airports validated : 5-1 vs F+
+    Phase 1 : Multi-scenario validation
+    Phase 2 : Full airport expansion
+    Phase 3 : Production : 4–6 month horizon
+    Phase 4 : Long-term model : 15–18 month horizon
+    Phase 5 : Full system launch : ~400 airports
 </div>
 </section>
 <section id="the-opportunity" class="slide level3">
@@ -392,7 +316,7 @@ scale.</strong></p>
 <div style="font-size: 0.85em;">
 <ul>
 <li><strong>Today:</strong> 10 departure airports → <strong>9,700
-tonnes</strong> less misorder in 6 months</li>
+t</strong> less misorder in 6 months</li>
 <li>Every airport added means more routes, more data, more savings</li>
 <li>The model is airline-agnostic and built to scale</li>
 <li><strong>~400 airports</strong> on the roadmap</li>
@@ -425,10 +349,10 @@ route accuracy</li>
 <div style="font-size: 0.85em;">
 <div>
 <ul>
-<li class="fragment"><strong>5 out of 6 months, 15% less fuel
+<li class="fragment"><strong>5 out of 6 months, 15% less uplift
 misorder</strong></li>
-<li class="fragment">10 airports, 11 airlines, 64 routes — 6 months
-validated</li>
+<li class="fragment">10 airports, 11 airlines, ~64 airline–airport
+combinations — 6 months validated</li>
 <li class="fragment">Airline-agnostic: adding airlines = adding
 data</li>
 <li class="fragment">Continue the project and expand coverage</li>
@@ -609,7 +533,12 @@ data</li>
     </script>
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        flowchart: { useMaxWidth: false, htmlLabels: false },
+        timeline: { useMaxWidth: false }
+      });
 
       async function renderMermaid() {
         const elements = document.querySelectorAll('.mermaid:not([data-processed])');

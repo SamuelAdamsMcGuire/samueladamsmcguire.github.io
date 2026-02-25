@@ -1,6 +1,11 @@
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    flowchart: { useMaxWidth: false, htmlLabels: false },
+    timeline: { useMaxWidth: false }
+  });
 
   async function renderMermaid() {
     const elements = document.querySelectorAll('.mermaid:not([data-processed])');

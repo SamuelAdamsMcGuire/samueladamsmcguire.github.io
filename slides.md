@@ -13,15 +13,18 @@ autoPlayMedia: true
 css: styles.css
 ---
 
-### The Problem
+### The Challenge
 
-F+ forecasts fuel uplift by averaging the **last 3 months** of actual uplift per route.
+Predicting fuel uplift accurately, months ahead, across a constantly changing schedule.
 
-- Ignores schedule changes (cancellations, added flights)
-- Can't predict new or seasonal routes
-- Gets worse the further into the future it forecasts
+::: incremental
 
-**Can we do better?**
+- Schedules change — cancellations, additions, and aircraft swaps happen after publication
+- New and seasonal routes have limited history to rely on
+- The further ahead the forecast, the more the schedule diverges from reality
+- FLT addresses this by predicting **what will actually fly**, not what was planned
+
+:::
 
 ---
 
@@ -33,9 +36,9 @@ F+ forecasts fuel uplift by averaging the **last 3 months** of actual uplift per
 |---|---|
 | **Departure Airports** | BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW |
 | **Airlines** | LH, OS, LX, SN, EW, EN, WK, 4Y, YF, XQ, 3S |
-| **Routes** | ~64 active |
-| **Forecast Horizon** | 6 months (Jul–Dec 2025) |
-| **Total Volume** | 1,610M kg fuel |
+| **Airline–Airport combinations** | ~64 active |
+| **Forecast date** | 12 June 2025 — as if today is June 12th and we forecast Jul–Dec 2025 |
+| **Total Uplift Volume** | 1.61M t |
 
 </div>
 
@@ -61,7 +64,7 @@ F+ forecasts fuel uplift by averaging the **last 3 months** of actual uplift per
 | | FLT | F+ |
 |---|---|---|
 | **Overall Error** | **3.3%** | 3.9% |
-| **6-Month Misorder** | 53,800t | 63,500t |
+| **6-Month Total Misorder** | 53,800 t | 63,500 t |
 
 </div>
 
@@ -73,41 +76,25 @@ F+ forecasts fuel uplift by averaging the **last 3 months** of actual uplift per
 
 ---
 
-### The Further Out We Forecast, the Bigger Our Edge
-
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/02_error_trend.html" height="500" width="100%"></iframe>
-
----
-
-### Why F+ Struggles at Long Horizons
-
-::: incremental
-
-- F+ depends on the schedule and the previous 3 months uplift average
-- When the schedule changes, F+ doesn't know
-- FLT **corrects the schedule first**, then predicts fuel using ML
-- Seasonal shifts, cancellations, and new routes are captured
-
-:::
-
----
-
-### The F+ Pipeline
+### The F+ Approach
 
 ```{=html}
 <div class="mermaid">
-flowchart TB
-    A1["Schedule departures"]
-    A2["Historical Uplift<br/>(last 3 months)"]
-    A3["Simple Average<br/>per Route"]
-    A4["Fuel Order<br/>Prediction"]
-    A1 --> A2 --> A3 --> A4
-    style A1 fill:#662222,stroke:#ff6b6b,color:#fff
-    style A2 fill:#662222,stroke:#ff6b6b,color:#fff
-    style A3 fill:#662222,stroke:#ff6b6b,color:#fff
-    style A4 fill:#662222,stroke:#ff6b6b,color:#fff
+%%{init: {'theme': 'dark', 'flowchart': {'nodeSpacing': 40, 'rankSpacing': 50}}}%%
+flowchart LR
+    A1["Published Schedule"] --> A2["Last 3 months avg"] --> A3["Route Average"] --> A4["Predicted Uplift"]
+    style A1 fill:#2a2a2a,stroke:#888,color:#fff
+    style A2 fill:#2a2a2a,stroke:#888,color:#fff
+    style A3 fill:#2a2a2a,stroke:#888,color:#fff
+    style A4 fill:#2a2a2a,stroke:#888,color:#fff
 </div>
 ```
+
+<div style="font-size: 0.8em; margin-top: 1em;">
+
+When the schedule changes, the historical average doesn't adjust — leading to growing errors the further out the forecast.
+
+</div>
 
 ---
 
@@ -115,32 +102,33 @@ flowchart TB
 
 ```{=html}
 <div class="mermaid">
+%%{init: {'theme': 'dark', 'flowchart': {'useMaxWidth': false, 'nodeSpacing': 35, 'rankSpacing': 45}}}%%
 flowchart TB
-    subgraph input["Inputs"]
-        S["Published Schedule<br/>(SSIM)"]
+    subgraph input["Input"]
+        S["Schedule (SSIM)"]
     end
     subgraph phase1["Phase 1: Schedule Correction"]
         direction LR
-        P1A["1a: Predict<br/>Actual Departures"]
-        P1B["1b: Predict<br/>Actual Flight Minutes"]
+        P1A["Predict Departures"]
+        P1B["Predict Flight Minutes"]
     end
     subgraph phase3["Phase 2: Statistical Uplift"]
         direction TB
-        RM["Recency-Weighted<br/>Route Means"]
-        BLEND["Blend Formula<br/>(per-flight + per-minute) / 2"]
-        FB["3-Level Fallback<br/>route → airport → global"]
+        RM["Recency-Weighted Means"]
+        BLEND["Blend per-flight + per-minute"]
+        FB["Fallback: route / airport / global"]
     end
     subgraph phase4["Phase 3: ML Correction"]
-        CR["Correction Ratio<br/>(HistGradientBoosting)"]
+        CR["Correction Ratio"]
     end
     subgraph output["Output"]
-        FO["Fuel Order<br/>Prediction"]
+        FO["Predicted Uplift"]
     end
     S --> phase1
     P1A --> BLEND
     P1B --> BLEND
     RM --> BLEND
-    FB -.->|"no history?"| BLEND
+    FB -.->|"no history"| BLEND
     BLEND --> CR
     CR --> FO
     style input fill:#1a2a4a,stroke:#4dabf7,color:#fff
@@ -169,14 +157,14 @@ flowchart TB
 |---:|---|---|
 | **1a** | Predict actual departures | Schedule is never perfectly right |
 | **1b** | Predict actual flight minutes | Captures aircraft swaps & frequency changes |
-| **2** | Statistical uplift formula | Recency-weighted route means x predicted volume |
+| **2** | Statistical uplift formula | Recency-weighted route means × predicted volume |
 | **3** | ML correction | Fine-tunes the formula at far horizons |
 
 </div>
 
 <div style="margin-top: 0.8em; font-size: 0.8em;">
 
-**Key insight:** We don't trust the schedule. We predict what will actually fly.
+**Key insight:** We predict by airline, aircraft type, and airport — shifting from fixed route averages to forecasted capacity.
 
 </div>
 
@@ -188,7 +176,7 @@ flowchart TB
 
 <div style="font-size: 0.7em;">
 
-**~9,700 tonnes less misorder** than F+ over 6 months across 10 airports
+**9,700 t less misorder** than F+ over 6 months across 10 airports
 
 </div>
 
@@ -200,7 +188,7 @@ flowchart TB
 
 <div style="font-size: 0.7em;">
 
-Even small % improvements on high-volume routes = large kg savings
+LH-FRA alone: **12,700 t less misorder** with FLT vs F+ over 6 months
 
 </div>
 
@@ -212,10 +200,10 @@ Even small % improvements on high-volume routes = large kg savings
 
 <div style="font-size: 0.85em;">
 
-| | Scheduled | Actual | Predicted |
+| | Scheduled | Actual | FLT Predicted |
 |---|---|---|---|
 | Flights | 0 | 2 | 2 |
-| Uplift (kg) | — | 15,854 | 18,915 |
+| Uplift | — | 15,854 kg | 18,915 kg |
 
 </div>
 
@@ -229,42 +217,20 @@ FLT caught the unscheduled flights using historical patterns.
 
 ---
 
-### Current Scope
-
-<div style="font-size: 0.85em;">
-
-| | |
-|---|---|
-| **Airports** | BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW |
-| **Airlines** | 11 across Lufthansa Group |
-| **Horizon** | 6 months (Jul-Dec 2025 validated) |
-| **Routes** | ~64 active |
-| **Total Volume** | 1,610M kg fuel over validation period |
-
-</div>
-
-<div style="margin-top: 1em;">
-
-This is our proof of concept. **The model is ready to scale.**
-
-</div>
-
----
-
 ### Roadmap
 
-<div style="font-size: 0.7em;">
-
-| Next Steps | What | Deliverable |
-|---:|---|---|
-| 1 | Multi-scenario validation | Models validated across diverse periods |
-| 2 | Full airport expansion + ML pipeline | Complete coverage, automated training |
-| 3 | Short-term production deployment | 4-6 month predictions live, parallel with F+ |
-| 4 | Long-term model development | 15-18 month predictions validated |
-| 5 | Full system launch | All airports, all horizons, user interface |
-
+```{=html}
+<div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+timeline
+    Now : Proof of Concept : 10 airports validated : 5-1 vs F+
+    Phase 1 : Multi-scenario validation
+    Phase 2 : Full airport expansion
+    Phase 3 : Production : 4–6 month horizon
+    Phase 4 : Long-term model : 15–18 month horizon
+    Phase 5 : Full system launch : ~400 airports
 </div>
-
+```
 
 ---
 
@@ -272,7 +238,7 @@ This is our proof of concept. **The model is ready to scale.**
 
 <div style="font-size: 0.85em;">
 
-- **Today:** 10 departure airports → **9,700 tonnes** less misorder in 6 months
+- **Today:** 10 departure airports → **9,700 t** less misorder in 6 months
 - Every airport added means more routes, more data, more savings
 - The model is airline-agnostic and built to scale
 - **~400 airports** on the roadmap
@@ -313,13 +279,11 @@ This is our proof of concept. **The model is ready to scale.**
 
 ::: incremental
 
-- **5 out of 6 months, 15% less fuel misorder**
-- 10 airports, 11 airlines, 64 routes — 6 months validated
+- **5 out of 6 months, 15% less uplift misorder**
+- 10 airports, 11 airlines, ~64 airline–airport combinations — 6 months validated
 - Airline-agnostic: adding airlines = adding data
 - Continue the project and expand coverage
 
 :::
 
 </div>
-
-
