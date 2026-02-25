@@ -90,51 +90,27 @@ When the schedule changes, the historical average doesn't adjust — leading to 
 
 ---
 
-### The FLT Pipeline
+### How FLT Works
 
-```{=html}
-<div class="mermaid">
-%%{init: {'theme': 'dark', 'flowchart': {'useMaxWidth': false, 'nodeSpacing': 35, 'rankSpacing': 45}}}%%
-flowchart TB
-    subgraph input["Input"]
-        S["Schedule (SSIM)"]
-    end
-    subgraph phase1["Phase 1: Schedule Correction"]
-        direction LR
-        P1A["Departure Delta Model"]
-        P1B["Flight Minutes Delta Model"]
-    end
-    subgraph phase2["Phase 2: Uplift Prediction"]
-        direction TB
-        RM["Recency-Weighted Rates"]
-        BLEND["Blend kg/dep + kg/min"]
-        FB["Fallback: route / airport / global"]
-        CR["Correction Ratio"]
-    end
-    subgraph output["Output"]
-        FO["Predicted Uplift"]
-    end
-    S --> phase1
-    P1A --> BLEND
-    P1B --> BLEND
-    RM --> BLEND
-    FB -.->|"no history"| BLEND
-    BLEND --> CR
-    CR --> FO
-    style input fill:#1a2a4a,stroke:#4dabf7,color:#fff
-    style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
-    style phase1 fill:#1a3a1a,stroke:#51cf66,color:#fff
-    style P1A fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style P1B fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style phase2 fill:#3a2a1a,stroke:#fcc419,color:#fff
-    style RM fill:#4a3a1a,stroke:#fcc419,color:#fff
-    style BLEND fill:#4a3a1a,stroke:#fcc419,color:#fff
-    style FB fill:#4a3a1a,stroke:#fcc419,color:#fff
-    style CR fill:#3a1a4a,stroke:#cc5de8,color:#fff
-    style output fill:#1a3a3a,stroke:#20c997,color:#fff
-    style FO fill:#1a4a4a,stroke:#20c997,color:#fff
+**From route averages → forecasted capacity**
+
+<div style="font-size: 0.75em; margin-top: 0.6em;">
+
+| Step | What | Why |
+|---:|---|---|
+| **1a** | Departure delta model | The schedule is a baseline — correct it, don't replace it |
+| **1b** | Flight-minutes delta model | Captures aircraft swaps and frequency changes |
+| **2** | Recency-weighted rates + correction ratio | kg/flight-min by airline + aircraft type + airport; ratio nudges at long horizons |
+
 </div>
-```
+
+<div style="margin-top: 0.8em; font-size: 0.82em;">
+
+F+ asks: *"How much did this route historically burn?"*
+
+FLT asks: *"How much will actually fly — and what will those aircraft burn?"*
+
+</div>
 
 ---
 
@@ -189,66 +165,51 @@ Uplift model trained on **2025 data** · Schedule correction trained on **Jan 20
 
 ---
 
-### From Schedule to Forecast
+### The FLT Pipeline
 
 ```{=html}
 <div class="mermaid">
-%%{init: {'theme': 'dark', 'flowchart': {'nodeSpacing': 18, 'rankSpacing': 52, 'useMaxWidth': true}}}%%
-flowchart LR
-    S["Schedule\nSSIM"]
-    PA["Predicted\nDepartures"]
-    PB["Predicted\nFlight Mins"]
-    BASE["Statistical Base\nkg/dep · kg/min\nby airline+seat_bin+airport"]
-    CR["Correction\nRatio ~1.0"]
-    OUT["Predicted\nUplift"]
-
-    S -->|"days_to_ops\nseat_bin"| PA
-    S --> PB
-    PA -->|"predicted deps"| BASE
-    PB -->|"predicted mins"| BASE
-    PA --> CR
-    PB --> CR
-    BASE -->|"base estimate"| CR
-    CR -->|"base × ratio"| OUT
-
+%%{init: {'theme': 'dark', 'flowchart': {'useMaxWidth': false, 'nodeSpacing': 35, 'rankSpacing': 45}}}%%
+flowchart TB
+    subgraph input["Input"]
+        S["Schedule (SSIM)"]
+    end
+    subgraph phase1["Phase 1: Schedule Correction"]
+        direction LR
+        P1A["Departure Delta Model"]
+        P1B["Flight Minutes Delta Model"]
+    end
+    subgraph phase2["Phase 2: Uplift Prediction"]
+        direction TB
+        RM["Recency-Weighted Rates"]
+        BLEND["Blend kg/dep + kg/min"]
+        FB["Fallback: route / airport / global"]
+        CR["Correction Ratio"]
+    end
+    subgraph output["Output"]
+        FO["Predicted Uplift"]
+    end
+    S --> phase1
+    P1A --> BLEND
+    P1B --> BLEND
+    RM --> BLEND
+    FB -.->|"no history"| BLEND
+    BLEND --> CR
+    CR --> FO
+    style input fill:#1a2a4a,stroke:#4dabf7,color:#fff
     style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
-    style PA fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style PB fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style BASE fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style phase1 fill:#1a3a1a,stroke:#51cf66,color:#fff
+    style P1A fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style P1B fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style phase2 fill:#3a2a1a,stroke:#fcc419,color:#fff
+    style RM fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style BLEND fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style FB fill:#4a3a1a,stroke:#fcc419,color:#fff
     style CR fill:#3a1a4a,stroke:#cc5de8,color:#fff
-    style OUT fill:#1a4a4a,stroke:#20c997,color:#fff
+    style output fill:#1a3a3a,stroke:#20c997,color:#fff
+    style FO fill:#1a4a4a,stroke:#20c997,color:#fff
 </div>
 ```
-
-<div style="font-size: 0.78em; margin-top: 0.5em; color: #aaa;">
-
-Phase 1 corrects the schedule. Phase 2 applies recency-weighted fuel rates and a correction ratio for long-horizon accuracy.
-
-</div>
-
----
-
-### How FLT Works
-
-**From route averages → forecasted capacity**
-
-<div style="font-size: 0.75em; margin-top: 0.6em;">
-
-| Step | What | Why |
-|---:|---|---|
-| **1a** | Departure delta model | The schedule is a baseline — correct it, don't replace it |
-| **1b** | Flight-minutes delta model | Captures aircraft swaps and frequency changes |
-| **2** | Recency-weighted rates + correction ratio | kg/flight-min by airline + aircraft type + airport; ratio nudges at long horizons |
-
-</div>
-
-<div style="margin-top: 0.8em; font-size: 0.82em;">
-
-F+ asks: *"How much did this route historically burn?"*
-
-FLT asks: *"How much will actually fly — and what will those aircraft burn?"*
-
-</div>
 
 ---
 
@@ -304,7 +265,6 @@ FLT caught the unscheduled flights using historical patterns.
 - Tankering regulations changed how airlines order fuel in 2025, making pre-2025 uplift data less relevant as a training signal. Every additional month under the new rules directly improves the uplift model.
 - Adding airports strengthens shared patterns across the network without diluting route-level accuracy — the model scales cleanly.
 :::
-
 
 ---
 
