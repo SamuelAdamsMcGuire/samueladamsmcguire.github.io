@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <title>Uplift Forecast</title>
+  <title>FLT: Smarter Fuel Uplift Forecasting</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reset.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
   <style>
     .reveal .sourceCode {  /* see #7635 */
       overflow: visible;
@@ -29,133 +29,435 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/theme/moon.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/moon.css" id="theme">
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
 
 <section id="title-slide">
-  <h1 class="title">Uplift Forecast</h1>
+  <h1 class="title">FLT: Smarter Fuel Uplift Forecasting</h1>
   <p class="subtitle">DataTactics GmbH</p>
-  <p class="date">26-08-2025</p>
+  <p class="date">February 2026</p>
 </section>
 
-<section id="staus-quo" class="slide level3">
-<h3>Staus Quo</h3>
-<p>The current tool assigns the average uplift from the last three full
-calendar months for the city pair, airline and aircraft type to each
-event in the schedule and sums uplift.</p>
+<section id="the-challenge" class="slide level3">
+<h3>The Challenge</h3>
+<ul>
+<li class="fragment">The published schedule is never what actually flies
+— cancellations, swaps, additions happen constantly</li>
+<li class="fragment">New and seasonal routes have no history to rely
+on</li>
+<li class="fragment">The further out the forecast, the more the schedule
+diverges from reality</li>
+<li class="fragment"><strong>FLT predicts what will actually fly — not
+what was planned.</strong></li>
+</ul>
 </section>
-<section id="goal-more-efficient-fuel-uplift-forecast"
-class="slide level3">
-<h3>Goal: More efficient fuel Uplift forecast</h3>
-<p>Taking a different approach we will try to model the changes in the
-flight plan from schedule to actual in order to have a more precise
-flight plan that can be used to calculate the uplift needed.</p>
-<!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; bottom: 1rem; right: 1rem;" /> -->
-<!-- <img src="assets/dT-blue.svg" alt="Logo" width="60" style="position: absolute; top: 1rem; left: 1rem;" /> -->
+<section id="validation-setup" class="slide level3">
+<h3>Validation Setup</h3>
+<div style="font-size: 0.8em;">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr>
+<td><strong>Departure Airports</strong></td>
+<td>BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td>
+</tr>
+<tr>
+<td><strong>Airlines</strong></td>
+<td>LH, OS, LX, SN, EW, EN, WK, 4Y, YF, XQ, 3S</td>
+</tr>
+<tr>
+<td><strong>Airline–Airport combinations</strong></td>
+<td>64 active</td>
+</tr>
+<tr>
+<td><strong>Forecast date</strong></td>
+<td>12 June 2025 — as if today is June 12th and we forecast Jul–Dec
+2025</td>
+</tr>
+<tr>
+<td><strong>Total Uplift Volume</strong></td>
+<td>1.61M t</td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
-<section id="assumptions" class="slide level3">
-<h3>Assumptions</h3>
-<ol type="1">
-<li>Using a seasonal avg of mins flown will be better than the scheduled
-min</li>
-<li>Minutes flown and total departures have a direct relationship with
-uplift</li>
-<li>Due to scheduling flux modeling schedule changes will lead to more
-accurate forecasts</li>
-</ol>
+<section id="flt-beats-f-in-5-out-of-6-months"
+class="slide level3 highlight-title">
+<h3 class="highlight-title">FLT Beats F+ in 5 out of 6 Months</h3>
+<div style="font-size: 3em; text-align: center; margin: 0.5em 0;">
+<p><strong>5 — 1</strong></p>
+</div>
+<div
+style="display: flex; justify-content: center; gap: 0.3em; font-size: 2em;">
+<p><span style="color: #00d4aa;">✓</span> <span
+style="color: #00d4aa;">✓</span> <span style="color: #ff6b6b;">✗</span>
+<span style="color: #00d4aa;">✓</span> <span
+style="color: #00d4aa;">✓</span> <span
+style="color: #00d4aa;">✓</span></p>
+</div>
+<div style="margin-top: 1em; font-size: 0.9em;">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>FLT</th>
+<th>F+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Overall Error</strong></td>
+<td><strong>3.3%</strong></td>
+<td>3.9%</td>
+</tr>
+<tr>
+<td><strong>6-Month Total Misorder</strong></td>
+<td>53,800 t</td>
+<td>63,500 t</td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
-<section id="problems-that-could-hurt-forecast" class="slide level3">
-<h3>Problems that could hurt forecast</h3>
-<ol type="1">
-<li>Uplift values to train model 2 can only be used from 2025 due to new
+<section id="the-f-approach" class="slide level3">
+<h3>The F+ Approach</h3>
+<div class="mermaid">
+%%{init: {'theme': 'dark', 'flowchart': {'nodeSpacing': 40, 'rankSpacing': 50}}}%%
+flowchart LR
+    A1["Published Schedule"] --> A2["Last 3 months avg"] --> A3["Route Average"] --> A4["Predicted Uplift"]
+    style A1 fill:#2a2a2a,stroke:#888,color:#fff
+    style A2 fill:#2a2a2a,stroke:#888,color:#fff
+    style A3 fill:#2a2a2a,stroke:#888,color:#fff
+    style A4 fill:#2a2a2a,stroke:#888,color:#fff
+</div>
+<div style="font-size: 0.8em; margin-top: 1em;">
+<p>When the schedule changes, the historical average doesn’t adjust —
+leading to growing errors the further out the forecast.</p>
+</div>
+</section>
+<section id="the-flt-pipeline" class="slide level3">
+<h3>The FLT Pipeline</h3>
+<div class="mermaid">
+%%{init: {'theme': 'dark', 'flowchart': {'useMaxWidth': false, 'nodeSpacing': 35, 'rankSpacing': 45}}}%%
+flowchart TB
+    subgraph input["Input"]
+        S["Schedule (SSIM)"]
+    end
+    subgraph phase1["Phase 1: Schedule Correction"]
+        direction LR
+        P1A["Departure Delta Model"]
+        P1B["Flight Minutes Delta Model"]
+    end
+    subgraph phase2["Phase 2: Uplift Prediction"]
+        direction TB
+        RM["Recency-Weighted Rates"]
+        BLEND["Blend kg/dep + kg/min"]
+        FB["Fallback: route / airport / global"]
+        CR["Correction Ratio"]
+    end
+    subgraph output["Output"]
+        FO["Predicted Uplift"]
+    end
+    S --> phase1
+    P1A --> BLEND
+    P1B --> BLEND
+    RM --> BLEND
+    FB -.->|"no history"| BLEND
+    BLEND --> CR
+    CR --> FO
+    style input fill:#1a2a4a,stroke:#4dabf7,color:#fff
+    style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
+    style phase1 fill:#1a3a1a,stroke:#51cf66,color:#fff
+    style P1A fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style P1B fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style phase2 fill:#3a2a1a,stroke:#fcc419,color:#fff
+    style RM fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style BLEND fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style FB fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style CR fill:#3a1a4a,stroke:#cc5de8,color:#fff
+    style output fill:#1a3a3a,stroke:#20c997,color:#fff
+    style FO fill:#1a4a4a,stroke:#20c997,color:#fff
+</div>
+</section>
+<section id="how-the-model-learns-phase-1" class="slide level3">
+<h3>How the Model Learns — Phase 1</h3>
+<p><strong>Schedule Correction: Two Delta Models</strong></p>
+<p>The schedule is the baseline — the models learn <strong>to adjust
+it.</strong></p>
+<div style="text-align: center; font-size: 1.1em; margin: 0.8em 0;">
+<p><code>predicted = scheduled + Δ</code></p>
+</div>
+<div style="font-size: 0.85em; margin-top: 0.6em;">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Departures</th>
+<th>Flight Minutes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Target (Δ)</strong></td>
+<td>actual − scheduled</td>
+<td>actual − scheduled</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="margin-top: 0.8em; font-size: 0.82em; color: #aaa;">
+<p>Δ driven by: <code>days_to_ops</code> · <code>seat_bin</code> ·
+<code>airline</code> · <code>station</code> · historical lags</p>
+</div>
+</section>
+<section id="how-the-model-learns-phase-2" class="slide level3">
+<h3>How the Model Learns — Phase 2</h3>
+<p><strong>Capacity → Uplift</strong></p>
+<div style="font-size: 0.85em; margin-top: 0.8em;">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>What</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fuel rates</strong></td>
+<td>kg/dep · kg/min, recency-weighted by airline, actype, airport</td>
+</tr>
+<tr>
+<td><strong>Estimate</strong></td>
+<td>Blend of per-flight and per-minute signals</td>
+</tr>
+<tr>
+<td><strong>Sparse routes</strong></td>
+<td>Fallback: route → airport → global</td>
+</tr>
+<tr>
+<td><strong>Long horizon</strong></td>
+<td>Correction ratio (≈ 1.0) nudges the estimate</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="font-size: 0.78em; margin-top: 1.2em; color: #aaa;">
+<p>Uplift model trained on <strong>2025 data</strong> · Schedule
+correction trained on <strong>Jan 2024 – Jun 2025</strong> · Grouped by
+airline + aircraft type + departure airport</p>
+</div>
+</section>
+<section id="from-schedule-to-forecast" class="slide level3">
+<h3>From Schedule to Forecast</h3>
+<div class="mermaid">
+%%{init: {'theme': 'dark', 'flowchart': {'nodeSpacing': 18, 'rankSpacing': 52, 'useMaxWidth': true}}}%%
+flowchart LR
+    S["Schedule\nSSIM"]
+    PA["Predicted\nDepartures"]
+    PB["Predicted\nFlight Mins"]
+    BASE["Statistical Base\nkg/dep · kg/min\nby airline+seat_bin+airport"]
+    CR["Correction\nRatio ~1.0"]
+    OUT["Predicted\nUplift"]
+
+    S -->|"days_to_ops\nseat_bin"| PA
+    S --> PB
+    PA -->|"predicted deps"| BASE
+    PB -->|"predicted mins"| BASE
+    PA --> CR
+    PB --> CR
+    BASE -->|"base estimate"| CR
+    CR -->|"base × ratio"| OUT
+
+    style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
+    style PA fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style PB fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style BASE fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style CR fill:#3a1a4a,stroke:#cc5de8,color:#fff
+    style OUT fill:#1a4a4a,stroke:#20c997,color:#fff
+</div>
+<div style="font-size: 0.78em; margin-top: 0.5em; color: #aaa;">
+<p>Phase 1 corrects the schedule. Phase 2 applies recency-weighted fuel
+rates and a correction ratio for long-horizon accuracy.</p>
+</div>
+</section>
+<section id="how-flt-works" class="slide level3">
+<h3>How FLT Works</h3>
+<p><strong>From route averages → forecasted capacity</strong></p>
+<div style="font-size: 0.75em; margin-top: 0.6em;">
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: right;">Step</th>
+<th>What</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><strong>1a</strong></td>
+<td>Departure delta model</td>
+<td>The schedule is a baseline — correct it, don’t replace it</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>1b</strong></td>
+<td>Flight-minutes delta model</td>
+<td>Captures aircraft swaps and frequency changes</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>2</strong></td>
+<td>Recency-weighted rates + correction ratio</td>
+<td>kg/flight-min by airline + aircraft type + airport; ratio nudges at
+long horizons</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="margin-top: 0.8em; font-size: 0.82em;">
+<p>F+ asks: <em>“How much did this route historically burn?”</em></p>
+<p>FLT asks: <em>“How much will actually fly — and what will those
+aircraft burn?”</em></p>
+</div>
+</section>
+<section id="where-we-win-big-unscheduled-flights" class="slide level3">
+<h3>Where We Win Big — Unscheduled Flights</h3>
+<p><strong>XQ-KEF, July 2025</strong></p>
+<div style="font-size: 0.85em;">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Scheduled</th>
+<th>Actual</th>
+<th>FLT Predicted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flights</td>
+<td>0</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Uplift</td>
+<td>—</td>
+<td>15,854 kg</td>
+<td>18,915 kg</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="margin-top: 1em;">
+<p>F+ has <strong>no prediction</strong> — it can’t see what wasn’t
+scheduled.</p>
+<p>FLT caught the unscheduled flights using historical patterns.</p>
+</div>
+</section>
+<section id="month-by-month-head-to-head" class="slide level3">
+<h3>Month-by-Month Head-to-Head</h3>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/10_drilldown_bars.html" height="520" width="100%">
+</iframe>
+</section>
+<section id="built-to-improve" class="slide level3">
+<h3>Built to Improve</h3>
+<div style="font-size: 0.88em; margin-top: 0.6em;">
+<ul>
+<li><strong>17 months</strong> of data — one summer, one winter
+season</li>
+<li>Every new month improves accuracy at every forecast horizon</li>
+<li>Uplift model trained on <strong>2025 data only</strong> due to
 tankering regulations</li>
-<li>Fueling data from start of 2025 still adjusting to the tankering
-regulations</li>
-<li>Anomalies such as weather events and economic changes could affect
-the forecast</li>
-</ol>
-</section>
-<section id="schedule-behavior-analysis---ariline-designator"
-class="slide level3">
-<h3>Schedule behavior analysis - ariline designator</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/schedule_change_analysis_by_airline_designator.html" height="450" width="100%">
-</iframe>
-</section>
-<section id="schedule-behavior-analysis---airport" class="slide level3">
-<h3>Schedule behavior analysis - airport</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/schedule_change_analysis_by_departure_station.html" height="450" width="100%">
-</iframe>
-</section>
-<section id="our-idea-model-1" class="slide level3">
-<h3>Our Idea Model 1</h3>
-<ul>
-<li class="fragment">Scheduled and actual flight plan are rarely the
-same</li>
-<li class="fragment">Model difference between scheduled and actual
-flights</li>
-<li class="fragment">Forecast: Number of departures and minutes
-flown</li>
+<li>More airports = stronger shared patterns</li>
 </ul>
-</section>
-<section id="model-1-input-features" class="slide level3">
-<h3>Model 1 input features</h3>
-<p><img data-src="assets/model_1_features.png" /></p>
-</section>
-<section id="our-idea-model-2" class="slide level3">
-<h3>Our Idea Model 2</h3>
+</div>
+<div style="margin-top: 1em; font-size: 0.85em;">
+<p><strong>These results are our floor, not our ceiling.</strong></p>
+</div>
+<aside class="notes">
 <ul>
-<li class="fragment">Use output of model 1 as input to predict total
-uplift</li>
-<li class="fragment">Instead of using avg try other ML based models</li>
-<li class="fragment">Compare the results to status quo as well as actual
-burnoff</li>
+<li>days_to_ops: each new month adds training examples at every horizon
+from 1 to 180+ days out. The model learns more precisely how schedule
+accuracy degrades with distance.</li>
+<li>seat_bin: more routes and airports means richer aircraft-type
+coverage — fewer fallbacks on new or seasonal routes where history is
+sparse.</li>
+<li>Tankering regulations changed how airlines order fuel in 2025,
+making pre-2025 uplift data less relevant as a training signal. Every
+additional month under the new rules directly improves the uplift
+model.</li>
+<li>Adding airports strengthens shared patterns across the network
+without diluting route-level accuracy — the model scales cleanly.</li>
 </ul>
+</aside>
 </section>
-<section id="model-2-input-features" class="slide level3">
-<h3>Model 2 input features</h3>
-<p><img data-src="assets/model_2_input.png" /></p>
+<section id="roadmap" class="slide level3">
+<h3>Roadmap</h3>
+<div class="mermaid">
+%%{init: {'theme': 'dark', 'timeline': {'useMaxWidth': true}}}%%
+timeline
+    Now : Proof of Concept : 10 airports validated : 5-1 vs F+
+    Phase 1 : Multi-scenario validation
+    Phase 2 : Full airport expansion
+    Phase 3 : Production : 4–6 month horizon
+    Phase 4 : Long-term model : 15–18 month horizon
+    Phase 5 : Full system launch : ~400 airports
+</div>
 </section>
-<section id="model-flow-chart" class="slide level3">
-<h3>Model Flow Chart</h3>
-<p><img data-src="assets/pipeline.png" /></p>
-</section>
-<section id="general-results-model-1" class="slide level3">
-<h3>General Results Model 1</h3>
-<p><img data-src="assets/july_preds.png" /></p>
-</section>
-<section id="general-results-model-2" class="slide level3">
-<h3>General Results Model 2</h3>
-<p><img data-src="assets/lightgbm_uplift_error_distribution.png" /></p>
-</section>
-<section id="current-status" class="slide level3">
-<h3>Current Status</h3>
-<p>The model pipeline has been set. However the comparison with the
-actual uplift is still not matching up. We plan on improving model 1
-while getting model 2 to a place where the uplift forecast is more
-accurate and eventually better than the status quo.</p>
-</section>
-<section id="next-steps" class="slide level3">
-<h3>Next Steps</h3>
+<section id="the-opportunity" class="slide level3">
+<h3>The Opportunity</h3>
+<div style="font-size: 0.85em;">
 <ul>
-<li>Model 2: get reasonable results from the forecast</li>
-<li>Model 1: improve, add more features such as economic impact,
-waeather and so on</li>
-<li>Set up in test environment for rigorous testing comparing with
-current forecast and actual uplift</li>
+<li><strong>Today:</strong> 10 departure airports → <strong>9,700
+t</strong> less misorder in 6 months</li>
+<li>Every airport added means more routes, more data, more savings</li>
+<li>The model is airline-agnostic and built to scale</li>
+<li><strong>~400 airports</strong> on the roadmap</li>
 </ul>
+</div>
+<div style="margin-top: 1em; font-size: 0.8em;">
+<p><strong>More airports. Same model. More impact.</strong></p>
+</div>
+</section>
+<section id="the-ask" class="slide level3">
+<h3>The Ask</h3>
+<div style="font-size: 0.85em;">
+<ul>
+<li class="fragment"><strong>5 out of 6 months, 15% less
+misorder</strong></li>
+<li class="fragment">10 airports, 11 airlines, 64 airline–airport
+combinations — 6 months validated</li>
+<li class="fragment">Airline-agnostic: adding airlines = adding
+data</li>
+<li class="fragment">Continue the project and expand coverage</li>
+</ul>
+</div>
 </section>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
 
   <!-- reveal.js plugins -->
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/notes/notes.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/search/search.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/search/search.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/zoom/zoom.js"></script>
 
   <script>
 
@@ -302,6 +604,14 @@ current forecast and actual uplift</li>
         // viewDistance in order to save resources.
         mobileViewDistance: 2,
 
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.04,
+
         // reveal.js plugins
         plugins: [
           RevealNotes,
@@ -309,6 +619,39 @@ current forecast and actual uplift</li>
           RevealZoom
         ]
       });
+    </script>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        flowchart: { useMaxWidth: false, htmlLabels: false },
+        timeline: { useMaxWidth: false }
+      });
+
+      async function renderMermaid() {
+        const elements = document.querySelectorAll('.mermaid:not([data-processed])');
+        for (const el of elements) {
+          const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+          const { svg } = await mermaid.render(id, el.textContent);
+          el.innerHTML = svg;
+          el.setAttribute('data-processed', 'true');
+        }
+      }
+
+      // Render on initial load
+      await renderMermaid();
+
+      // Re-render when navigating to a slide with unrendered mermaid
+      if (typeof Reveal !== 'undefined') {
+        Reveal.on('slidechanged', () => renderMermaid());
+      } else {
+        window.addEventListener('load', () => {
+          if (typeof Reveal !== 'undefined') {
+            Reveal.on('slidechanged', () => renderMermaid());
+          }
+        });
+      }
     </script>
     </body>
 </html>
