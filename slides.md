@@ -268,6 +268,25 @@ This is our proof of concept. **The model is ready to scale.**
 
 ---
 
+### The Opportunity
+
+<div style="font-size: 0.85em;">
+
+- **Today:** 10 departure airports → **9,700 tonnes** less misorder in 6 months
+- Every airport added means more routes, more data, more savings
+- The model is airline-agnostic and built to scale
+- **~400 airports** on the roadmap
+
+</div>
+
+<div style="margin-top: 1em; font-size: 0.8em;">
+
+**More airports. Same model. More impact.**
+
+</div>
+
+---
+
 ### Built to Improve
 
 <div style="font-size: 0.85em;">
