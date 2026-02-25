@@ -3,6 +3,11 @@ name: Build and deploy
 on:
   push:
     branches: [ master, main, feature/flt-c-level-presentation ]
+    paths:
+      - 'slides.md'
+      - 'styles.css'
+      - 'mermaid-init.html'
+      - 'assets/**'
 
 jobs:
   build_deploy:
@@ -17,24 +22,18 @@ jobs:
           sudo dpkg -i pandoc-3.7.0.2-1-amd64.deb
           rm pandoc-3.7.0.2-1-amd64.deb
 
-      - name: Prepare build folder
-        run: mkdir public
-
       - name: Build slides
         run: >
-          pandoc -t revealjs -s slides.md -o public/index.html
+          pandoc -t revealjs -s slides.md -o index.html
           --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@5
           --variable width=1200
           --variable margin=0.04
           --include-after-body=mermaid-init.html
 
-      - name: Copy supporting files
+      - name: Commit and push index.html
         run: |
-          cp styles.css mermaid-init.html public/
-          cp -r assets public/
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --staged --quiet || git commit -m "build: rebuild index.html"
+          git push
