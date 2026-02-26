@@ -322,3 +322,29 @@ timeline
 ```{=html}
 <!-- build: 2026-02-25 -->
 ```
+
+---
+
+### Appendix: Phase 1 — Schedule Correction Detail
+
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:55vh; gap:16px;">
+<p style="color:#8899aa; font-size:0.8em;">Departures &amp; flight minutes by month — filter by airline, airport, seat bin — Volumes / Abs Error / WAPE % toggle</p>
+<a href="assets/phase1_comparison.html" target="_blank"
+   style="display:inline-block; padding:14px 40px; background:#00d4aa; color:#16213e;
+          font-size:1.1em; font-weight:bold; border-radius:6px; text-decoration:none;">
+  Open Phase 1 Chart ↗
+</a>
+</div>
+
+---
+
+### Appendix: Worst Case Root Cause Navigator
+
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:55vh; gap:16px;">
+<p style="color:#8899aa; font-size:0.8em;">6 worst routes · Uplift → Departures → Training history · Category badges · Root cause per case</p>
+<a href="assets/defense.html" target="_blank"
+   style="display:inline-block; padding:14px 40px; background:#00d4aa; color:#16213e;
+          font-size:1.1em; font-weight:bold; border-radius:6px; text-decoration:none;">
+  Open Root Cause Navigator ↗
+</a>
+</div>

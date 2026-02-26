@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reset.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.css">
   <style>
     .reveal .sourceCode {  /* see #7635 */
       overflow: visible;
@@ -29,7 +29,7 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/moon.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/theme/moon.css" id="theme">
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -248,7 +248,7 @@ it.</strong></p>
 <td>Fallback: route → airport → global</td>
 </tr>
 <tr>
-<td><strong>Long horizon</strong></td>
+<td><strong>ML Calibration</strong></td>
 <td>Correction ratio (≈ 1.0) nudges the estimate</td>
 </tr>
 </tbody>
@@ -421,15 +421,45 @@ data</li>
 </div>
 <!-- build: 2026-02-25 -->
 </section>
+<section id="appendix-phase-1-schedule-correction-detail"
+class="slide level3">
+<h3>Appendix: Phase 1 — Schedule Correction Detail</h3>
+<div
+style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:55vh; gap:16px;">
+<p style="color:#8899aa; font-size:0.8em;">
+Departures &amp; flight minutes by month — filter by airline, airport,
+seat bin — Volumes / Abs Error / WAPE % toggle
+</p>
+<p><a href="assets/phase1_comparison.html" target="_blank"
+   style="display:inline-block; padding:14px 40px; background:#00d4aa; color:#16213e;
+          font-size:1.1em; font-weight:bold; border-radius:6px; text-decoration:none;">
+Open Phase 1 Chart ↗ </a></p>
+</div>
+</section>
+<section id="appendix-worst-case-root-cause-navigator"
+class="slide level3">
+<h3>Appendix: Worst Case Root Cause Navigator</h3>
+<div
+style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:55vh; gap:16px;">
+<p style="color:#8899aa; font-size:0.8em;">
+6 worst routes · Uplift → Departures → Training history · Category
+badges · Root cause per case
+</p>
+<p><a href="assets/defense.html" target="_blank"
+   style="display:inline-block; padding:14px 40px; background:#00d4aa; color:#16213e;
+          font-size:1.1em; font-weight:bold; border-radius:6px; text-decoration:none;">
+Open Root Cause Navigator ↗ </a></p>
+</div>
+</section>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.js"></script>
 
   <!-- reveal.js plugins -->
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/search/search.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/search/search.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/zoom/zoom.js"></script>
 
   <script>
 

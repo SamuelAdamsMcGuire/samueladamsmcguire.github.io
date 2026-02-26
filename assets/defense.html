@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>FLT — Worst Case Navigator</title>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.27.0/plotly.min.js"></script>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  background: #16213e; color: #e0e0e0;
+  font-family: Arial, sans-serif; font-size: 13px;
+  display: flex; flex-direction: column; height: 100vh;
+}
+/* ── top bar ── */
+.topbar {
+  background: #0f3460; padding: 8px 16px;
+  display: flex; align-items: center; gap: 16px;
+  border-bottom: 1px solid #2a2a4a; flex-shrink: 0;
+}
+.topbar h2 { margin: 0; font-size: 15px; color: #00d4aa; }
+.topbar span { font-size: 12px; color: #8899aa; }
+
+/* ── main layout ── */
+.layout { display: flex; flex: 1; overflow: hidden; }
+
+/* ── sidebar ── */
+.sidebar {
+  width: 240px; flex-shrink: 0;
+  background: #0f1c38; border-right: 1px solid #2a2a4a;
+  overflow-y: auto; padding: 8px 0;
+}
+.sidebar-title {
+  padding: 6px 14px 4px; font-size: 11px; color: #6a7fa0;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.nav-card {
+  padding: 10px 14px; cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.15s;
+}
+.nav-card:hover { background: rgba(255,255,255,0.04); }
+.nav-card.active {
+  background: rgba(0,212,170,0.08);
+  border-left-color: #00d4aa;
+}
+.nav-card .route-id { font-size: 14px; font-weight: bold; color: #e0e0e0; }
+.nav-card .nav-err  { font-size: 11px; color: #8899aa; margin-top: 2px; }
+.nav-badge {
+  display: inline-block; padding: 1px 6px; border-radius: 3px;
+  font-size: 10px; font-weight: bold; color: #16213e; margin-top: 4px;
+}
+
+/* ── right panel ── */
+.content {
+  flex: 1; overflow-y: auto; padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+/* ── diagnosis banner ── */
+.diagnosis {
+  background: #1e2d4a; border: 1px solid #2a3a5a;
+  border-radius: 6px; padding: 10px 14px;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.diagnosis .diag-panel { flex: 1; }
+.diagnosis .diag-title { font-size: 11px; color: #6a7fa0; text-transform: uppercase; margin-bottom: 4px; }
+.diagnosis .diag-val   { font-size: 20px; font-weight: bold; }
+.diagnosis .diag-label { font-size: 11px; color: #8899aa; margin-top: 1px; }
+.diagnosis .diag-story { flex: 2.5; font-size: 12px; color: #c0cce0; line-height: 1.5; }
+.diag-arrow { font-size: 18px; color: #2a4a6a; padding-top: 14px; }
+
+/* ── charts row ── */
+.charts-row { display: flex; gap: 10px; }
+.chart-box  { flex: 1; background: #1a1a2e; border-radius: 6px; overflow: hidden; }
+.chart-label {
+  padding: 6px 10px 0; font-size: 11px; color: #6a7fa0;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* ── training chart ── */
+.train-box { background: #1a1a2e; border-radius: 6px; overflow: hidden; }
+
+/* ── root cause card ── */
+.rc-card {
+  background: #1a1a2e; border-radius: 6px; padding: 12px 16px;
+  border-left: 4px solid #aaa;
+}
+.rc-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.rc-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-size: 12px; font-weight: bold; color: #16213e;
+}
+.rc-title { font-size: 13px; font-weight: bold; color: #e0e0e0; }
+.rc-bullets { margin: 0; padding-left: 18px; }
+.rc-bullets li { margin-bottom: 5px; color: #c0cce0; line-height: 1.5; }
+.rc-fix {
+  margin-top: 10px; padding: 8px 12px;
+  background: rgba(0,212,170,0.07); border-radius: 4px;
+  border-left: 3px solid #00d4aa; font-size: 12px; color: #9de8d0;
+}
+.rc-fix strong { color: #00d4aa; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h2>FLT — Worst Case Root Cause Navigator</h2>
+  <span>Click a route to drill down: Uplift → Departures → Training Data → Root Cause</span>
+</div>
+
+<div class="layout">
+  <div class="sidebar" id="sidebar"></div>
+
+  <div class="content">
+    <div class="diagnosis" id="diagnosis"></div>
+
+    <div class="charts-row">
+
+      <div class="chart-box">
+        <div class="chart-label">① Uplift (t) — FLT vs F+ vs Actual</div>
+        <div id="chartUplift"></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">② Departures — Sched vs FLT Predicted vs Actual</div>
+        <div id="chartDeps"></div>
+      </div>
+    </div>
+
+    <div class="train-box">
+      <div class="chart-label">③ Training Data History — What the Model Saw</div>
+      <div id="chartTrain"></div>
+    </div>
+
+    <div class="rc-card" id="rcCard"></div>
+  </div>
+</div>
+
+<script>
+const CASES = [
+  {
+    "id": "LH-HKG",
+    "airline": "LH",
+    "airport": "HKG",
+    "category": "Cat 1 \u2014 Schedule Shock",
+    "cat_color": "#ff6b6b",
+    "total_err": 7070,
+    "avg_dep_err": 38.8,
+    "avg_upl_err": 46.4,
+    "avg_upl_err_signed": 36.9,
+    "title": "LH-HKG",
+    "phase1_story": "Phase 1 trusted the schedule \u2014 which is its job. But the schedule itself was wrong: 60 departures per month were filed for Nov/Dec, while every training observation for this route sits between 26\u201332 deps. Phase 1 had no basis to cut it in half.",
+    "bullets": [
+      "Training shows LH-HKG at 26\u201332 departures/month across all 18 training months.",
+      "Nov/Dec 2025 schedule filed 60 departures \u2014 double anything ever seen.",
+      "Actual: ~30 departures \u2014 exactly in line with history. F+ also missed by 79\u201388%.",
+      "This is not a model failure. The schedule was anomalous."
+    ],
+    "fix": "Flag routes where scheduled deps exceed training max by >30%; apply fallback conservatism or alert operations.",
+    "test": [
+      {
+        "month": "Jul",
+        "sched_deps": 31,
+        "pred_deps": 31,
+        "act_deps": 30,
+        "flt_uplift": 3165.7,
+        "fp_uplift": 3569.8,
+        "act_uplift": 3324.4,
+        "dep_err_pct": 3.3,
+        "upl_err_pct": -4.8
+      },
+      {
+        "month": "Aug",
+        "sched_deps": 31,
+        "pred_deps": 31,
+        "act_deps": 31,
+        "flt_uplift": 3116.7,
+        "fp_uplift": 3569.8,
+        "act_uplift": 3621.7,
+        "dep_err_pct": 0.0,
+        "upl_err_pct": -13.9
+      },
+      {
+        "month": "Sep",
+        "sched_deps": 30,
+        "pred_deps": 30,
+        "act_deps": 29,
+        "flt_uplift": 3233.3,
+        "fp_uplift": 3454.7,
+        "act_uplift": 3586.9,
+        "dep_err_pct": 3.4,
+        "upl_err_pct": -9.9
+      },
+      {
+        "month": "Oct",
+        "sched_deps": 37,
+        "pred_deps": 37,
+        "act_deps": 31,
+        "flt_uplift": 3807.8,
+        "fp_uplift": 3749.8,
+        "act_uplift": 3367.1,
+        "dep_err_pct": 19.4,
+        "upl_err_pct": 13.1
+      },
+      {
+        "month": "Nov",
+        "sched_deps": 60,
+        "pred_deps": 60,
+        "act_deps": 30,
+        "flt_uplift": 5197.4,
+        "fp_uplift": 4354.7,
+        "act_uplift": 2431.9,
+        "dep_err_pct": 100.0,
+        "upl_err_pct": 113.7
+      },
+      {
+        "month": "Dec",
+        "sched_deps": 60,
+        "pred_deps": 60,
+        "act_deps": 29,
+        "flt_uplift": 5155.1,
+        "fp_uplift": 4348.8,
+        "act_uplift": 2308.7,
+        "dep_err_pct": 106.9,
+        "upl_err_pct": 123.3
+      }
+    ],
+    "train": [
+      {
+        "label": "2024-01",
+        "deps": 28,
+        "uplift": 3404.5
+      },
+      {
+        "label": "2024-02",
+        "deps": 26,
+        "uplift": 3092.9
+      },
+      {
+        "label": "2024-03",
+        "deps": 28,
+        "uplift": 3390.0
+      },
+      {
+        "label": "2024-04",
+        "deps": 30,
+        "uplift": 3476.4
+      },
+      {
+        "label": "2024-05",
+        "deps": 30,
+        "uplift": 3526.5
+      },
+      {
+        "label": "2024-06",
+        "deps": 28,
+        "uplift": 3075.2
+      },
+      {
+        "label": "2024-07",
+        "deps": 29,
+        "uplift": 3209.2
+      },
+      {
+        "label": "2024-08",
+        "deps": 30,
+        "uplift": 3457.6
+      },
+      {
+        "label": "2024-09",
+        "deps": 30,
+        "uplift": 3163.7
+      },
+      {
+        "label": "2024-10",
+        "deps": 30,
+        "uplift": 3325.8
+      },
+      {
+        "label": "2024-11",
+        "deps": 30,
+        "uplift": 3202.8
+      },
+      {
+        "label": "2024-12",
+        "deps": 27,
+        "uplift": 3131.5
+      },
+      {
+        "label": "2025-01",
+        "deps": 26,
+        "uplift": 3057.4
+      },
+      {
+        "label": "2025-02",
+        "deps": 22,
+        "uplift": 2352.0
+      },
+      {
+        "label": "2025-03",
+        "deps": 29,
+        "uplift": 3306.2
+      },
+      {
+        "label": "2025-04",
+        "deps": 30,
+        "uplift": 3390.4
+      },
+      {
+        "label": "2025-05",
+        "deps": 32,
+        "uplift": 3353.5
+      },
+      {
+        "label": "2025-06",
+        "deps": 30,
+        "uplift": 3443.7
+      }
+    ]
+  },
+  {
+    "id": "EW-PMI",
+    "airline": "EW",
+    "airport": "PMI",
+    "category": "Cat 2 \u2014 Thin Winter Training Data",
+    "cat_color": "#fcc419",
+    "total_err": 3899,
+    "avg_dep_err": 44.9,
+    "avg_upl_err": 13.6,
+    "avg_upl_err_signed": -13.6,
+    "title": "EW-PMI",
+    "phase1_story": "Phase 1 correctly identified EW-PMI as seasonal, but its winter floor was calibrated from only one prior winter (2024). Winter 2025 operated at one-third the 2024 level \u2014 a 70% YoY collapse the model had zero basis to anticipate.",
+    "bullets": [
+      "EW-PMI is a highly seasonal leisure beach route that nearly shuts down in winter.",
+      "Training covered only one winter (2024): Nov 2024 = 490 actual departures.",
+      "Nov 2025 actual: 154 departures \u2014 a 69% year-on-year reduction.",
+      "The model's winter floor was 2024's. 2025 set a new, much lower floor."
+    ],
+    "fix": "Second full winter in training (Q4 2025 data, available Q1 2026) directly addresses this.",
+    "test": [
+      {
+        "month": "Jul",
+        "sched_deps": 1756,
+        "pred_deps": 1692,
+        "act_deps": 1750,
+        "flt_uplift": 9307.2,
+        "fp_uplift": 9343.1,
+        "act_uplift": 10053.3,
+        "dep_err_pct": -3.3,
+        "upl_err_pct": -7.4
+      },
+      {
+        "month": "Aug",
+        "sched_deps": 1789,
+        "pred_deps": 1685,
+        "act_deps": 1794,
+        "flt_uplift": 9357.6,
+        "fp_uplift": 9505.4,
+        "act_uplift": 10131.2,
+        "dep_err_pct": -6.1,
+        "upl_err_pct": -7.6
+      },
+      {
+        "month": "Sep",
+        "sched_deps": 1627,
+        "pred_deps": 1579,
+        "act_deps": 1630,
+        "flt_uplift": 8703.9,
+        "fp_uplift": 8618.6,
+        "act_uplift": 9236.2,
+        "dep_err_pct": -3.1,
+        "upl_err_pct": -5.8
+      },
+      {
+        "month": "Oct",
+        "sched_deps": 1548,
+        "pred_deps": 1483,
+        "act_deps": 1628,
+        "flt_uplift": 8590.3,
+        "fp_uplift": 8147.9,
+        "act_uplift": 9266.2,
+        "dep_err_pct": -8.9,
+        "upl_err_pct": -7.3
+      },
+      {
+        "month": "Nov",
+        "sched_deps": 505,
+        "pred_deps": 356,
+        "act_deps": 154,
+        "flt_uplift": 1775.0,
+        "fp_uplift": 2511.2,
+        "act_uplift": 2468.6,
+        "dep_err_pct": 131.2,
+        "upl_err_pct": -28.1
+      },
+      {
+        "month": "Dec",
+        "sched_deps": 426,
+        "pred_deps": 286,
+        "act_deps": 132,
+        "flt_uplift": 1393.2,
+        "fp_uplift": 2080.0,
+        "act_uplift": 1870.0,
+        "dep_err_pct": 116.7,
+        "upl_err_pct": -25.5
+      }
+    ],
+    "train": [
+      {
+        "label": "2024-01",
+        "deps": 324,
+        "uplift": 1854.0
+      },
+      {
+        "label": "2024-02",
+        "deps": 390,
+        "uplift": 2108.8
+      },
+      {
+        "label": "2024-03",
+        "deps": 726,
+        "uplift": 3720.3
+      },
+      {
+        "label": "2024-04",
+        "deps": 1434,
+        "uplift": 8277.4
+      },
+      {
+        "label": "2024-05",
+        "deps": 1671,
+        "uplift": 9754.2
+      },
+      {
+        "label": "2024-06",
+        "deps": 1590,
+        "uplift": 9316.2
+      },
+      {
+        "label": "2024-07",
+        "deps": 1697,
+        "uplift": 9976.3
+      },
+      {
+        "label": "2024-08",
+        "deps": 1732,
+        "uplift": 10590.5
+      },
+      {
+        "label": "2024-09",
+        "deps": 1657,
+        "uplift": 10124.7
+      },
+      {
+        "label": "2024-10",
+        "deps": 1661,
+        "uplift": 9808.4
+      },
+      {
+        "label": "2024-11",
+        "deps": 490,
+        "uplift": 2719.8
+      },
+      {
+        "label": "2024-12",
+        "deps": 399,
+        "uplift": 2151.6
+      },
+      {
+        "label": "2025-01",
+        "deps": 314,
+        "uplift": 1746.3
+      },
+      {
+        "label": "2025-02",
+        "deps": 464,
+        "uplift": 2427.4
+      },
+      {
+        "label": "2025-03",
+        "deps": 655,
+        "uplift": 3330.0
+      },
+      {
+        "label": "2025-04",
+        "deps": 1447,
+        "uplift": 7622.6
+      },
+      {
+        "label": "2025-05",
+        "deps": 1679,
+        "uplift": 9020.1
+      },
+      {
+        "label": "2025-06",
+        "deps": 1632,
+        "uplift": 9464.5
+      }
+    ]
+  },
+  {
+    "id": "LH-BLL",
+    "airline": "LH",
+    "airport": "BLL",
+    "category": "Cat 3 \u2014 Phase 1 Over-Correction",
+    "cat_color": "#cc5de8",
+    "total_err": 456,
+    "avg_dep_err": 33.6,
+    "avg_upl_err": 22.8,
+    "avg_upl_err_signed": -22.8,
+    "title": "LH-BLL",
+    "phase1_story": "Phase 1 is the direct cause here: it predicted 50\u201373 departures where 144\u2013146 operated. The model learned from Aug 2024 (only 94 of ~150 scheduled flights operated) that LH-BLL cancels heavily in autumn. In 2025 it operated normally. One bad month in training drove a consistent 40\u201350% downward correction.",
+    "bullets": [
+      "Aug 2024: only 94 departures against ~155 scheduled \u2014 a sharp cancellation event.",
+      "Phase 1 learned 'LH-BLL cancels ~50% in autumn' from this single anomalous month.",
+      "Sep/Oct 2025: 144\u2013146 departures operated \u2014 near full schedule. Model predicted 73\u201380.",
+      "Departure under-prediction directly cascaded into the uplift miss."
+    ],
+    "fix": "Per-route correction bounds: widen Phase 1 predictions toward schedule when training variance is high.",
+    "test": [
+      {
+        "month": "Jul",
+        "sched_deps": 155,
+        "pred_deps": 117,
+        "act_deps": 151,
+        "flt_uplift": 360.8,
+        "fp_uplift": 489.2,
+        "act_uplift": 384.0,
+        "dep_err_pct": -22.5,
+        "upl_err_pct": -6.1
+      },
+      {
+        "month": "Aug",
+        "sched_deps": 155,
+        "pred_deps": 106,
+        "act_deps": 155,
+        "flt_uplift": 347.7,
+        "fp_uplift": 489.2,
+        "act_uplift": 377.0,
+        "dep_err_pct": -31.6,
+        "upl_err_pct": -7.8
+      },
+      {
+        "month": "Sep",
+        "sched_deps": 150,
+        "pred_deps": 73,
+        "act_deps": 146,
+        "flt_uplift": 236.0,
+        "fp_uplift": 473.5,
+        "act_uplift": 383.7,
+        "dep_err_pct": -50.0,
+        "upl_err_pct": -38.5
+      },
+      {
+        "month": "Oct",
+        "sched_deps": 147,
+        "pred_deps": 80,
+        "act_deps": 144,
+        "flt_uplift": 209.4,
+        "fp_uplift": 451.9,
+        "act_uplift": 355.7,
+        "dep_err_pct": -44.4,
+        "upl_err_pct": -41.1
+      },
+      {
+        "month": "Nov",
+        "sched_deps": 107,
+        "pred_deps": 81,
+        "act_deps": 103,
+        "flt_uplift": 224.6,
+        "fp_uplift": 278.0,
+        "act_uplift": 291.0,
+        "dep_err_pct": -21.4,
+        "upl_err_pct": -22.8
+      },
+      {
+        "month": "Dec",
+        "sched_deps": 79,
+        "pred_deps": 64,
+        "act_deps": 94,
+        "flt_uplift": 164.1,
+        "fp_uplift": 205.2,
+        "act_uplift": 206.9,
+        "dep_err_pct": -31.9,
+        "upl_err_pct": -20.7
+      }
+    ],
+    "train": [
+      {
+        "label": "2024-01",
+        "deps": 100,
+        "uplift": 220.1
+      },
+      {
+        "label": "2024-02",
+        "deps": 126,
+        "uplift": 276.5
+      },
+      {
+        "label": "2024-03",
+        "deps": 76,
+        "uplift": 152.8
+      },
+      {
+        "label": "2024-04",
+        "deps": 158,
+        "uplift": 377.3
+      },
+      {
+        "label": "2024-05",
+        "deps": 60,
+        "uplift": 86.6
+      },
+      {
+        "label": "2024-06",
+        "deps": 120,
+        "uplift": 297.8
+      },
+      {
+        "label": "2024-07",
+        "deps": 163,
+        "uplift": 415.9
+      },
+      {
+        "label": "2024-08",
+        "deps": 94,
+        "uplift": 290.1
+      },
+      {
+        "label": "2024-09",
+        "deps": 105,
+        "uplift": 251.2
+      },
+      {
+        "label": "2024-10",
+        "deps": 151,
+        "uplift": 416.9
+      },
+      {
+        "label": "2024-11",
+        "deps": 105,
+        "uplift": 261.0
+      },
+      {
+        "label": "2024-12",
+        "deps": 65,
+        "uplift": 151.0
+      },
+      {
+        "label": "2025-01",
+        "deps": 73,
+        "uplift": 170.8
+      },
+      {
+        "label": "2025-02",
+        "deps": 78,
+        "uplift": 196.3
+      },
+      {
+        "label": "2025-03",
+        "deps": 107,
+        "uplift": 271.6
+      },
+      {
+        "label": "2025-04",
+        "deps": 128,
+        "uplift": 338.5
+      },
+      {
+        "label": "2025-05",
+        "deps": 133,
+        "uplift": 325.3
+      },
+      {
+        "label": "2025-06",
+        "deps": 133,
+        "uplift": 329.6
+      }
+    ]
+  },
+  {
+    "id": "EW-HAM",
+    "airline": "EW",
+    "airport": "HAM",
+    "category": "Cat 4 \u2014 Summer-Calibrated Uplift Rates",
+    "cat_color": "#ff922b",
+    "total_err": 3987,
+    "avg_dep_err": 2.9,
+    "avg_upl_err": 12.5,
+    "avg_upl_err_signed": -3.0,
+    "title": "EW-HAM",
+    "phase1_story": "Phase 1 departure prediction is essentially correct (1\u20135% error in most months). The error comes from the uplift rates in Phase 2: the model's kg/dep estimates are calibrated almost entirely to spring/summer 2025 because Sep 2024 \u2014 the only prior autumn in training \u2014 carries just 3.4% effective weight (90-day half-life). Summer rates applied to autumn/winter demand = systematic over-prediction.",
+    "bullets": [
+      "Departure prediction is accurate (1\u20135% error). The issue is in the uplift rates.",
+      "Sep 2024 is the only autumn observation in training, receiving just 3.4% weight.",
+      "Route means are calibrated almost entirely to spring/summer 2025 levels.",
+      "Winter 2025 also contracted slightly further than 2024, compounding the bias."
+    ],
+    "fix": "Season-aware route means: weight same-season months more heavily in rate calibration.",
+    "test": [
+      {
+        "month": "Jul",
+        "sched_deps": 1470,
+        "pred_deps": 1404,
+        "act_deps": 1441,
+        "flt_uplift": 7341.4,
+        "fp_uplift": 7122.0,
+        "act_uplift": 7302.2,
+        "dep_err_pct": -2.6,
+        "upl_err_pct": 0.5
+      },
+      {
+        "month": "Aug",
+        "sched_deps": 1410,
+        "pred_deps": 1407,
+        "act_deps": 1408,
+        "flt_uplift": 7373.1,
+        "fp_uplift": 7020.1,
+        "act_uplift": 7261.7,
+        "dep_err_pct": -0.1,
+        "upl_err_pct": 1.5
+      },
+      {
+        "month": "Sep",
+        "sched_deps": 1417,
+        "pred_deps": 1404,
+        "act_deps": 1420,
+        "flt_uplift": 7469.1,
+        "fp_uplift": 6731.0,
+        "act_uplift": 5978.6,
+        "dep_err_pct": -1.1,
+        "upl_err_pct": 24.9
+      },
+      {
+        "month": "Oct",
+        "sched_deps": 1423,
+        "pred_deps": 1353,
+        "act_deps": 1447,
+        "flt_uplift": 7392.6,
+        "fp_uplift": 6993.6,
+        "act_uplift": 7269.2,
+        "dep_err_pct": -6.5,
+        "upl_err_pct": 1.7
+      },
+      {
+        "month": "Nov",
+        "sched_deps": 958,
+        "pred_deps": 735,
+        "act_deps": 775,
+        "flt_uplift": 3789.0,
+        "fp_uplift": 4705.2,
+        "act_uplift": 5075.4,
+        "dep_err_pct": -5.2,
+        "upl_err_pct": -25.3
+      },
+      {
+        "month": "Dec",
+        "sched_deps": 878,
+        "pred_deps": 678,
+        "act_deps": 693,
+        "flt_uplift": 3515.4,
+        "fp_uplift": 4433.6,
+        "act_uplift": 4451.7,
+        "dep_err_pct": -2.2,
+        "upl_err_pct": -21.0
+      }
+    ],
+    "train": [
+      {
+        "label": "2024-01",
+        "deps": 745,
+        "uplift": 3668.7
+      },
+      {
+        "label": "2024-02",
+        "deps": 882,
+        "uplift": 4280.7
+      },
+      {
+        "label": "2024-03",
+        "deps": 1082,
+        "uplift": 6234.9
+      },
+      {
+        "label": "2024-04",
+        "deps": 1241,
+        "uplift": 6364.8
+      },
+      {
+        "label": "2024-05",
+        "deps": 1465,
+        "uplift": 8187.8
+      },
+      {
+        "label": "2024-06",
+        "deps": 1360,
+        "uplift": 7836.6
+      },
+      {
+        "label": "2024-07",
+        "deps": 1406,
+        "uplift": 8074.4
+      },
+      {
+        "label": "2024-08",
+        "deps": 1412,
+        "uplift": 7799.9
+      },
+      {
+        "label": "2024-09",
+        "deps": 1432,
+        "uplift": 8581.5
+      },
+      {
+        "label": "2024-10",
+        "deps": 1435,
+        "uplift": 7941.8
+      },
+      {
+        "label": "2024-11",
+        "deps": 1021,
+        "uplift": 5235.7
+      },
+      {
+        "label": "2024-12",
+        "deps": 934,
+        "uplift": 5160.1
+      },
+      {
+        "label": "2025-01",
+        "deps": 857,
+        "uplift": 3721.1
+      },
+      {
+        "label": "2025-02",
+        "deps": 960,
+        "uplift": 4347.8
+      },
+      {
+        "label": "2025-03",
+        "deps": 1034,
+        "uplift": 5324.1
+      },
+      {
+        "label": "2025-04",
+        "deps": 1153,
+        "uplift": 5897.3
+      },
+      {
+        "label": "2025-05",
+        "deps": 1411,
+        "uplift": 6671.1
+      },
+      {
+        "label": "2025-06",
+        "deps": 1383,
+        "uplift": 6666.7
+      }
+    ]
+  },
+  {
+    "id": "EN-FRA",
+    "airline": "EN",
+    "airport": "FRA",
+    "category": "Cat 1 \u2014 Conservative Schedule Filing",
+    "cat_color": "#ff6b6b",
+    "total_err": 2093,
+    "avg_dep_err": 15.3,
+    "avg_upl_err": 12.3,
+    "avg_upl_err_signed": -8.4,
+    "title": "EN-FRA",
+    "phase1_story": "EN-FRA has grown rapidly throughout 2025 (801 \u2192 1,299 deps from Jan to Jun). The carrier systematically filed schedules ~40% below planned operations. Phase 1 can only correct based on historical schedule deviations \u2014 it has no signal that EN routinely under-files during a capacity ramp.",
+    "bullets": [
+      "EN-FRA grew 62% in 2025: from 801 deps/month (Jan) to 1,299 deps/month (Jun).",
+      "Nov 2025 schedule: 777 departures. Actual: 1,290 \u2014 66% above the filed schedule.",
+      "Phase 1 corrects to just above schedule (817) \u2014 it cannot invent ops not filed.",
+      "F+ also under-predicts for the same reason: both rely on the same filed schedule."
+    ],
+    "fix": "Carrier-specific schedule bias: detect airlines that consistently over-deliver vs their filed schedule.",
+    "test": [
+      {
+        "month": "Jul",
+        "sched_deps": 1388,
+        "pred_deps": 1297,
+        "act_deps": 1327,
+        "flt_uplift": 3289.7,
+        "fp_uplift": 3184.6,
+        "act_uplift": 3128.5,
+        "dep_err_pct": -2.3,
+        "upl_err_pct": 5.2
+      },
+      {
+        "month": "Aug",
+        "sched_deps": 1334,
+        "pred_deps": 1251,
+        "act_deps": 1315,
+        "flt_uplift": 3129.2,
+        "fp_uplift": 3055.1,
+        "act_uplift": 3062.0,
+        "dep_err_pct": -4.9,
+        "upl_err_pct": 2.2
+      },
+      {
+        "month": "Sep",
+        "sched_deps": 1340,
+        "pred_deps": 1259,
+        "act_deps": 1316,
+        "flt_uplift": 3206.1,
+        "fp_uplift": 3067.5,
+        "act_uplift": 3074.1,
+        "dep_err_pct": -4.3,
+        "upl_err_pct": 4.3
+      },
+      {
+        "month": "Oct",
+        "sched_deps": 1276,
+        "pred_deps": 1212,
+        "act_deps": 1360,
+        "flt_uplift": 3008.4,
+        "fp_uplift": 2905.2,
+        "act_uplift": 3068.8,
+        "dep_err_pct": -10.9,
+        "upl_err_pct": -2.0
+      },
+      {
+        "month": "Nov",
+        "sched_deps": 777,
+        "pred_deps": 817,
+        "act_deps": 1290,
+        "flt_uplift": 1936.2,
+        "fp_uplift": 1699.5,
+        "act_uplift": 2772.7,
+        "dep_err_pct": -36.7,
+        "upl_err_pct": -30.2
+      },
+      {
+        "month": "Dec",
+        "sched_deps": 763,
+        "pred_deps": 828,
+        "act_deps": 1229,
+        "flt_uplift": 1961.4,
+        "fp_uplift": 1671.7,
+        "act_uplift": 2797.1,
+        "dep_err_pct": -32.6,
+        "upl_err_pct": -29.9
+      }
+    ],
+    "train": [
+      {
+        "label": "2024-01",
+        "deps": 545,
+        "uplift": 1312.3
+      },
+      {
+        "label": "2024-02",
+        "deps": 622,
+        "uplift": 1481.6
+      },
+      {
+        "label": "2024-03",
+        "deps": 764,
+        "uplift": 1915.7
+      },
+      {
+        "label": "2024-04",
+        "deps": 857,
+        "uplift": 2015.0
+      },
+      {
+        "label": "2024-05",
+        "deps": 955,
+        "uplift": 2411.5
+      },
+      {
+        "label": "2024-06",
+        "deps": 840,
+        "uplift": 2215.6
+      },
+      {
+        "label": "2024-07",
+        "deps": 965,
+        "uplift": 2426.0
+      },
+      {
+        "label": "2024-08",
+        "deps": 912,
+        "uplift": 2338.9
+      },
+      {
+        "label": "2024-09",
+        "deps": 968,
+        "uplift": 2580.8
+      },
+      {
+        "label": "2024-10",
+        "deps": 964,
+        "uplift": 2424.5
+      },
+      {
+        "label": "2024-11",
+        "deps": 940,
+        "uplift": 2397.9
+      },
+      {
+        "label": "2024-12",
+        "deps": 864,
+        "uplift": 2208.6
+      },
+      {
+        "label": "2025-01",
+        "deps": 801,
+        "uplift": 1781.2
+      },
+      {
+        "label": "2025-02",
+        "deps": 818,
+        "uplift": 1805.4
+      },
+      {
+        "label": "2025-03",
+        "deps": 949,
+        "uplift": 2084.6
+      },
+      {
+        "label": "2025-04",
+        "deps": 1286,
+        "uplift": 2920.7
+      },
+      {
+        "label": "2025-05",
+        "deps": 1300,
+        "uplift": 3065.7
+      },
+      {
+        "label": "2025-06",
+        "deps": 1299,
+        "uplift": 3083.2
+      }
+    ]
+  },
+  {
+    "id": "3S-HKG",
+    "airline": "3S",
+    "airport": "HKG",
+    "category": "Cat 1 \u2014 Unscheduled Capacity Surge",
+    "cat_color": "#ff6b6b",
+    "total_err": 6320,
+    "avg_dep_err": 12.3,
+    "avg_upl_err": 9.9,
+    "avg_upl_err_signed": -9.9,
+    "title": "3S-HKG",
+    "phase1_story": "Phase 1 correctly predicted 141 departures \u2014 close to the schedule of 144. The actual was 206: a 43% over-delivery, 25% above the training maximum of 165. No schedule-based model can anticipate unscheduled capacity injections. F+ missed by \u221230% for identical reasons.",
+    "bullets": [
+      "Training maximum for 3S-HKG: 165 departures/month (Jun 2025).",
+      "Oct 2025 schedule: 144 departures. FLT predicted 141. Actual: 206 \u2014 43% above schedule.",
+      "Phase 1 performed correctly; the operation broke outside all precedent.",
+      "F+ also missed by \u221230%. Both models trusted the schedule."
+    ],
+    "fix": "Real-time operations monitoring: compare weekly actuals vs schedule and update forecast when ops diverge >20%.",
+    "test": [
+      {
+        "month": "Jul",
+        "sched_deps": 186,
+        "pred_deps": 175,
+        "act_deps": 189,
+        "flt_uplift": 14066.0,
+        "fp_uplift": 15391.9,
+        "act_uplift": 14900.5,
+        "dep_err_pct": -7.4,
+        "upl_err_pct": -5.6
+      },
+      {
+        "month": "Aug",
+        "sched_deps": 172,
+        "pred_deps": 163,
+        "act_deps": 175,
+        "flt_uplift": 13169.0,
+        "fp_uplift": 14273.0,
+        "act_uplift": 14026.3,
+        "dep_err_pct": -6.9,
+        "upl_err_pct": -6.1
+      },
+      {
+        "month": "Sep",
+        "sched_deps": 174,
+        "pred_deps": 162,
+        "act_deps": 168,
+        "flt_uplift": 13036.5,
+        "fp_uplift": 14480.8,
+        "act_uplift": 13369.6,
+        "dep_err_pct": -3.6,
+        "upl_err_pct": -2.5
+      },
+      {
+        "month": "Oct",
+        "sched_deps": 144,
+        "pred_deps": 141,
+        "act_deps": 206,
+        "flt_uplift": 12686.2,
+        "fp_uplift": 11973.5,
+        "act_uplift": 16980.9,
+        "dep_err_pct": -31.6,
+        "upl_err_pct": -25.3
+      }
+    ],
+    "train": [
+      {
+        "label": "2024-01",
+        "deps": 147,
+        "uplift": 11121.5
+      },
+      {
+        "label": "2024-02",
+        "deps": 126,
+        "uplift": 9293.4
+      },
+      {
+        "label": "2024-03",
+        "deps": 149,
+        "uplift": 11416.9
+      },
+      {
+        "label": "2024-04",
+        "deps": 125,
+        "uplift": 10400.9
+      },
+      {
+        "label": "2024-05",
+        "deps": 123,
+        "uplift": 9822.9
+      },
+      {
+        "label": "2024-06",
+        "deps": 129,
+        "uplift": 9742.9
+      },
+      {
+        "label": "2024-07",
+        "deps": 136,
+        "uplift": 10355.3
+      },
+      {
+        "label": "2024-08",
+        "deps": 127,
+        "uplift": 9932.6
+      },
+      {
+        "label": "2024-09",
+        "deps": 120,
+        "uplift": 9536.2
+      },
+      {
+        "label": "2024-10",
+        "deps": 123,
+        "uplift": 10397.0
+      },
+      {
+        "label": "2024-11",
+        "deps": 104,
+        "uplift": 9528.0
+      },
+      {
+        "label": "2024-12",
+        "deps": 105,
+        "uplift": 9794.9
+      },
+      {
+        "label": "2025-01",
+        "deps": 101,
+        "uplift": 9350.4
+      },
+      {
+        "label": "2025-02",
+        "deps": 99,
+        "uplift": 8601.3
+      },
+      {
+        "label": "2025-03",
+        "deps": 121,
+        "uplift": 10836.5
+      },
+      {
+        "label": "2025-04",
+        "deps": 151,
+        "uplift": 11980.4
+      },
+      {
+        "label": "2025-05",
+        "deps": 142,
+        "uplift": 11511.8
+      },
+      {
+        "label": "2025-06",
+        "deps": 165,
+        "uplift": 13249.4
+      }
+    ]
+  }
+];
+
+const BG     = '#1a1a2e';
+const GRID   = '#2a2a4a';
+const TEXT   = '#e0e0e0';
+const ACTUAL = '#4dabf7';
+const FLT    = '#51cf66';
+const FP     = '#ff6b6b';
+const SCHED  = '#fcc419';
+const TRAIN  = '#3a5a8a';
+
+const BASE_LAYOUT = {
+  paper_bgcolor: BG, plot_bgcolor: BG,
+  font: { color: TEXT, size: 11 },
+  margin: { l: 55, r: 10, t: 8, b: 40 },
+  height: 240,
+  barmode: 'group',
+  xaxis: { gridcolor: GRID, zeroline: false },
+  yaxis: { gridcolor: GRID, zeroline: false },
+  legend: { bgcolor: 'rgba(0,0,0,0)', bordercolor: GRID,
+            orientation: 'h', x: 0.5, y: -0.18, xanchor: 'center',
+            font: { size: 10 } },
+};
+
+let activeId = CASES[0].id;
+
+// ── sidebar ──────────────────────────────────────────────────────────────────
+function buildSidebar() {
+  const sb = document.getElementById('sidebar');
+  sb.innerHTML = `<div class="sidebar-title">Worst Cases (by error)</div>`;
+  CASES.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'nav-card' + (c.id === activeId ? ' active' : '');
+    card.id = 'nav-' + c.id;
+    card.innerHTML = `
+      <div class="route-id">${c.id}</div>
+      <div class="nav-err">${c.total_err.toLocaleString()}t total error</div>
+      <span class="nav-badge" style="background:${c.cat_color}">${c.category.split('—')[0].trim()}</span>`;
+    card.addEventListener('click', () => showCase(c.id));
+    sb.appendChild(card);
+  });
+}
+
+// ── diagnosis banner ─────────────────────────────────────────────────────────
+function buildDiagnosis(c) {
+  // Phase 1 driven vs rate driven
+  const depDriven = c.avg_dep_err >= c.avg_upl_err * 0.5;
+  const diagLabel = depDriven
+    ? '⚠ Phase 1 departure errors propagated into uplift'
+    : '⚠ Phase 1 departure errors are small — the issue is in uplift rates (Phase 2/3)';
+  const diagColor = depDriven ? '#cc5de8' : '#ff922b';
+
+  document.getElementById('diagnosis').innerHTML = `
+    <div class="diag-panel">
+      <div class="diag-title">Avg departure error</div>
+      <div class="diag-val" style="color:${c.avg_dep_err > 10 ? '#ff6b6b' : '#51cf66'}">${c.avg_dep_err}%</div>
+      <div class="diag-label">across ${c.test.length} months</div>
+    </div>
+    <div class="diag-arrow">→</div>
+    <div class="diag-panel">
+      <div class="diag-title">Avg uplift error</div>
+      <div class="diag-val" style="color:${Math.abs(c.avg_upl_err_signed) > 10 ? '#ff6b6b' : '#51cf66'}">${c.avg_upl_err_signed > 0 ? '+' : ''}${c.avg_upl_err_signed}%</div>
+      <div class="diag-label">FLT vs actual (signed mean)</div>
+    </div>
+    <div class="diag-arrow" style="color:${diagColor};font-size:22px">⟹</div>
+    <div class="diag-story">
+      <strong style="color:${diagColor}">${diagLabel}</strong><br>
+      ${c.phase1_story}
+    </div>`;
+}
+
+// ── uplift chart ─────────────────────────────────────────────────────────────
+function plotUplift(c) {
+  const months  = c.test.map(r => r.month);
+  const actual  = c.test.map(r => r.act_uplift);
+  const flt     = c.test.map(r => r.flt_uplift);
+  const fp      = c.test.map(r => r.fp_uplift);
+
+  const traces = [
+    { type:'bar', name:'Actual',   x:months, y:actual, marker:{color:ACTUAL},
+      text:actual.map(v=>`${v.toLocaleString()}t`), textposition:'outside', textfont:{size:9,color:ACTUAL} },
+    { type:'bar', name:'FLT',      x:months, y:flt,    marker:{color:FLT},
+      text:flt.map(v=>`${v.toLocaleString()}t`),    textposition:'outside', textfont:{size:9,color:FLT} },
+    { type:'bar', name:'F+',       x:months, y:fp,     marker:{color:FP},
+      text:fp.map(v=>`${v.toLocaleString()}t`),     textposition:'outside', textfont:{size:9,color:FP} },
+  ];
+  const allVals = [...actual, ...flt, ...fp].filter(v => v != null);
+  const ymax = Math.max(...allVals) * 1.25;
+  Plotly.react('chartUplift', traces,
+    { ...BASE_LAYOUT, yaxis:{...BASE_LAYOUT.yaxis, title:'Uplift (t)', range:[0,ymax]} });
+}
+
+// ── departure chart ───────────────────────────────────────────────────────────
+function plotDeps(c) {
+  const months = c.test.map(r => r.month);
+  const actual = c.test.map(r => r.act_deps);
+  const sched  = c.test.map(r => r.sched_deps);
+  const pred   = c.test.map(r => r.pred_deps);
+
+  const traces = [
+    { type:'bar', name:'Actual',       x:months, y:actual, marker:{color:ACTUAL},
+      text:actual.map(v=>v.toLocaleString()), textposition:'outside', textfont:{size:9,color:ACTUAL} },
+    { type:'bar', name:'Scheduled',    x:months, y:sched,  marker:{color:SCHED},
+      text:sched.map(v=>v.toLocaleString()),  textposition:'outside', textfont:{size:9,color:SCHED} },
+    { type:'bar', name:'FLT Predicted',x:months, y:pred,   marker:{color:FLT},
+      text:pred.map(v=>v.toLocaleString()),   textposition:'outside', textfont:{size:9,color:FLT} },
+  ];
+  const ymax = Math.max(...[...actual,...sched,...pred]) * 1.25;
+  Plotly.react('chartDeps', traces,
+    { ...BASE_LAYOUT, yaxis:{...BASE_LAYOUT.yaxis, title:'Departures', range:[0,ymax]} });
+}
+
+// ── training history chart ────────────────────────────────────────────────────
+function plotTrain(c) {
+  const tLabels  = c.train.map(r => r.label);
+  const tDeps    = c.train.map(r => r.deps);
+  const tUplift  = c.train.map(r => r.uplift);
+  const testLabels = c.test.map((r,i) => `2025-${String(c.test[0] ? 7+i : 7).padStart(2,'0')}`);
+
+  // Rebuild labels as year-month strings for test period
+  const monthNum = {Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
+  const testXdeps   = c.test.map(r => `2025-${String(monthNum[r.month]).padStart(2,'0')}`);
+  const testActDeps = c.test.map(r => r.act_deps);
+  const testActUpl  = c.test.map(r => r.act_uplift);
+
+  const traces = [
+    // Training bars (faded) — deps
+    { type:'bar', name:'Training actuals (deps)', x:tLabels, y:tDeps,
+      marker:{color:TRAIN, opacity:0.7},
+      yaxis:'y', legendgroup:'deps' },
+    // Test actual bars — deps (solid)
+    { type:'bar', name:'Test actual deps (2025)', x:testXdeps, y:testActDeps,
+      marker:{color:ACTUAL},
+      yaxis:'y', legendgroup:'deps' },
+    // Uplift line (right axis)
+    { type:'scatter', name:'Training uplift (t)', x:tLabels, y:tUplift,
+      mode:'lines+markers', marker:{size:3, color:'#fcc419'},
+      line:{color:'#fcc419', dash:'dot'},
+      yaxis:'y2' },
+    { type:'scatter', name:'Test actual uplift (t)', x:testXdeps, y:testActUpl,
+      mode:'markers', marker:{size:7, color:'#fcc419', symbol:'star'},
+      yaxis:'y2' },
+  ];
+
+  const yDepMax    = Math.max(...tDeps, ...testActDeps) * 1.3;
+  const yUpliftMax = Math.max(...tUplift, ...testActUpl) * 1.3;
+
+  Plotly.react('chartTrain', traces, {
+    ...BASE_LAYOUT,
+    height: 220,
+    barmode: 'overlay',
+    yaxis:  { ...BASE_LAYOUT.yaxis, title: 'Departures', range: [0, yDepMax] },
+    yaxis2: { title: 'Uplift (t)', overlaying:'y', side:'right',
+              gridcolor: GRID, zeroline:false, range:[0, yUpliftMax],
+              tickfont:{color:TEXT, size:10}, titlefont:{color:TEXT,size:11} },
+    xaxis: { ...BASE_LAYOUT.xaxis, tickangle: 45, tickfont:{size:9} },
+    legend: { ...BASE_LAYOUT.legend, y: -0.28 },
+    margin: { l:55, r:60, t:8, b:60 },
+    shapes: [{  // separator between training and test
+      type:'line', x0:'2025-06', x1:'2025-06',
+      y0:0, y1:1, yref:'paper',
+      line:{color:'rgba(255,255,255,0.2)', width:1, dash:'dash'},
+    }],
+    annotations: [{
+      x:'2025-06', y:1.05, xref:'x', yref:'paper',
+      text:'Training / Test', showarrow:false,
+      font:{color:'rgba(255,255,255,0.4)', size:10},
+      xanchor:'center',
+    }],
+  });
+}
+
+// ── root cause card ───────────────────────────────────────────────────────────
+function buildRcCard(c) {
+  const bullets = c.bullets.map(b => `<li>${b}</li>`).join('');
+  document.getElementById('rcCard').style.borderLeftColor = c.cat_color;
+  document.getElementById('rcCard').innerHTML = `
+    <div class="rc-header">
+      <span class="rc-badge" style="background:${c.cat_color}">${c.category}</span>
+      <span class="rc-title">${c.id} — Root Cause Summary</span>
+    </div>
+    <ul class="rc-bullets">${bullets}</ul>`;
+}
+
+// ── main showCase ─────────────────────────────────────────────────────────────
+function showCase(id) {
+  activeId = id;
+  // Update sidebar active state
+  document.querySelectorAll('.nav-card').forEach(el => el.classList.remove('active'));
+  const card = document.getElementById('nav-' + id);
+  if (card) card.classList.add('active');
+
+  const c = CASES.find(x => x.id === id);
+  if (!c) return;
+
+  buildDiagnosis(c);
+  plotUplift(c);
+  plotDeps(c);
+  plotTrain(c);
+  buildRcCard(c);
+}
+
+// ── init ──────────────────────────────────────────────────────────────────────
+buildSidebar();
+showCase(CASES[0].id);
+</script>
+</body>
+</html>

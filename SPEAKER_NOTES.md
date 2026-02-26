@@ -57,7 +57,7 @@
 - FLT asks: "How much will actually fly — and what will those aircraft burn?" Dynamic, forward-looking.
 - Step 1a: The schedule says 30 flights — the model corrects it to what will actually operate, using historical deviation patterns.
 - Step 1b: Flight minutes capture aircraft swaps. A wide-body replaced by a narrow-body burns less fuel and flies different minutes. FLT sees that; F+ doesn't.
-- Step 2: We're not applying a historical route mean to scheduled flights. We're applying a kg/flight-minute rate (by airline + aircraft type + airport) to our *predicted* capacity. If the aircraft changes, the prediction adjusts. If frequency changes, the prediction adjusts. The correction ratio fine-tunes at long horizons.
+- Step 2: We're not applying a historical route mean to scheduled flights. We're applying a kg/flight-minute rate (by airline + aircraft type + airport) to our *predicted* capacity. If the aircraft changes, the prediction adjusts. If frequency changes, the prediction adjusts. ML Calibration fine-tunes wherever the estimate needs it.
 
 ---
 
@@ -78,10 +78,12 @@
 **Key message:** Statistical rates applied to corrected capacity, with ML fine-tuning at long horizons.
 
 - Phase 1 gives us corrected departures and flight minutes. Phase 2 converts those to kg.
-- Fuel rates: recency-weighted averages of kg/departure and kg/flight-minute, grouped by airline + aircraft type + airport. More recent months count more — this handles gradual changes in aircraft fleet or fuel efficiency.
+- Fuel rates: recency-weighted averages of kg/departure and kg/flight-minute, grouped by airline + aircraft type + airport.
+- **Recency weighting:** each month's observed fuel rate is assigned a weight that decays with age — recent months count more than older ones. Concretely: if an airline switched to a more fuel-efficient aircraft variant six months ago, the old rates from two years ago don't drag the estimate back. The model naturally tracks the current fleet and operating practices without needing a manual cutoff date.
+- In this setup: we calculate kg/dep and kg/min for each airline + aircraft type + airport combination per month, then take a weighted average across months, with weights falling off for older data. The result is a rate that reflects how that airline-aircraft-airport combination is burning fuel *now*, not just historically.
 - We blend per-flight and per-minute signals. Per-minute adjusts for aircraft swaps (same flight, different aircraft = different minutes); per-flight adjusts for frequency changes.
 - Fallback chain: no history for a specific airline + aircraft + airport combination? Fall back to same airport + aircraft size, then to the global airline mean. This is how FLT handles new and seasonal routes.
-- Correction ratio (≈ 1.0): a learned nudge for when the statistical formula drifts at long horizons. Keeps the estimate calibrated without replacing the statistical backbone.
+- ML Calibration (≈ 1.0): a learned nudge applied when the statistical formula drifts. Not specific to long horizons — it can correct wherever the estimate needs it. Keeps the prediction calibrated without replacing the statistical backbone.
 - Uplift model trained only on 2025 data — tankering regulations changed fuel ordering behaviour in 2025, making earlier data unreliable as a training signal.
 
 ---
@@ -92,7 +94,8 @@
 
 - Blue (input): Published schedule (SSIM). Same starting point as F+.
 - Green (Phase 1): Two delta models — departure and flight minutes. Both correct the schedule, not replace it.
-- Yellow (Phase 2): Statistical rates (recency-weighted kg/dep and kg/min), blended and with fallback for sparse routes. Correction ratio fine-tunes at long horizons.
+- Yellow (Phase 2): Statistical rates (recency-weighted kg/dep and kg/min), blended and with fallback for sparse routes.
+- Purple (correction ratio / ML Calibration): fine-tunes the estimate wherever the formula drifts — not limited to long horizons.
 - Teal (output): Predicted uplift per airline–airport per month.
 - "The statistical formula does the heavy lifting. ML corrects the schedule and fine-tunes the edges."
 
@@ -175,10 +178,29 @@
 ## Q&A Preparation
 
 **"Why did you lose September?"**
-- F+ uses a rolling recent average (last 3 months). In September 2025, the Jun/Jul/Aug summer average happened to closely predict September's actual demand — seasonal stability between late summer and early autumn.
-- FLT was still within 2.4% in September — well within operational accuracy. It's not that we were wrong, F+ was just lucky that month.
-- Same pattern that helped F+ in September causes it to lag when the schedule shifts. October, November, December show exactly that.
-- Also: we've only seen one September in training. With a second year of data, the model will have seen two September patterns and will model the transition better.
+
+First, the margin: FLT WAPE 3.24% vs F+ WAPE 2.45% — a gap of ~2,300 t across 292M kg of actual uplift. Less than 1% of the month's volume. This is not a structural failure, it is a data coverage issue.
+
+**Root cause: recency weighting starves September of training signal.**
+
+The training window is Jan 2024 – Jun 2025. September appears exactly once: September 2024. With the 90-day exponential decay half-life used for route means, September 2024 data receives a weight of only **3.4%** relative to June 2025 (100%). The route rates that drive Phase 2 are almost entirely calibrated to spring/summer 2025.
+
+Concretely:
+
+| Month | Effective weight |
+|---|---|
+| Jun 2025 | 100% |
+| Apr 2025 | 51% |
+| Jan 2025 | 19% |
+| Sep 2024 | **3.4%** |
+
+**Phase 1 is not the problem.** Departure predictions in September were accurate to −0.66%, flight minutes to −0.95%. The schedule correction worked correctly.
+
+**Phase 2 overshoots on summer-peak routes.** FLT applies uplift rates calibrated to Jun–Aug 2025 levels to September, which is a seasonal transition month where demand falls from peak summer. The biggest contributor: EW-HAM, where FLT over-predicted by +24.9% (738 t), accounting for nearly a third of the total September gap on its own.
+
+**Why F+ happened to win.** F+'s "last 3 months" method anchors to roughly Mar–May 2025 actuals — spring months with lower uplift than peak summer. September 2025 also came in lower than summer, so F+'s spring-anchored estimate was coincidentally closer. It is not that F+ understood the seasonality — it benefited from a favourable coincidence of its lookback window.
+
+**The fix is more data, not a model change.** With September 2025 in training, the model would see two Septembers. The 2025 data point would carry near-full weight, teaching the seasonal dip directly. This is the "Built to Improve" story in practice: one more year of data makes September's pattern visible and correctable.
 
 **"How much money does this save?"**
 - At ~€700/tonne Jet-A1, 9,700 tonnes of better ordering represents ~€6.8M in fuel value more accurately predicted over 6 months at 10 airports.
