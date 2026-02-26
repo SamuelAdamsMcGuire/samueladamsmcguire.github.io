@@ -278,7 +278,7 @@ function depsTraces(byM, filtered) {
     const traces = [
       bar('Actual',    monthNames, actY,   '#4dabf7'),
       bar('Scheduled', monthNames, schedY, '#6b7fa3'),
-      bar('FLT v1',    monthNames, v1Y,    '#00d4aa'),
+      bar('FLT',    monthNames, v1Y,    '#00d4aa'),
     ];
     if (hasV2) traces.push(bar('New Model', monthNames, v2Y, '#ffd700'));
     return { traces, yTitle: 'Departures' };
@@ -297,7 +297,7 @@ function depsTraces(byM, filtered) {
     const v1W    = wByM.map(b => b && b.act > 0 ? +(b.absErrV1    / b.act * 100).toFixed(2) : null);
     const traces = [
       wapeBar('Scheduled', monthNames, schedW, '#6b7fa3'),
-      wapeBar('FLT v1',    monthNames, v1W,    '#00d4aa'),
+      wapeBar('FLT',    monthNames, v1W,    '#00d4aa'),
     ];
     if (hasV2) traces.push(wapeBar('New Model', monthNames, v1W.map(() => null), '#ffd700'));
     return { traces, yTitle: 'WAPE %' };
@@ -313,7 +313,7 @@ function minsTraces(byM, filtered) {
     const v2Y  = byM.map(b => b && b.pv2n > 0 ? toK(b.pv2) : null);
     const traces = [
       bar('Actual', monthNames, actY, '#4dabf7', 'k'),
-      bar('FLT v1', monthNames, v1Y,  '#00d4aa', 'k'),
+      bar('FLT', monthNames, v1Y,  '#00d4aa', 'k'),
     ];
     if (hasV2) traces.push(bar('New Model', monthNames, v2Y, '#ffd700', 'k'));
     return { traces, yTitle: 'Flight mins (k)' };
@@ -325,7 +325,7 @@ function minsTraces(byM, filtered) {
   } else {
     const wByM = wapeByMonth(filtered, 'act_mins_raw', null, 'pred_mins_v1_raw');
     const v1W  = wByM.map(b => b && b.act > 0 ? +(b.absErrV1 / b.act * 100).toFixed(2) : null);
-    const traces = [wapeBar('FLT v1', monthNames, v1W, '#00d4aa')];
+    const traces = [wapeBar('FLT', monthNames, v1W, '#00d4aa')];
     if (hasV2) traces.push(wapeBar('New Model', monthNames, v1W.map(() => null), '#ffd700'));
     return { traces, yTitle: 'WAPE %' };
   }
