@@ -35,3 +35,6 @@ The file `.github/workflows/build_deploy.yml` does the rest. For more informatio
 
 
 
+### Updates
+
+- added mermaid plugin
