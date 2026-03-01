@@ -327,7 +327,7 @@ timeline
 
 ### Appendix: Phase 1 — Schedule Correction Detail
 
-<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:55vh; gap:16px;">
+<div style="display:flex; flex-direction:column; align-items:center; gap:20px;">
 <p style="color:#8899aa; font-size:0.8em;">Departures &amp; flight minutes by month — filter by airline, airport, seat bin — Volumes / Abs Error / WAPE % toggle</p>
 <a href="assets/phase1_comparison.html" target="_blank"
    style="display:inline-block; padding:14px 40px; background:#00d4aa; color:#16213e;
@@ -340,7 +340,7 @@ timeline
 
 ### Appendix: Worst Case Root Cause Navigator
 
-<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:55vh; gap:16px;">
+<div style="display:flex; flex-direction:column; align-items:center; gap:20px;">
 <p style="color:#8899aa; font-size:0.8em;">6 worst routes · Uplift → Departures → Training history · Category badges · Root cause per case</p>
 <a href="assets/defense.html" target="_blank"
    style="display:inline-block; padding:14px 40px; background:#00d4aa; color:#16213e;
@@ -567,7 +567,7 @@ Without lags: WAPE rises **5.5% → 6.5%**.
 
 ### Appendix: Phase 1 Model Comparison
 
-<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:68vh; gap:16px;">
+<div style="display:flex; flex-direction:column; align-items:center; gap:20px;">
 <p style="color:#8899aa; font-size:0.8em;">5 departures variants · 5 minutes variants · delta vs direct · single vs split · full vs core · Jul–Dec 2025</p>
 <div style="display:flex; gap: 20px;">
 <a href="assets/phase1_comparison.html" target="_blank"
@@ -749,7 +749,7 @@ Neither alone matches the combination.
 
 ### Appendix: Phase 2 Model Comparison
 
-<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:68vh; gap:16px;">
+<div style="display:flex; flex-direction:column; align-items:center; gap:20px;">
 <p style="color:#8899aa; font-size:0.8em;">16 model variants · monthly WAPE by approach · formula vs ML vs production · Jul–Dec 2025</p>
 <div style="display:flex; gap: 20px;">
 <a href="assets/phase2_comparison.html" target="_blank"
