@@ -351,56 +351,6 @@ timeline
 
 ---
 
-### Appendix: Phase 2 — Approaches Tested
-
-<div style="font-size: 0.8em; margin-bottom: 0.6em;">
-
-- **Baselines** — seasonal mean (Dummy) and simple Ridge regression to anchor the scale
-- **ML direct** — HistGradientBoosting predicts kg uplift directly from Phase 1 schedule outputs
-- **ML ratio** — model predicts a *correction ratio* on top of a route-mean base; HL variants use exponentially-weighted means (half-life 200 days)
-- **Formula (no ML)** — pure `route_mean × predicted deps/mins`; no model trained; simple vs HL-weighted
-
-Key finding: **formula-only variants beat all ML ratio models** — Phase 1 already captures most of the signal.
-
-</div>
-
-<div style="font-size: 0.72em;">
-
-| Approach | Variants | Best WAPE |
-|---|---|---|
-| Production FLT | Phase 3+4, HL blend + correction | **3.43%** |
-| F+ benchmark | 3-month route avg | 3.9% |
-| Formula HL | blend HL, deps HL, mins HL | 4.3–4.7% |
-| ML ratio HL | Ratio Blend HL | 5.1% |
-| Formula simple | blend, mins, deps | 5.2% |
-| ML ratio simple | Ratio Blend, Log Ratio, Ratio (dep) | 6.0–6.3% |
-| ML direct | Hist Simple, Hist Full | 6.7–7.5% |
-| Baselines | Ridge Simple, Ridge Full, Dummy | 9–120% |
-
-</div>
-
----
-
-### Appendix: Phase 2 Model Comparison
-
-<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:42vh; gap:16px;">
-<p style="color:#8899aa; font-size:0.8em;">16 model variants · monthly WAPE by approach · formula vs ML vs production · Jul–Dec 2025</p>
-<div style="display:flex; gap: 20px;">
-<a href="assets/phase2_comparison.html" target="_blank"
-   style="display:inline-block; padding:14px 36px; background:#00d4aa; color:#16213e;
-          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
-  Open Comparison Chart ↗
-</a>
-<a href="assets/comparison_drilldown.html" target="_blank"
-   style="display:inline-block; padding:14px 36px; background:#756bb1; color:#fff;
-          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
-  Open Per-Route Drilldown ↗
-</a>
-</div>
-</div>
-
----
-
 ### Appendix: Phase 1 — Approaches Tested
 
 <div style="font-size: 0.8em; margin-bottom: 0.6em;">
@@ -432,31 +382,6 @@ Key finding: **formula-only variants beat all ML ratio models** — Phase 1 alre
 | Delta no split | 7.4% | 4.8 | 6.2 | 6.3 | 6.6 | 9.4 | 18.2 |
 | Delta split no lags | 6.5% | 3.6 | 5.5 | 5.6 | 5.9 | 9.2 | 19.0 |
 
-</div>
-
----
-
-### Appendix: Phase 1 Model Comparison
-
-<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:42vh; gap:16px;">
-<p style="color:#8899aa; font-size:0.8em;">5 departures variants · 5 minutes variants · delta vs direct · single vs split · full vs core · Jul–Dec 2025</p>
-<div style="display:flex; gap: 20px;">
-<a href="assets/phase1_comparison.html" target="_blank"
-   style="display:inline-block; padding:14px 36px; background:#4e9af1; color:#fff;
-          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
-  Open Combined Chart ↗
-</a>
-<a href="assets/phase1_comparison_deps.html" target="_blank"
-   style="display:inline-block; padding:14px 36px; background:#00d4aa; color:#16213e;
-          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
-  Departures Only ↗
-</a>
-<a href="assets/phase1_comparison_mins.html" target="_blank"
-   style="display:inline-block; padding:14px 36px; background:#756bb1; color:#fff;
-          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
-  Minutes Only ↗
-</a>
-</div>
 </div>
 
 ---
@@ -615,6 +540,61 @@ Without lags: WAPE rises **5.5% → 6.5%**.
 
 ---
 
+### Appendix: Phase 1 Model Comparison
+
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:42vh; gap:16px;">
+<p style="color:#8899aa; font-size:0.8em;">5 departures variants · 5 minutes variants · delta vs direct · single vs split · full vs core · Jul–Dec 2025</p>
+<div style="display:flex; gap: 20px;">
+<a href="assets/phase1_comparison.html" target="_blank"
+   style="display:inline-block; padding:14px 36px; background:#4e9af1; color:#fff;
+          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
+  Open Combined Chart ↗
+</a>
+<a href="assets/phase1_comparison_deps.html" target="_blank"
+   style="display:inline-block; padding:14px 36px; background:#00d4aa; color:#16213e;
+          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
+  Departures Only ↗
+</a>
+<a href="assets/phase1_comparison_mins.html" target="_blank"
+   style="display:inline-block; padding:14px 36px; background:#756bb1; color:#fff;
+          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
+  Minutes Only ↗
+</a>
+</div>
+</div>
+
+---
+
+### Appendix: Phase 2 — Approaches Tested
+
+<div style="font-size: 0.8em; margin-bottom: 0.6em;">
+
+- **Baselines** — seasonal mean (Dummy) and simple Ridge regression to anchor the scale
+- **ML direct** — HistGradientBoosting predicts kg uplift directly from Phase 1 schedule outputs
+- **ML ratio** — model predicts a *correction ratio* on top of a route-mean base; HL variants use exponentially-weighted means (half-life 200 days)
+- **Formula (no ML)** — pure `route_mean × predicted deps/mins`; no model trained; simple vs HL-weighted
+
+Key finding: **formula-only variants beat all ML ratio models** — Phase 1 already captures most of the signal.
+
+</div>
+
+<div style="font-size: 0.72em;">
+
+| Approach | Variants | Best WAPE |
+|---|---|---|
+| Production FLT | Phase 3+4, HL blend + correction | **3.43%** |
+| F+ benchmark | 3-month route avg | 3.9% |
+| Formula HL | blend HL, deps HL, mins HL | 4.3–4.7% |
+| ML ratio HL | Ratio Blend HL | 5.1% |
+| Formula simple | blend, mins, deps | 5.2% |
+| ML ratio simple | Ratio Blend, Log Ratio, Ratio (dep) | 6.0–6.3% |
+| ML direct | Hist Simple, Hist Full | 6.7–7.5% |
+| Baselines | Ridge Simple, Ridge Full, Dummy | 9–120% |
+
+</div>
+
+---
+
 ### Appendix: Fuel Uplift — Step 1: The Formula
 
 <div style="font-size:0.84em; margin-bottom:0.6em;">
@@ -701,4 +681,24 @@ The two-step design separates two kinds of knowledge:
 
 Neither alone matches the combination.
 
+</div>
+
+---
+
+### Appendix: Phase 2 Model Comparison
+
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:42vh; gap:16px;">
+<p style="color:#8899aa; font-size:0.8em;">16 model variants · monthly WAPE by approach · formula vs ML vs production · Jul–Dec 2025</p>
+<div style="display:flex; gap: 20px;">
+<a href="assets/phase2_comparison.html" target="_blank"
+   style="display:inline-block; padding:14px 36px; background:#00d4aa; color:#16213e;
+          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
+  Open Comparison Chart ↗
+</a>
+<a href="assets/comparison_drilldown.html" target="_blank"
+   style="display:inline-block; padding:14px 36px; background:#756bb1; color:#fff;
+          font-size:1.05em; font-weight:bold; border-radius:6px; text-decoration:none;">
+  Open Per-Route Drilldown ↗
+</a>
+</div>
 </div>
