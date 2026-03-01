@@ -3,7 +3,7 @@ title: "FLT: Smarter Fuel Uplift Forecasting"
 subtitle: DataTactics GmbH
 date: February 2026
 theme: moon
-transition: concave
+transition: slide
 highlight-style: breezeDark
 progress: true
 slideNumber: true
@@ -351,123 +351,155 @@ timeline
 
 ---
 
-### Appendix: Phase 1 — Approaches Tested
+### Appendix: Phase 1 — What We Tested
 
-<div style="font-size: 0.8em; margin-bottom: 0.6em;">
+<div style="font-size:0.84em;">
 
-- **Delta model** — predicts the *correction* to the schedule (`actual − scheduled`); final prediction = `scheduled + Δ`. Both models use this approach.
-- **Direct model** — predicts the actual value outright, ignoring the schedule as a baseline
-- **Horizon split** — separate models for short (1–90d) and mid (91–220d) forecasts; captures that near-term and long-range predictions have different dynamics
-- **No-split** — single unified model across all horizons (minutes only, since departures currently uses single)
-- **No lags** — removes all lag/rolling features; isolates how much historical patterns help
-- **Core only** — airline + airport + seat_bin + scheduled + month + days_to_ops; the absolute minimum
-
-</div>
-
-<div style="font-size: 0.72em;">
-
-**Departures** — WAPE on predicted vs actual departures (Jul–Dec 2025):
-
-| Variant | Overall | Jul | Aug | Sep | Oct | Nov | Dec |
-|---|---|---|---|---|---|---|---|
-| **Delta split short+mid** | **6.1%** | 2.6 | 3.6 | 2.6 | 3.8 | 14.4 | 20.0 |
-| Delta full (current — single) | 6.4% | 3.0 | 4.0 | 3.2 | 4.3 | 13.8 | 20.8 |
-| Delta no lags | 7.2% | 3.3 | 4.3 | 3.6 | 4.4 | 15.3 | 21.4 |
-
-**Minutes** — WAPE on predicted vs actual flight minutes:
-
-| Variant | Overall | Jul | Aug | Sep | Oct | Nov | Dec |
-|---|---|---|---|---|---|---|---|
-| **Delta split full (current)** | **5.5%** | 4.1 | 5.3 | 4.7 | 7.7 | 11.1 | 15.2 |
-| Delta no split | 7.4% | 4.8 | 6.2 | 6.3 | 6.6 | 9.4 | 18.2 |
-| Delta split no lags | 6.5% | 3.6 | 5.5 | 5.6 | 5.9 | 9.2 | 19.0 |
+- **Delta model** — predict the *correction* (`actual − scheduled`); final = `scheduled + Δ`
+- **Direct model** — predict the actual value outright, ignoring the schedule
+- **Horizon split** — separate models for short (1–90d) and mid (91–220d) horizons
+- **No-split** — one model for all horizons (tested for minutes; departures already uses this)
+- **No lags** — removes all lag features; shows how much historical patterns contribute
+- **Core only** — airline + airport + seat bin + scheduled + month + days_to_ops only
 
 </div>
 
 ---
 
-### Appendix: Departures — The Delta Approach
+### Appendix: Phase 1 — Results
 
-<div style="font-size:0.84em;">
+<div style="font-size:0.78em;">
 
-The schedule is our best starting point. We don't predict departures from scratch — we predict **how far off the schedule will be**, then apply that correction.
+**Departures** — WAPE vs actual departures, Jul–Dec 2025:
+
+| Variant | Overall | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|
+| Delta split short+mid | 6.1% | 2.6 | 3.6 | 2.6 | 3.8 | 14.4 | 20.0 |
+| **Delta single (current)** | **6.4%** | 3.0 | 4.0 | 3.2 | 4.3 | 13.8 | 20.8 |
+| Delta no lags | 7.2% | 3.3 | 4.3 | 3.6 | 4.4 | 15.3 | 21.4 |
+
+**Minutes** — WAPE vs actual flight minutes, Jul–Dec 2025:
+
+| Variant | Overall | Jul | Aug | Sep | Oct | Nov | Dec |
+|---|---|---|---|---|---|---|---|
+| **Delta split (current)** | **5.5%** | 4.1 | 5.3 | 4.7 | 7.7 | 11.1 | 15.2 |
+| Delta split no lags | 6.5% | 3.6 | 5.5 | 5.6 | 5.9 | 9.2 | 19.0 |
+| Delta no split | 7.4% | 4.8 | 6.2 | 6.3 | 6.6 | 9.4 | 18.2 |
 
 </div>
 
-<div style="background:#0d1f2d; border-left:4px solid #00d4aa; padding:10px 16px; margin:12px 0; font-family:monospace; font-size:0.88em;">
+---
+
+### Appendix: Departures — Predict the Correction
+
+<div style="font-size:0.84em;">
+
+The schedule is our best starting point. We don't predict departures from scratch — we predict **how far off the schedule will be**, then add that correction on top.
+
+</div>
+
+<div style="background:#0d1f2d; border-left:4px solid #00d4aa; padding:10px 16px; margin:14px 0; font-family:monospace; font-size:0.88em;">
 predicted departures = scheduled departures + Δ
 </div>
 
 <div style="font-size:0.84em;">
 
 - Schedule says **14 flights**, model expects **2 cancellations** → predict **12**
-- Route chronically over-promises → delta is always negative; model learns this
-- Extra charters regularly added → delta is positive; model learns this too
-
-**Why delta beats predicting from scratch:**
-The schedule already captures route structure, airline intent, and seasonality.
-We only need to learn the *gap* — a far smaller and more stable signal.
+- Route chronically over-promises → delta is consistently negative; model learns this
+- Extra charters regularly get added → delta is positive; model learns this too
 
 </div>
 
 ---
 
-### Appendix: Departures — One Model for All Horizons
+### Appendix: Departures — Why Delta Works
 
 <div style="font-size:0.84em;">
 
-A single model covers all forecast horizons (1–220 days ahead).
+**Why predict the gap rather than the absolute number?**
 
-We tested a short/mid split like minutes — **6.1% vs 6.4% WAPE**.
-Not enough gain to justify two models for departures.
+The published schedule already encodes route structure, airline intent, and seasonality.
+We only need to learn the *correction* — a much smaller and more stable signal.
+This generalises far better across routes with sparse history.
 
 </div>
 
 <div style="font-size:0.84em; margin-top:1em;">
 
-**Features used:**
+**One model or two?**
 
-| Feature | Role |
-|---|---|
-| Scheduled departures | Starting baseline |
-| Airline | Each airline over/under-delivers differently |
-| Airport | Some airports are more disrupted than others |
-| Seat bin | Wide-body vs narrow-body — different cancellation rates |
-| `days_to_ops` | Accuracy degrades with distance; model adjusts by horizon |
-| Month | Summer schedules over-promise more than winter |
-| Lag corrections — 7 / 14 / 28 / 90 / 180 / 365 days | Correction patterns at this route and horizon |
-
-Lags are the key differentiator — without them WAPE rises **6.4% → 7.2%**.
+We tested a short/mid horizon split identical to the minutes approach.
+Result: **6.1% vs 6.4% WAPE** — marginal improvement, not worth the added complexity.
+A single model covering 1–220 days ahead works well for departures.
 
 </div>
 
 ---
 
-### Appendix: Flight Minutes — Why Departures Aren't Enough
+### Appendix: Departures — Features
+
+<div style="font-size:0.84em;">
+
+| Feature | Role |
+|---|---|
+| Scheduled departures | Starting baseline |
+| Airline | Each airline over/under-delivers on its schedule differently |
+| Airport | Disruption levels vary by airport |
+| Seat bin | Wide-body vs narrow-body have different cancellation rates |
+| `days_to_ops` | Accuracy degrades with forecast distance; model adjusts |
+| Month | Seasonal patterns — summer over-promises more than winter |
+| Lag corrections — 7 / 14 / 28 / 90 / 180 / 365 days | Correction patterns at this route and horizon in history |
+
+Without lag features, WAPE rises from **6.4% → 7.2%**.
+The historical pattern of corrections is real, repeating signal.
+
+</div>
+
+---
+
+### Appendix: Flight Minutes — Why Not Just Departures
 
 <div style="font-size:0.84em;">
 
 Predicted departures alone cannot estimate fuel — **duration matters**.
 
-An A380 long-haul burns more fuel than five A320 short hops.
-We need to know *how long the aircraft is in the air*, not just how many take off.
+An A380 long-haul sector burns more fuel than five A320 short hops, even with the same departure count.
+We need to know *how long the aircraft is in the air*.
 
 </div>
 
-<div style="background:#0d1f2d; border-left:4px solid #756bb1; padding:10px 16px; margin:12px 0; font-family:monospace; font-size:0.88em;">
+<div style="background:#0d1f2d; border-left:4px solid #756bb1; padding:10px 16px; margin:14px 0; font-family:monospace; font-size:0.88em;">
 predicted flight minutes = scheduled flight minutes + Δ
 </div>
 
 <div style="font-size:0.84em;">
 
-Same delta approach as departures — predict the *correction*, not the absolute value.
+Same delta approach — predict the correction to the schedule, not the absolute value.
 
-Minutes captures two things departures cannot:
+</div>
 
-- **Aircraft size** — seat bin tells us the family; minutes tell us how far it flew
-- **Routing changes** — a direct-to-connecting swap changes minutes even if departure count is unchanged
+---
 
-Both predictions (departures + minutes) feed the fuel formula in Phase 2.
+### Appendix: Flight Minutes — What Minutes Adds
+
+<div style="font-size:0.84em;">
+
+Minutes captures two things that departure count cannot:
+
+- **Aircraft size** — seat bin identifies the family; minutes tell us how far it actually flew
+- **Routing changes** — a swap from direct to connecting changes flight time even if the number of departures stays the same
+
+Together, predicted departures and predicted minutes feed the fuel rate formula in Phase 2:
+
+</div>
+
+<div style="background:#0d1f2d; border-left:4px solid #f59e0b; padding:10px 16px; margin:14px 0; font-family:monospace; font-size:0.88em;">
+base_fuel = (kg_per_dep × deps) + (kg_per_min × mins)
+</div>
+
+<div style="font-size:0.84em;">
+
+Without the minutes signal, this formula collapses to a simple per-departure rate — far less accurate.
 
 </div>
 
@@ -477,14 +509,15 @@ Both predictions (departures + minutes) feed the fuel formula in Phase 2.
 
 <div style="font-size:0.84em; margin-bottom:0.6em;">
 
-Unlike departures, minutes uses **two separate models**.
-This was the single biggest accuracy gain in Phase 1: **7.4% → 5.5% WAPE**.
+Unlike departures, minutes uses **two separate models** — the single biggest accuracy gain in Phase 1.
+
+WAPE improvement: **7.4% → 5.5%** on unseen Jul–Dec 2025 data.
 
 </div>
 
 <div style="display:flex; gap:18px; font-size:0.82em;">
 
-<div style="flex:1; background:#1a2a3a; border-radius:8px; padding:12px 16px;">
+<div style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px;">
 
 **Short horizon — 1 to 90 days**
 
@@ -495,22 +528,16 @@ This was the single biggest accuracy gain in Phase 1: **7.4% → 5.5% WAPE**.
 
 </div>
 
-<div style="flex:1; background:#1a2a3a; border-radius:8px; padding:12px 16px;">
+<div style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px;">
 
 **Mid horizon — 91 to 220 days**
 
-- Schedule still highly speculative
+- Schedule is still highly speculative
 - Airline planning changes are common
 - Corrections are larger and more volatile
 - Model learns to discount the schedule more
 
 </div>
-
-</div>
-
-<div style="font-size:0.84em; margin-top:12px;">
-
-One model averaging both regimes handles neither well — the split is necessary.
 
 </div>
 
@@ -520,20 +547,18 @@ One model averaging both regimes handles neither well — the split is necessary
 
 <div style="font-size:0.84em;">
 
-Both models (short + mid) use the same features — trained and applied on their respective `days_to_ops` range only.
+Both models (short + mid) use the same feature set, trained and applied within their `days_to_ops` range.
 
 | Feature | Role |
 |---|---|
 | Scheduled flight minutes | Starting baseline |
-| Airline + airport + seat bin | Route and aircraft-specific patterns |
+| Airline + airport + seat bin | Route and aircraft identity |
 | `days_to_ops` | Horizon within the band (1–90 or 91–220) |
 | Month | Seasonal routing shifts |
-| Lag departure corrections — 7 / 14 / 28 / 90 / 180 / 365 days | Past departure accuracy at this route and horizon |
-| Lag minute corrections — 7 / 14 / 28 / 90 / 180 / 365 days | Past minute accuracy at this route and horizon |
+| Lag departure corrections — 7 / 14 / 28 / 90 / 180 / 365 days | Past departure accuracy at this route + horizon |
+| Lag minute corrections — 7 / 14 / 28 / 90 / 180 / 365 days | Past minute accuracy at this route + horizon |
 
-Lags are grouped by route **and** `days_to_ops` band — the model separately learns
-"60 days out this route runs short" vs "150 days out it over-extends".
-
+Lags are grouped by route **and** `days_to_ops` band — the model learns horizon-specific patterns.
 Without lags: WAPE rises **5.5% → 6.5%**.
 
 </div>
@@ -542,7 +567,7 @@ Without lags: WAPE rises **5.5% → 6.5%**.
 
 ### Appendix: Phase 1 Model Comparison
 
-<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:42vh; gap:16px;">
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:68vh; gap:16px;">
 <p style="color:#8899aa; font-size:0.8em;">5 departures variants · 5 minutes variants · delta vs direct · single vs split · full vs core · Jul–Dec 2025</p>
 <div style="display:flex; gap: 20px;">
 <a href="assets/phase1_comparison.html" target="_blank"
@@ -565,60 +590,83 @@ Without lags: WAPE rises **5.5% → 6.5%**.
 
 ---
 
-### Appendix: Phase 2 — Approaches Tested
+### Appendix: Phase 2 — What We Tested
 
-<div style="font-size: 0.8em; margin-bottom: 0.6em;">
+<div style="font-size:0.84em;">
 
-- **Baselines** — seasonal mean (Dummy) and simple Ridge regression to anchor the scale
-- **ML direct** — HistGradientBoosting predicts kg uplift directly from Phase 1 schedule outputs
-- **ML ratio** — model predicts a *correction ratio* on top of a route-mean base; HL variants use exponentially-weighted means (half-life 200 days)
-- **Formula (no ML)** — pure `route_mean × predicted deps/mins`; no model trained; simple vs HL-weighted
-
-Key finding: **formula-only variants beat all ML ratio models** — Phase 1 already captures most of the signal.
-
-</div>
-
-<div style="font-size: 0.72em;">
-
-| Approach | Variants | Best WAPE |
-|---|---|---|
-| Production FLT | Phase 3+4, HL blend + correction | **3.43%** |
-| F+ benchmark | 3-month route avg | 3.9% |
-| Formula HL | blend HL, deps HL, mins HL | 4.3–4.7% |
-| ML ratio HL | Ratio Blend HL | 5.1% |
-| Formula simple | blend, mins, deps | 5.2% |
-| ML ratio simple | Ratio Blend, Log Ratio, Ratio (dep) | 6.0–6.3% |
-| ML direct | Hist Simple, Hist Full | 6.7–7.5% |
-| Baselines | Ridge Simple, Ridge Full, Dummy | 9–120% |
+- **Baselines** — seasonal mean (Dummy) and Ridge regression; anchor for scale
+- **ML direct** — HistGradientBoosting predicts kg uplift directly from Phase 1 outputs
+- **ML ratio** — model predicts a *correction ratio* on a route-mean base; HL variants use exponentially-weighted means (half-life 200 days)
+- **Formula only** — pure `route_mean × predicted deps/mins`; no model trained; simple vs HL-weighted
 
 </div>
 
 ---
 
-### Appendix: Fuel Uplift — Step 1: The Formula
+### Appendix: Phase 2 — Key Finding and Results
 
 <div style="font-size:0.84em; margin-bottom:0.6em;">
 
-With corrected departures and minutes in hand, we apply a statistical base formula:
+**Formula-only variants beat all pure ML ratio models** — Phase 1 already captures most of the signal.
+Production FLT beats both by combining the formula with a learned correction.
 
 </div>
 
-<div style="background:#0d1f2d; border-left:4px solid #f59e0b; padding:12px 16px; margin:8px 0; font-family:monospace; font-size:0.88em;">
+<div style="font-size:0.8em;">
+
+| Approach | Best WAPE |
+|---|---|
+| **Production FLT** (formula + ML correction) | **3.43%** |
+| F+ benchmark | 3.9% |
+| Formula HL (blend, deps, mins) | 4.3–4.7% |
+| ML ratio HL | 5.1% |
+| Formula simple | 5.2% |
+| ML ratio simple | 6.0–6.3% |
+| ML direct | 6.7–7.5% |
+| Baselines | 9–120% |
+
+</div>
+
+---
+
+### Appendix: Fuel Uplift — Step 1: The Base Formula
+
+<div style="font-size:0.84em; margin-bottom:0.4em;">
+
+With corrected departures and minutes in hand, we apply a statistical base formula.
+We know historically, per route and aircraft type, how much fuel was uplifted per departure and per flight minute.
+
+</div>
+
+<div style="background:#0d1f2d; border-left:4px solid #f59e0b; padding:12px 16px; margin:10px 0; font-family:monospace; font-size:0.88em;">
 base = (kg_per_dep × predicted_deps)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ (kg_per_min × predicted_mins)
 </div>
 
 <div style="font-size:0.84em;">
 
-- Rates are computed per **airline + airport + aircraft type**
-- Uses an **exponentially-weighted average** (half-life ≈ 200 days) — recent data counts more
-- Separate `kg_per_dep` and `kg_per_min` rates capture both fixed and variable fuel costs
+- Rates computed per **airline + airport + aircraft type**
+- **Exponentially-weighted average** (half-life ≈ 200 days) — recent months count more
+- `kg_per_dep` and `kg_per_min` separately capture fixed and variable fuel costs
 
-**This formula is stronger than it looks.**
-In our comparison, it outperformed most trained ML models.
-The reason: Phase 1 already fixes the schedule inputs — the rates capture the rest.
+</div>
 
-Formula alone achieves **4.3–5.2% WAPE**. Production adds one more step.
+---
+
+### Appendix: Fuel Uplift — Why the Formula Is Strong
+
+<div style="font-size:0.84em;">
+
+This formula looks simple — but in our comparison it outperformed most trained ML models.
+
+**Why?**
+
+Phase 1 already corrects the schedule inputs (departures and minutes).
+With accurate inputs, the per-route fuel rates capture most of the remaining variation.
+The formula is physics-grounded: more flying always means more fuel.
+
+Formula alone achieves **4.3–5.2% WAPE** on unseen data.
+Production FLT adds one more step to close the remaining gap.
 
 </div>
 
@@ -628,25 +676,43 @@ Formula alone achieves **4.3–5.2% WAPE**. Production adds one more step.
 
 <div style="font-size:0.84em; margin-bottom:0.4em;">
 
-The formula drifts when conditions change — new aircraft type, new route, or unusual disruption.
-We train a model to predict *how wrong the formula is* and correct it.
+The formula drifts when conditions change — a new aircraft type, a new route, or unusual disruption.
+We train a model to predict *how wrong the formula is* and apply a correction ratio.
 
 </div>
 
-<div style="background:#0d1f2d; border-left:4px solid #00d4aa; padding:10px 16px; margin:8px 0; font-family:monospace; font-size:0.88em;">
-ratio = actual_uplift ÷ formula_base &nbsp; ← learned from history<br>
-final = formula_base × predicted_ratio
+<div style="background:#0d1f2d; border-left:4px solid #00d4aa; padding:10px 16px; margin:10px 0; font-family:monospace; font-size:0.88em;">
+ratio &nbsp;= actual_uplift ÷ formula_base &nbsp;← learned from history<br>
+final &nbsp;= formula_base × predicted_ratio
 </div>
 
 <div style="font-size:0.84em; margin-top:0.6em;">
 
-| Ratio | What it means |
+| Ratio | Meaning |
 |---|---|
-| 1.0 | Formula was right — no change |
+| 1.0 | Formula was right — no adjustment |
 | 0.9 | Formula 10% too high — model pulls down |
 | 1.1 | Formula 10% too low — model nudges up |
 
-**Features:** predicted deps + mins, airline + airport + seat bin, `days_to_ops`, month, route mean uplift.
+</div>
+
+---
+
+### Appendix: Fuel Uplift — Correction Model Features
+
+<div style="font-size:0.84em;">
+
+The correction model learns from historical mismatches between the formula and actual uplifts.
+It picks up signals the formula cannot — e.g. "this airline in summer consistently loads heavier than rates suggest".
+
+| Feature | Role |
+|---|---|
+| Predicted departures | Activity volume |
+| Predicted flight minutes | Duration signal |
+| Airline + airport + seat bin | Route-specific bias |
+| `days_to_ops` | Accuracy degrades further out |
+| Month | Seasonal loading differences |
+| Route mean uplift | Context on the base estimate's scale |
 
 </div>
 
@@ -654,13 +720,9 @@ final = formula_base × predicted_ratio
 
 ### Appendix: Fuel Uplift — Results
 
-<div style="font-size:0.84em; margin-bottom:0.8em;">
+<div style="font-size:0.84em; margin-bottom:0.6em;">
 
-The ML correction step adds ~**0.9 percentage points** over the formula alone.
-
-</div>
-
-<div style="font-size:0.84em;">
+The ML correction adds ~**0.9 percentage points** over the formula alone.
 
 | Method | WAPE (Jul–Dec 2025) |
 |---|---|
@@ -672,12 +734,12 @@ The ML correction step adds ~**0.9 percentage points** over the formula alone.
 
 </div>
 
-<div style="font-size:0.84em; margin-top:0.8em;">
+<div style="font-size:0.84em;">
 
 The two-step design separates two kinds of knowledge:
 
 - The **formula** captures stable, physics-based relationships (more flying = more fuel)
-- The **ML model** captures soft, context-dependent drift the formula can't see
+- The **ML model** captures context-dependent drift the formula cannot see
 
 Neither alone matches the combination.
 
@@ -687,7 +749,7 @@ Neither alone matches the combination.
 
 ### Appendix: Phase 2 Model Comparison
 
-<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:42vh; gap:16px;">
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:68vh; gap:16px;">
 <p style="color:#8899aa; font-size:0.8em;">16 model variants · monthly WAPE by approach · formula vs ML vs production · Jul–Dec 2025</p>
 <div style="display:flex; gap: 20px;">
 <a href="assets/phase2_comparison.html" target="_blank"
