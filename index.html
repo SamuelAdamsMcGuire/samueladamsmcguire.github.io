@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.3.1/dist/reset.css">
-  <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.3.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <style>
     .reveal .sourceCode {  /* see #7635 */
       overflow: visible;
@@ -29,7 +29,7 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.3.1/dist/theme/moon.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/moon.css" id="theme">
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -176,8 +176,8 @@ leading to growing errors the further out the forecast.</p>
 <tr>
 <td style="text-align: right;"><strong>2</strong></td>
 <td>Recency-weighted rates + correction ratio</td>
-<td>kg/flight-min by airline + aircraft type + airport; ratio nudges at
-long horizons</td>
+<td>kg/flight-min by airline + seat bin + airport; ratio nudges at long
+horizons</td>
 </tr>
 </tbody>
 </table>
@@ -257,7 +257,7 @@ it.</strong></p>
 <div style="font-size: 0.78em; margin-top: 1.2em; color: #aaa;">
 <p>Uplift model trained on <strong>2025 data</strong> · Schedule
 correction trained on <strong>Jan 2024 – Jun 2025</strong> · Grouped by
-airline + aircraft type + departure airport</p>
+airline + seat bin + departure airport</p>
 </div>
 </section>
 <section id="the-flt-pipeline" class="slide level3">
@@ -724,36 +724,42 @@ style="background:#0d1f2d; border-left:4px solid #f59e0b; padding:10px 16px; mar
 per-departure rate — far less accurate.</p>
 </div>
 </section>
-<section id="appendix-flight-minutes-short-vs-mid-horizon-split"
-class="slide level3">
-<h3>Appendix: Flight Minutes — Short vs Mid Horizon Split</h3>
+<section id="appendix-phase-1-why-horizon-matters" class="slide level3">
+<h3>Appendix: Phase 1 — Why Horizon Matters</h3>
 <div style="font-size:0.84em; margin-bottom:0.6em;">
-<p>Unlike departures, minutes uses <strong>two separate models</strong>
-— the single biggest accuracy gain in Phase 1.</p>
-<p>WAPE improvement: <strong>7.4% → 5.5%</strong> on unseen Jul–Dec 2025
-data.</p>
+<p>A schedule published <strong>10 days out</strong> looks very
+different from one published <strong>6 months out</strong>. A single
+model trained on all horizons at once must compromise — it can’t fully
+capture both regimes. The solution: <strong>separate models</strong> for
+short and mid horizons, each trained on its own correction patterns.</p>
 </div>
 <div style="display:flex; gap:18px; font-size:0.82em;">
 <div
-style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px;">
+style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px; border-top:3px solid #4e9af1;">
 <p><strong>Short horizon — 1 to 90 days</strong></p>
 <ul>
 <li>Operational decisions mostly finalised</li>
-<li>Swaps and cancellations partially confirmed</li>
-<li>Corrections are small and predictable</li>
-<li>Model learns tight, low-variance adjustments</li>
+<li>Swaps and cancellations at least partially confirmed</li>
+<li>Schedule error is small and predictable</li>
+<li>Model learns tight, low-variance corrections</li>
 </ul>
 </div>
 <div
-style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px;">
+style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px; border-top:3px solid #f59e0b;">
 <p><strong>Mid horizon — 91 to 220 days</strong></p>
 <ul>
-<li>Schedule is still highly speculative</li>
-<li>Airline planning changes are common</li>
-<li>Corrections are larger and more volatile</li>
-<li>Model learns to discount the schedule more</li>
+<li>Schedule is still speculative; planning changes are common</li>
+<li>Aircraft swaps and charter additions not yet locked in</li>
+<li>Schedule error is larger and more volatile</li>
+<li>Model learns to discount the schedule more aggressively</li>
 </ul>
 </div>
+</div>
+<div style="font-size:0.82em; margin-top:0.9em;">
+<p><code>days_to_ops</code> is the key feature that drives this: the
+model learns how much schedule trust to assign at every point in the
+forecast window. Splitting at day 90 lets each model specialise —
+confirmed in testing for both departures and minutes.</p>
 </div>
 </section>
 <section id="appendix-flight-minutes-features" class="slide level3">
@@ -903,8 +909,8 @@ class="slide level3">
 <h3>Appendix: Fuel Uplift — Step 1: The Base Formula</h3>
 <div style="font-size:0.84em; margin-bottom:0.4em;">
 <p>With corrected departures and minutes in hand, we apply a statistical
-base formula. We know historically, per route and aircraft type, how
-much fuel was uplifted per departure and per flight minute.</p>
+base formula. We know historically, per airline, airport, and seat bin,
+how much fuel was uplifted per departure and per flight minute.</p>
 </div>
 <div
 style="background:#0d1f2d; border-left:4px solid #f59e0b; padding:12px 16px; margin:10px 0; font-family:monospace; font-size:0.88em;">
@@ -913,8 +919,8 @@ predicted_mins)</p>
 </div>
 <div style="font-size:0.84em;">
 <ul>
-<li>Rates computed per <strong>airline + airport + aircraft
-type</strong></li>
+<li>Rates computed per <strong>airline + airport + seat
+bin</strong></li>
 <li><strong>Exponentially-weighted average</strong> (half-life ≈ 200
 days) — recent months count more</li>
 <li><code>kg_per_dep</code> and <code>kg_per_min</code> separately
@@ -1089,12 +1095,12 @@ Open Per-Route Drilldown ↗ </a></p>
     </div>
   </div>
 
-  <script src="https://unpkg.com/reveal.js@4.3.1/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
 
   <!-- reveal.js plugins -->
-  <script src="https://unpkg.com/reveal.js@4.3.1/plugin/notes/notes.js"></script>
-  <script src="https://unpkg.com/reveal.js@4.3.1/plugin/search/search.js"></script>
-  <script src="https://unpkg.com/reveal.js@4.3.1/plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/search/search.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/zoom/zoom.js"></script>
 
   <script>
 
@@ -1148,7 +1154,7 @@ Open Per-Route Drilldown ↗ </a></p>
         disableLayout: false,
 
         // Vertical centering of slides
-        center: true,
+        center: false,
 
         // Enables touch navigation on devices with touch input
         touch: true,

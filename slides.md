@@ -100,7 +100,7 @@ When the schedule changes, the historical average doesn't adjust — leading to 
 |---:|---|---|
 | **1a** | Departure delta model | The schedule is a baseline — correct it, don't replace it |
 | **1b** | Flight-minutes delta model | Captures aircraft swaps and frequency changes |
-| **2** | Recency-weighted rates + correction ratio | kg/flight-min by airline + aircraft type + airport; ratio nudges at long horizons |
+| **2** | Recency-weighted rates + correction ratio | kg/flight-min by airline + seat bin + airport; ratio nudges at long horizons |
 
 </div>
 
@@ -159,7 +159,7 @@ The schedule is the baseline — the models learn **to adjust it.**
 
 <div style="font-size: 0.78em; margin-top: 1.2em; color: #aaa;">
 
-Uplift model trained on **2025 data** · Schedule correction trained on **Jan 2024 – Jun 2025** · Grouped by airline + aircraft type + departure airport
+Uplift model trained on **2025 data** · Schedule correction trained on **Jan 2024 – Jun 2025** · Grouped by airline + seat bin + departure airport
 
 </div>
 
@@ -505,39 +505,46 @@ Without the minutes signal, this formula collapses to a simple per-departure rat
 
 ---
 
-### Appendix: Flight Minutes — Short vs Mid Horizon Split
+### Appendix: Phase 1 — Why Horizon Matters
 
 <div style="font-size:0.84em; margin-bottom:0.6em;">
 
-Unlike departures, minutes uses **two separate models** — the single biggest accuracy gain in Phase 1.
-
-WAPE improvement: **7.4% → 5.5%** on unseen Jul–Dec 2025 data.
+A schedule published **10 days out** looks very different from one published **6 months out**.
+A single model trained on all horizons at once must compromise — it can't fully capture both regimes.
+The solution: **separate models** for short and mid horizons, each trained on its own correction patterns.
 
 </div>
 
 <div style="display:flex; gap:18px; font-size:0.82em;">
 
-<div style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px;">
+<div style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px; border-top:3px solid #4e9af1;">
 
 **Short horizon — 1 to 90 days**
 
 - Operational decisions mostly finalised
-- Swaps and cancellations partially confirmed
-- Corrections are small and predictable
-- Model learns tight, low-variance adjustments
+- Swaps and cancellations at least partially confirmed
+- Schedule error is small and predictable
+- Model learns tight, low-variance corrections
 
 </div>
 
-<div style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px;">
+<div style="flex:1; background:#1a2a3a; border-radius:8px; padding:14px 16px; border-top:3px solid #f59e0b;">
 
 **Mid horizon — 91 to 220 days**
 
-- Schedule is still highly speculative
-- Airline planning changes are common
-- Corrections are larger and more volatile
-- Model learns to discount the schedule more
+- Schedule is still speculative; planning changes are common
+- Aircraft swaps and charter additions not yet locked in
+- Schedule error is larger and more volatile
+- Model learns to discount the schedule more aggressively
 
 </div>
+
+</div>
+
+<div style="font-size:0.82em; margin-top:0.9em;">
+
+`days_to_ops` is the key feature that drives this: the model learns how much schedule trust to assign at every point in the forecast window.
+Splitting at day 90 lets each model specialise — confirmed in testing for both departures and minutes.
 
 </div>
 
@@ -608,7 +615,7 @@ Without lags: WAPE rises **5.5% → 6.5%**.
 <div style="font-size:0.84em; margin-bottom:0.6em;">
 
 **Formula-only variants beat all pure ML ratio models** — Phase 1 already captures most of the signal.
-Production FLT beats both by combining the formula with a learned correction.
+Current FLT beats both by combining the formula with a learned correction.
 
 </div>
 
@@ -616,7 +623,7 @@ Production FLT beats both by combining the formula with a learned correction.
 
 | Approach | Best WAPE |
 |---|---|
-| **Production FLT** (formula + ML correction) | **3.43%** |
+| **Current FLT** (formula + ML correction) | **3.43%** |
 | F+ benchmark | 3.9% |
 | Formula HL (blend, deps, mins) | 4.3–4.7% |
 | ML ratio HL | 5.1% |
@@ -634,7 +641,7 @@ Production FLT beats both by combining the formula with a learned correction.
 <div style="font-size:0.84em; margin-bottom:0.4em;">
 
 With corrected departures and minutes in hand, we apply a statistical base formula.
-We know historically, per route and aircraft type, how much fuel was uplifted per departure and per flight minute.
+We know historically, per airline, airport, and seat bin, how much fuel was uplifted per departure and per flight minute.
 
 </div>
 
@@ -645,7 +652,7 @@ base = (kg_per_dep × predicted_deps)<br>
 
 <div style="font-size:0.84em;">
 
-- Rates computed per **airline + airport + aircraft type**
+- Rates computed per **airline + airport + seat bin**
 - **Exponentially-weighted average** (half-life ≈ 200 days) — recent months count more
 - `kg_per_dep` and `kg_per_min` separately capture fixed and variable fuel costs
 
@@ -666,7 +673,7 @@ With accurate inputs, the per-route fuel rates capture most of the remaining var
 The formula is physics-grounded: more flying always means more fuel.
 
 Formula alone achieves **4.3–5.2% WAPE** on unseen data.
-Production FLT adds one more step to close the remaining gap.
+Current FLT adds one more step to close the remaining gap.
 
 </div>
 
@@ -726,7 +733,7 @@ The ML correction adds ~**0.9 percentage points** over the formula alone.
 
 | Method | WAPE (Jul–Dec 2025) |
 |---|---|
-| **Production FLT** (formula + ML correction) | **3.43%** |
+| **Current FLT** (formula + ML correction) | **3.43%** |
 | F+ benchmark | 3.9% |
 | Formula only — HL-weighted | 4.3–4.7% |
 | Formula only — simple rates | 5.2% |
