@@ -758,7 +758,7 @@ FLT caught the unscheduled flights using historical patterns.
       </tr>
       <tr>
         <td style="padding:0.32em 0.6em; color:#e0e0e0;">Aircraft swaps</td>
-        <td style="padding:0.32em 0.6em; color:#ccc;">seat_bin + kg/min rates capture aircraft size; within-bin swaps handled well — cross-bin late swaps are a known gap</td>
+        <td style="padding:0.32em 0.6em; color:#ccc;">seat_bin + kg/min rates capture aircraft size; within-bin swaps handled well</td>
         <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#2a2a1a;border:1px solid #5a5a3a;color:#ffd966;padding:2px 10px;border-radius:20px;font-size:0.85em;">Partial</span></td>
       </tr>
     </tbody>
