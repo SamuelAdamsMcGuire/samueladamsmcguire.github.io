@@ -66,13 +66,15 @@ flowchart LR
 
 ### The Limits of F+
 
+<div style="font-size:0.85em; color:#aaa; margin-bottom:0.5em;">Five structural weaknesses — FLT was built to address them.</div>
+
 ::: incremental
 
-- **The published schedule is never what actually flies** — cancellations, swaps and additions happen constantly
-- **The further out the forecast, the worse it gets** — schedule diverges from reality over time
-- **New and seasonal routes have no history** — no city-pair data means no estimate
-- **Station disruptions go undetected** — if an airport can't fuel, aircraft tank elsewhere; F+ doesn't adjust
-- **Cannot distinguish aircraft swaps** — a 180-seat aircraft replacing a 250-seat one carries very different fuel
+- **Schedule drift** — the published schedule is never what actually flies: cancellations, swaps and additions happen constantly
+- **Horizon degradation** — the further out the forecast, the worse it gets: schedule diverges from reality over time
+- **No route history** — new and seasonal routes have no city-pair data, so F+ returns no estimate
+- **Station disruptions** — if an airport can't fuel, aircraft tank elsewhere; F+ doesn't detect or adjust
+- **Aircraft swaps** — a 180-seat aircraft replacing a 250-seat one carries very different fuel requirements
 
 :::
 
@@ -718,6 +720,51 @@ FLT caught the unscheduled flights using historical patterns.
 
 <iframe scrolling="no" style="border:none;" seamless="seamless"
   data-src="assets/comparison_drilldown.html" height="615" width="100%"></iframe>
+
+---
+
+### How FLT Closes the Gap
+
+```{=html}
+<div style="margin-top:0.3em; font-size:0.73em;">
+  <table style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr style="border-bottom:1px solid #3a3a4a;">
+        <th style="text-align:left; padding:0.28em 0.6em; color:#aaa; font-weight:normal; font-size:0.85em; text-transform:uppercase; letter-spacing:0.06em; width:28%;">F+ Limitation</th>
+        <th style="text-align:left; padding:0.28em 0.6em; color:#aaa; font-weight:normal; font-size:0.85em; text-transform:uppercase; letter-spacing:0.06em;">How FLT Addresses It</th>
+        <th style="text-align:center; padding:0.28em 0.6em; color:#aaa; font-weight:normal; font-size:0.85em; text-transform:uppercase; letter-spacing:0.06em; width:11%;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #2a2a3a;">
+        <td style="padding:0.32em 0.6em; color:#e0e0e0;">Schedule drift</td>
+        <td style="padding:0.32em 0.6em; color:#ccc;">Phase 1 models predict actual departures &amp; flight minutes from the published schedule</td>
+        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:2px 10px;border-radius:20px;font-size:0.85em;">Solved</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a2a3a;">
+        <td style="padding:0.32em 0.6em; color:#e0e0e0;">Horizon degradation</td>
+        <td style="padding:0.32em 0.6em; color:#ccc;">Horizon-split models (1–90 / 91–220 days) each specialise on their forecast range</td>
+        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:2px 10px;border-radius:20px;font-size:0.85em;">Solved</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a2a3a;">
+        <td style="padding:0.32em 0.6em; color:#e0e0e0;">No route history</td>
+        <td style="padding:0.32em 0.6em; color:#ccc;">Fallback hierarchy: route rates → airport means → global mean. No city-pair history required.</td>
+        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:2px 10px;border-radius:20px;font-size:0.85em;">Solved</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a2a3a;">
+        <td style="padding:0.32em 0.6em; color:#e0e0e0;">Station disruptions</td>
+        <td style="padding:0.32em 0.6em; color:#ccc;">Uplift ratio monitoring to detect anomalies and flag volume redistribution across stations</td>
+        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#3a2a1a;border:1px solid #7a5a2a;color:#fcc419;padding:2px 10px;border-radius:20px;font-size:0.85em;">Roadmap</span></td>
+      </tr>
+      <tr>
+        <td style="padding:0.32em 0.6em; color:#e0e0e0;">Aircraft swaps</td>
+        <td style="padding:0.32em 0.6em; color:#ccc;">seat_bin + kg/min rates capture aircraft size; within-bin swaps handled well — cross-bin late swaps are a known gap</td>
+        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#2a2a1a;border:1px solid #5a5a3a;color:#ffd966;padding:2px 10px;border-radius:20px;font-size:0.85em;">Partial</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+```
 
 ---
 
