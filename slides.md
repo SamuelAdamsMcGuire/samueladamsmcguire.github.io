@@ -166,7 +166,7 @@ flowchart LR
     <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">leisure_route</span>
     <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">mins × hub</span>
     <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">mins × charter</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">route_mean / dep</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">route_mean uplift / flight</span>
   </div>
 </div>
 ```
