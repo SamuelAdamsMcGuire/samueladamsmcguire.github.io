@@ -192,23 +192,23 @@ this size from this airport — how much fuel?</em></li>
 </section>
 <section id="how-it-works-the-equation" class="slide level3">
 <h3>How It Works — The Equation</h3>
-<div style="margin-top:0.7em; font-size:0.86em;">
+<div style="margin-top:0.3em; font-size:0.82em;">
 
   <!-- Base formula -->
-  <div style="text-align:center; margin-bottom:1em;">
-    <div style="font-size:0.72em; color:#aaa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.4em;">Base estimate</div>
-    <div style="display:inline-block; background:#1a1a2e; border:1px solid #5a6a2a; border-radius:8px; padding:0.6em 1.4em; font-family:monospace; font-size:1.15em; color:#fcc419;">
+  <div style="text-align:center; margin-bottom:0.6em;">
+    <div style="font-size:0.72em; color:#aaa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">Base estimate</div>
+    <div style="display:inline-block; background:#1a1a2e; border:1px solid #5a6a2a; border-radius:8px; padding:0.4em 1.4em; font-family:monospace; font-size:1.15em; color:#fcc419;">
       base &nbsp;=&nbsp; ½ (rate<sub style="font-size:0.75em;">dep</sub> × deps &nbsp;+&nbsp; rate<sub style="font-size:0.75em;">min</sub> × mins)
     </div>
-    <div style="font-size:0.78em; color:#aaa; margin-top:0.4em;">Recency-weighted kg/dep and kg/min rates blended equally</div>
+    <div style="font-size:0.78em; color:#aaa; margin-top:0.3em;">Recency-weighted kg/dep and kg/min rates blended equally</div>
   </div>
 
   <!-- Train / Predict columns -->
   <div style="display:flex; gap:1em;">
 
-    <div style="flex:1; background:#1a1a2e; border:1px solid #3a4a6a; border-radius:8px; padding:0.6em 0.9em;">
-      <div style="font-size:0.7em; color:#9ecae1; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.4em;">① Training — learning the ratio</div>
-      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.35em;">
+    <div style="flex:1; background:#1a1a2e; border:1px solid #3a4a6a; border-radius:8px; padding:0.5em 0.9em;">
+      <div style="font-size:0.7em; color:#9ecae1; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">① Training — learning the ratio</div>
+      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.25em;">
         target &nbsp;=&nbsp; <span style="color:#00d4aa;">actual uplift</span> &nbsp;÷&nbsp; <span style="color:#fcc419;">base</span>
       </div>
       <div style="font-size:0.78em; color:#aaa; line-height:1.4;">
@@ -216,9 +216,9 @@ this size from this airport — how much fuel?</em></li>
       </div>
     </div>
 
-    <div style="flex:1; background:#1a1a2e; border:1px solid #2a5a2a; border-radius:8px; padding:0.6em 0.9em;">
-      <div style="font-size:0.7em; color:#74c476; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.4em;">② Prediction — applying the ratio</div>
-      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.35em;">
+    <div style="flex:1; background:#1a1a2e; border:1px solid #2a5a2a; border-radius:8px; padding:0.5em 0.9em;">
+      <div style="font-size:0.7em; color:#74c476; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">② Prediction — applying the ratio</div>
+      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.25em;">
         result &nbsp;=&nbsp; <span style="color:#fcc419;">base</span> &nbsp;×&nbsp; <span style="color:#00d4aa;">predicted ratio</span>
       </div>
       <div style="font-size:0.78em; color:#aaa; line-height:1.4;">
@@ -276,9 +276,9 @@ for details</span></p>
 </section>
 <section id="training-and-test-data-uplift-model" class="slide level3">
 <h3>Training and Test Data — Uplift Model</h3>
-<div style="display:flex; gap:1.5em; margin-top:0.4em; font-size:0.8em;">
-  <div style="flex:1; background:#1a2a1a; border:1px solid #3a6a4a; border-radius:8px; padding:0.7em 0.9em;">
-    <div style="color:#74c476; font-weight:bold; margin-bottom:0.4em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
+<div style="display:flex; gap:1.5em; margin-top:0.2em; font-size:0.8em;">
+  <div style="flex:1; background:#1a2a1a; border:1px solid #3a6a4a; border-radius:8px; padding:0.5em 0.9em;">
+    <div style="color:#74c476; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Jan 2024 – Jun 2025 <span style="color:#aaa;">(17 months)</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
@@ -286,8 +286,8 @@ for details</span></p>
       <tr><td style="padding:2px 0; color:#aaa;">Target</td><td style="padding:2px 0;">Actual uplift kg · per day · per airport · per airline · per seat_bin</td></tr>
     </table>
   </div>
-  <div style="flex:1; background:#1a1a2a; border:1px solid #3a5a8a; border-radius:8px; padding:0.7em 0.9em;">
-    <div style="color:#9ecae1; font-weight:bold; margin-bottom:0.4em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Test Vector — Perfect Schedule</div>
+  <div style="flex:1; background:#1a1a2a; border:1px solid #3a5a8a; border-radius:8px; padding:0.5em 0.9em;">
+    <div style="color:#9ecae1; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Test Vector — Perfect Schedule</div>
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Forecast date</td><td style="padding:2px 0;">12 June 2025</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Test window</td><td style="padding:2px 0;">Jul – Dec 2025 <span style="color:#aaa;">(6 months)</span></td></tr>
@@ -297,7 +297,7 @@ for details</span></p>
     </table>
   </div>
 </div>
-<div style="margin-top:0.7em; font-size:0.76em; color:#aaa; text-align:center;">
+<div style="margin-top:0.4em; font-size:0.76em; color:#aaa; text-align:center;">
   Using actual inputs removes schedule noise — this measures the ceiling of our approach.
 </div>
 </section>
@@ -398,23 +398,23 @@ actual is Phase 1 — the schedule correction models.</strong></li>
 </section>
 <section id="how-it-works-schedule-equation" class="slide level3">
 <h3>How It Works — Schedule Equation</h3>
-<div style="margin-top:0.7em; font-size:0.86em;">
+<div style="margin-top:0.3em; font-size:0.82em;">
 
   <!-- Base formula -->
-  <div style="text-align:center; margin-bottom:1em;">
-    <div style="font-size:0.72em; color:#aaa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.4em;">Correction target</div>
-    <div style="display:inline-block; background:#1a1a2e; border:1px solid #5a6a2a; border-radius:8px; padding:0.6em 1.4em; font-family:monospace; font-size:1.15em; color:#fcc419;">
+  <div style="text-align:center; margin-bottom:0.6em;">
+    <div style="font-size:0.72em; color:#aaa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">Correction target</div>
+    <div style="display:inline-block; background:#1a1a2e; border:1px solid #5a6a2a; border-radius:8px; padding:0.4em 1.4em; font-family:monospace; font-size:1.15em; color:#fcc419;">
       Δ &nbsp;=&nbsp; actual &nbsp;−&nbsp; scheduled
     </div>
-    <div style="font-size:0.78em; color:#aaa; margin-top:0.4em;">One delta model for departures, one for flight minutes</div>
+    <div style="font-size:0.78em; color:#aaa; margin-top:0.3em;">One delta model for departures, one for flight minutes</div>
   </div>
 
   <!-- Train / Predict columns -->
   <div style="display:flex; gap:1em;">
 
-    <div style="flex:1; background:#1a1a2e; border:1px solid #3a4a6a; border-radius:8px; padding:0.6em 0.9em;">
-      <div style="font-size:0.7em; color:#9ecae1; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.4em;">① Training — learning the delta</div>
-      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.35em;">
+    <div style="flex:1; background:#1a1a2e; border:1px solid #3a4a6a; border-radius:8px; padding:0.5em 0.9em;">
+      <div style="font-size:0.7em; color:#9ecae1; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">① Training — learning the delta</div>
+      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.25em;">
         target &nbsp;=&nbsp; <span style="color:#00d4aa;">actual</span> &nbsp;−&nbsp; <span style="color:#fcc419;">scheduled</span>
       </div>
       <div style="font-size:0.78em; color:#aaa; line-height:1.4;">
@@ -422,9 +422,9 @@ actual is Phase 1 — the schedule correction models.</strong></li>
       </div>
     </div>
 
-    <div style="flex:1; background:#1a1a2e; border:1px solid #2a5a2a; border-radius:8px; padding:0.6em 0.9em;">
-      <div style="font-size:0.7em; color:#74c476; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.4em;">② Prediction — applying the delta</div>
-      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.35em;">
+    <div style="flex:1; background:#1a1a2e; border:1px solid #2a5a2a; border-radius:8px; padding:0.5em 0.9em;">
+      <div style="font-size:0.7em; color:#74c476; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">② Prediction — applying the delta</div>
+      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.25em;">
         result &nbsp;=&nbsp; <span style="color:#fcc419;">scheduled</span> &nbsp;+&nbsp; <span style="color:#00d4aa;">predicted Δ</span>
       </div>
       <div style="font-size:0.78em; color:#aaa; line-height:1.4;">
@@ -488,9 +488,9 @@ details</span></p>
 <section id="training-and-test-data-schedule-models"
 class="slide level3">
 <h3>Training and Test Data — Schedule Models</h3>
-<div style="display:flex; gap:1.5em; margin-top:0.4em; font-size:0.8em;">
-  <div style="flex:1; background:#1a2a1a; border:1px solid #3a6a4a; border-radius:8px; padding:0.7em 0.9em;">
-    <div style="color:#74c476; font-weight:bold; margin-bottom:0.4em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
+<div style="display:flex; gap:1.5em; margin-top:0.2em; font-size:0.8em;">
+  <div style="flex:1; background:#1a2a1a; border:1px solid #3a6a4a; border-radius:8px; padding:0.5em 0.9em;">
+    <div style="color:#74c476; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Oct 2023 – Jun 2025 <span style="color:#aaa;">(20 months)</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
@@ -499,8 +499,8 @@ class="slide level3">
       <tr><td style="padding:2px 0; color:#aaa;">Target</td><td style="padding:2px 0;">Δ departures · Δ flight minutes · per day · per airport · per airline · per seat_bin</td></tr>
     </table>
   </div>
-  <div style="flex:1; background:#1a1a2a; border:1px solid #3a5a8a; border-radius:8px; padding:0.7em 0.9em;">
-    <div style="color:#9ecae1; font-weight:bold; margin-bottom:0.4em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Test Vector</div>
+  <div style="flex:1; background:#1a1a2a; border:1px solid #3a5a8a; border-radius:8px; padding:0.5em 0.9em;">
+    <div style="color:#9ecae1; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Test Vector</div>
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Forecast date</td><td style="padding:2px 0;">12 June 2025</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Test window</td><td style="padding:2px 0;">Jul – Dec 2025 <span style="color:#aaa;">(6 months)</span></td></tr>
@@ -510,13 +510,19 @@ class="slide level3">
     </table>
   </div>
 </div>
-<div style="margin-top:0.7em; font-size:0.76em; color:#aaa; text-align:center;">
+<div style="margin-top:0.4em; font-size:0.76em; color:#aaa; text-align:center;">
   Models see only the schedule available at forecast time — no future information.
 </div>
 </section>
-<section id="schedule-model-results" class="slide level3">
-<h3>Schedule Model Results</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/phase1_comparison.html" height="615" width="100%">
+<section id="schedule-model-results-departures" class="slide level3">
+<h3>Schedule Model Results — Departures</h3>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/phase1_comparison_deps.html" height="615" width="100%">
+</iframe>
+</section>
+<section id="schedule-model-results-flight-minutes"
+class="slide level3">
+<h3>Schedule Model Results — Flight Minutes</h3>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/phase1_comparison_mins.html" height="615" width="100%">
 </iframe>
 </section>
 <section id="putting-it-all-together" class="slide level3">

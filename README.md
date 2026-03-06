@@ -5,12 +5,13 @@
 - Run to convert your markdown `slides.md` into a html file `index.html`:
 
 ```shell
-pandoc -t revealjs -s slides.md -o index.html \
+pandoc -t revealjs -s slides.md -o index.html 
+  --slide-level=3 \
+  --css=styles.css \
   --variable revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@4.4.0 \
   --variable width=1200 \
   --variable margin=0.04 \
   --include-after-body=mermaid-init.html
-
 ```
 
 Render in browser:
