@@ -682,12 +682,12 @@ flowchart TB
 |---|---|
 | **Current FLT** (formula + ML correction) | **3.84%** |
 | F+ benchmark | 9.51% |
-| Formula HL (blend, deps, mins) | 4.3–4.7% |
-| ML ratio HL | 5.1% |
-| Formula simple | 5.2% |
-| ML ratio simple | 6.0–6.3% |
-| ML direct | 6.7–7.5% |
-| Baselines | 9–120% |
+| Formula HL (deps) | 4.4% |
+| Formula simple (deps) | 5.3% |
+| Formula HL (blend, mins) | 6.8–10.2% |
+| ML ratio HL | 8.5% |
+| ML ratio / ML direct | 9–19% |
+| Baselines | ~120% |
 
 </div>
 
