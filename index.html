@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reset.css">
-  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.css">
   <style>
     .reveal .sourceCode {  /* see #7635 */
       overflow: visible;
@@ -29,8 +29,83 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/theme/moon.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/theme/black.css" id="theme">
   <link rel="stylesheet" href="styles.css"/>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'loose',
+      flowchart: { useMaxWidth: false, htmlLabels: false },
+      timeline: { useMaxWidth: false }
+    });
+
+    // Track mouse so node click popups can appear near the cursor
+    let _mx = window.innerWidth / 2, _my = window.innerHeight / 2;
+    document.addEventListener('mousemove', e => { _mx = e.clientX; _my = e.clientY; });
+
+    const NODE_DETAILS = {
+      D:  { title: 'Actual Departures',      color: '#4dabf7', text: 'Number of departures that actually operated, taken from historical flight records. One of two signals fed into the base estimate.' },
+      M:  { title: 'Actual Flight Minutes',  color: '#4dabf7', text: 'Total block minutes that actually flew, taken from historical flight records. A longer rotation typically carries more fuel — this gives the base estimate a second independent signal beyond departure count.' },
+      R:  { title: 'Route Mean Rates',       color: '#fcc419', text: 'Recency-weighted historical rates: kg per departure and kg per flight minute, calculated per airline, per airport, per seat_bin from the past 17 months. Recent months are weighted more heavily so seasonal shifts are reflected quickly.' },
+      B:  { title: 'Base Estimate',          color: '#888',    text: '½ × (rate/dep × deps + rate/min × mins). Applies the historical rates to the actual departure and minute counts, blending the two results equally to reduce variance. When the formula is well-calibrated the ML correction ratio stays close to 1.0 — making the model\'s job easy.' },
+      ML: { title: 'ML Correction Ratio',   color: '#5aaa5a', text: 'A LightGBM model trained to predict actual_uplift ÷ base. Predicting a ratio near 1.0 gives a normalised target that is consistent across busy hubs and thin leisure routes alike. It corrects wherever the statistical formula systematically drifts.' },
+      P:  { title: 'Predicted Uplift',       color: '#00d4aa', text: 'Final output: base × predicted ratio, in kg — per day, per airline, per departure airport, per seat_bin.' },
+      S:  { title: 'Published Schedule (SSIM)', color: '#888', text: 'The raw schedule as published by the airline — departure counts and planned flight times per route. This is the starting point; Phase 1 corrects for what will actually operate.' },
+      H1: { title: 'Near-term horizon: 1–90 days',  color: '#aaa', text: 'Flights within 90 days of operations. Schedules at this range are more stable — cancellations and swaps are mostly known. A dedicated model pair learns these near-term patterns separately.' },
+      H2: { title: 'Long-range horizon: 91–220 days', color: '#aaa', text: 'Flights 91–220 days out. Schedules at this range are more speculative — summer schedules filed months ahead carry more uncertainty. A separate model pair learns how to adjust for this.' },
+      D1: { title: 'Departures Model — Near-term', color: '#4dabf7', text: 'HistGBM model trained to predict the delta between scheduled and actual departures for the 1–90 day horizon. Target: actual_deps − scheduled_deps.' },
+      M1: { title: 'Minutes Model — Near-term',    color: '#4dabf7', text: 'HistGBM model trained to predict the delta between scheduled and actual flight minutes for the 1–90 day horizon. Target: actual_mins − scheduled_mins.' },
+      D2: { title: 'Departures Model — Long-range', color: '#9ecae1', text: 'HistGBM model trained to predict the departure delta for the 91–220 day horizon. Long-range schedules tend to overstate capacity, so this model learns a different correction pattern.' },
+      M2: { title: 'Minutes Model — Long-range',   color: '#9ecae1', text: 'HistGBM model trained to predict the flight minutes delta for the 91–220 day horizon.' },
+      PD: { title: 'Predicted Actual Departures', color: '#00d4aa', text: 'Schedule departures + predicted delta from the relevant horizon model. Fed into the uplift base estimate in place of raw scheduled departures.' },
+      PM: { title: 'Predicted Actual Flight Minutes', color: '#00d4aa', text: 'Scheduled flight minutes + predicted delta from the relevant horizon model. Fed into the uplift base estimate in place of raw scheduled minutes.' }
+    };
+
+    window.showNodeDetail = function(nodeId) {
+      document.querySelectorAll('.nd-popup').forEach(p => p.remove());
+      const d = NODE_DETAILS[nodeId];
+      if (!d) return;
+      const pop = document.createElement('div');
+      pop.className = 'nd-popup';
+      pop.style.cssText = 'position:fixed;background:#12121e;border:1px solid #3a4a6a;border-radius:10px;padding:1.4em 1.8em;max-width:500px;font-size:1.4vw;color:#ccc;z-index:9999;box-shadow:0 6px 32px rgba(0,0,0,0.8);line-height:1.6;pointer-events:none;';
+      pop.innerHTML = `<div style="font-weight:bold;color:${d.color};margin-bottom:0.5em;font-size:1.15em;">${d.title}</div><div>${d.text}</div><div style="font-size:0.75em;color:#555;margin-top:0.6em;text-align:right;">click anywhere to close</div>`;
+      document.body.appendChild(pop);
+      const r = pop.getBoundingClientRect();
+      pop.style.left = Math.min(_mx + 14, window.innerWidth  - r.width  - 8) + 'px';
+      pop.style.top  = Math.min(_my + 14, window.innerHeight - r.height - 8) + 'px';
+      pop.style.pointerEvents = 'auto';
+      const close = () => { pop.remove(); document.removeEventListener('click', close); document.removeEventListener('keydown', esc); };
+      const esc   = e => { if (e.key === 'Escape') close(); };
+      setTimeout(() => { document.addEventListener('click', close); document.addEventListener('keydown', esc); }, 80);
+    };
+
+    async function renderMermaid() {
+      const elements = document.querySelectorAll('.mermaid:not([data-processed])');
+      for (const el of elements) {
+        const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+        const { svg, bindFunctions } = await mermaid.render(id, el.textContent);
+        el.innerHTML = svg;
+        el.setAttribute('data-processed', 'true');
+        if (bindFunctions) bindFunctions(el);
+      }
+    }
+
+    // Render on initial load
+    await renderMermaid();
+
+    // Re-render when navigating to a slide with unrendered mermaid
+    if (typeof Reveal !== 'undefined') {
+      Reveal.on('slidechanged', () => renderMermaid());
+    } else {
+      window.addEventListener('load', () => {
+        if (typeof Reveal !== 'undefined') {
+          Reveal.on('slidechanged', () => renderMermaid());
+        }
+      });
+    }
+  </script>
 </head>
 <body>
   <div class="reveal">
@@ -854,12 +929,12 @@ data</li>
     </div>
   </div>
 
-  <script src="https://unpkg.com/reveal.js@^4//dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.js"></script>
 
   <!-- reveal.js plugins -->
-  <script src="https://unpkg.com/reveal.js@^4//plugin/notes/notes.js"></script>
-  <script src="https://unpkg.com/reveal.js@^4//plugin/search/search.js"></script>
-  <script src="https://unpkg.com/reveal.js@^4//plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/search/search.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/zoom/zoom.js"></script>
 
   <script>
 
@@ -1006,14 +1081,6 @@ data</li>
         // viewDistance in order to save resources.
         mobileViewDistance: 2,
 
-        // The "normal" size of the presentation, aspect ratio will be preserved
-        // when the presentation is scaled to fit different resolutions. Can be
-        // specified using percentage units.
-        width: 1200,
-
-        // Factor of the display size that should remain empty around the content
-        margin: 0.04,
-
         // reveal.js plugins
         plugins: [
           RevealNotes,
@@ -1021,81 +1088,6 @@ data</li>
           RevealZoom
         ]
       });
-    </script>
-    <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: 'dark',
-        securityLevel: 'loose',
-        flowchart: { useMaxWidth: false, htmlLabels: false },
-        timeline: { useMaxWidth: false }
-      });
-
-      // Track mouse so node click popups can appear near the cursor
-      let _mx = window.innerWidth / 2, _my = window.innerHeight / 2;
-      document.addEventListener('mousemove', e => { _mx = e.clientX; _my = e.clientY; });
-
-      const NODE_DETAILS = {
-        D:  { title: 'Actual Departures',      color: '#4dabf7', text: 'Number of departures that actually operated, taken from historical flight records. One of two signals fed into the base estimate.' },
-        M:  { title: 'Actual Flight Minutes',  color: '#4dabf7', text: 'Total block minutes that actually flew, taken from historical flight records. A longer rotation typically carries more fuel — this gives the base estimate a second independent signal beyond departure count.' },
-        R:  { title: 'Route Mean Rates',       color: '#fcc419', text: 'Recency-weighted historical rates: kg per departure and kg per flight minute, calculated per airline, per airport, per seat_bin from the past 17 months. Recent months are weighted more heavily so seasonal shifts are reflected quickly.' },
-        B:  { title: 'Base Estimate',          color: '#888',    text: '½ × (rate/dep × deps + rate/min × mins). Applies the historical rates to the actual departure and minute counts, blending the two results equally to reduce variance. When the formula is well-calibrated the ML correction ratio stays close to 1.0 — making the model\'s job easy.' },
-        ML: { title: 'ML Correction Ratio',   color: '#5aaa5a', text: 'A LightGBM model trained to predict actual_uplift ÷ base. Predicting a ratio near 1.0 gives a normalised target that is consistent across busy hubs and thin leisure routes alike. It corrects wherever the statistical formula systematically drifts.' },
-        P:  { title: 'Predicted Uplift',       color: '#00d4aa', text: 'Final output: base × predicted ratio, in kg — per day, per airline, per departure airport, per seat_bin.' },
-        S:  { title: 'Published Schedule (SSIM)', color: '#888', text: 'The raw schedule as published by the airline — departure counts and planned flight times per route. This is the starting point; Phase 1 corrects for what will actually operate.' },
-        H1: { title: 'Near-term horizon: 1–90 days',  color: '#aaa', text: 'Flights within 90 days of operations. Schedules at this range are more stable — cancellations and swaps are mostly known. A dedicated model pair learns these near-term patterns separately.' },
-        H2: { title: 'Long-range horizon: 91–220 days', color: '#aaa', text: 'Flights 91–220 days out. Schedules at this range are more speculative — summer schedules filed months ahead carry more uncertainty. A separate model pair learns how to adjust for this.' },
-        D1: { title: 'Departures Model — Near-term', color: '#4dabf7', text: 'HistGBM model trained to predict the delta between scheduled and actual departures for the 1–90 day horizon. Target: actual_deps − scheduled_deps.' },
-        M1: { title: 'Minutes Model — Near-term',    color: '#4dabf7', text: 'HistGBM model trained to predict the delta between scheduled and actual flight minutes for the 1–90 day horizon. Target: actual_mins − scheduled_mins.' },
-        D2: { title: 'Departures Model — Long-range', color: '#9ecae1', text: 'HistGBM model trained to predict the departure delta for the 91–220 day horizon. Long-range schedules tend to overstate capacity, so this model learns a different correction pattern.' },
-        M2: { title: 'Minutes Model — Long-range',   color: '#9ecae1', text: 'HistGBM model trained to predict the flight minutes delta for the 91–220 day horizon.' },
-        PD: { title: 'Predicted Actual Departures', color: '#00d4aa', text: 'Schedule departures + predicted delta from the relevant horizon model. Fed into the uplift base estimate in place of raw scheduled departures.' },
-        PM: { title: 'Predicted Actual Flight Minutes', color: '#00d4aa', text: 'Scheduled flight minutes + predicted delta from the relevant horizon model. Fed into the uplift base estimate in place of raw scheduled minutes.' }
-      };
-
-      window.showNodeDetail = function(nodeId) {
-        document.querySelectorAll('.nd-popup').forEach(p => p.remove());
-        const d = NODE_DETAILS[nodeId];
-        if (!d) return;
-        const pop = document.createElement('div');
-        pop.className = 'nd-popup';
-        pop.style.cssText = 'position:fixed;background:#12121e;border:1px solid #3a4a6a;border-radius:10px;padding:1.4em 1.8em;max-width:500px;font-size:1.4vw;color:#ccc;z-index:9999;box-shadow:0 6px 32px rgba(0,0,0,0.8);line-height:1.6;pointer-events:none;';
-        pop.innerHTML = `<div style="font-weight:bold;color:${d.color};margin-bottom:0.5em;font-size:1.15em;">${d.title}</div><div>${d.text}</div><div style="font-size:0.75em;color:#555;margin-top:0.6em;text-align:right;">click anywhere to close</div>`;
-        document.body.appendChild(pop);
-        const r = pop.getBoundingClientRect();
-        pop.style.left = Math.min(_mx + 14, window.innerWidth  - r.width  - 8) + 'px';
-        pop.style.top  = Math.min(_my + 14, window.innerHeight - r.height - 8) + 'px';
-        pop.style.pointerEvents = 'auto';
-        const close = () => { pop.remove(); document.removeEventListener('click', close); document.removeEventListener('keydown', esc); };
-        const esc   = e => { if (e.key === 'Escape') close(); };
-        setTimeout(() => { document.addEventListener('click', close); document.addEventListener('keydown', esc); }, 80);
-      };
-
-      async function renderMermaid() {
-        const elements = document.querySelectorAll('.mermaid:not([data-processed])');
-        for (const el of elements) {
-          const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
-          const { svg, bindFunctions } = await mermaid.render(id, el.textContent);
-          el.innerHTML = svg;
-          el.setAttribute('data-processed', 'true');
-          if (bindFunctions) bindFunctions(el);
-        }
-      }
-
-      // Render on initial load
-      await renderMermaid();
-
-      // Re-render when navigating to a slide with unrendered mermaid
-      if (typeof Reveal !== 'undefined') {
-        Reveal.on('slidechanged', () => renderMermaid());
-      } else {
-        window.addEventListener('load', () => {
-          if (typeof Reveal !== 'undefined') {
-            Reveal.on('slidechanged', () => renderMermaid());
-          }
-        });
-      }
     </script>
     </body>
 </html>
