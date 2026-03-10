@@ -681,12 +681,12 @@ flowchart TB
 | Approach | Best WAPE |
 |---|---|
 | **Current FLT** (formula + ML correction) | **3.84%** |
-| F+ benchmark | 9.51% |
-| Formula HL (deps) | 4.4% |
-| Formula simple (deps) | 5.3% |
-| Formula HL (blend, mins) | 6.8–10.2% |
+| Formula HL (blend, deps, mins) | 4.4–6.8% |
+| Formula simple | 5.3–7.5% |
 | ML ratio HL | 8.5% |
-| ML ratio / ML direct | 9–19% |
+| ML ratio simple | 9.3–10.1% |
+| F+ benchmark | 9.51% |
+| ML direct | 11–19% |
 | Baselines | ~120% |
 
 </div>
