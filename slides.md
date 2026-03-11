@@ -698,7 +698,7 @@ flowchart TB
 | | Scheduled | Actual | FLT Predicted |
 |---|---|---|---|
 | Flights | 0 | 2 | 2 |
-| Uplift | — | 15,854 kg | 18,909 kg |
+| Uplift | — | 15.9 t | 18.9 t |
 
 </div>
 
@@ -732,7 +732,7 @@ F+ sees an empty schedule and makes **no prediction**. FLT forecasts from histor
 
 <div style="font-size:0.84em; margin-top:0.7em;">
 
-Even on a **like-for-like** basis FLT is **~20% more accurate** — and 3S/YF represent **5.8% of total uplift volume**.
+Even on a **like-for-like** basis FLT is **~20.5% more accurate** — and 3S/YF represent **5.8% of total uplift volume**.
 
 </div>
 
@@ -796,7 +796,8 @@ Even on a **like-for-like** basis FLT is **~20% more accurate** — and 3S/YF re
 
 - **17 months** of data — one summer, one winter season
 - Every new month improves accuracy at every forecast horizon
-- Uplift model trained on **2025 data only** due to tankering regulations
+- Charter & cargo routes with no published schedule improve as historical patterns accumulate
+- New airlines onboard faster — shared seat-bin patterns transfer across carriers
 - More airports = stronger shared patterns
 
 </div>
