@@ -286,7 +286,7 @@ for details</span></p>
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Jan 2024 – Jun 2025 <span style="color:#aaa;">(17 months)</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 64 airline–airport pairs</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 67 airline–airport routes</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Target</td><td style="padding:2px 0;">Actual uplift kg · per day · per airport · per airline · per seat_bin</td></tr>
     </table>
   </div>
@@ -498,7 +498,7 @@ class="slide level3">
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Oct 2023 – Jun 2025 <span style="color:#aaa;">(20 months)</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 64 airline–airport pairs</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 67 airline–airport routes</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Horizon</td><td style="padding:2px 0;">1 – 220 days to operations</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Target</td><td style="padding:2px 0;">Δ departures · Δ flight minutes · per day · per airport · per airline · per seat_bin</td></tr>
     </table>
@@ -600,8 +600,8 @@ flowchart TB
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">LH, OS, LX, SN, EW, EN, WK, 4Y, YF, XQ, 3S</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Combinations</td><td style="padding:2px 0;">64 active airline–airport pairs</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Total volume</td><td style="padding:2px 0;">1.61M t uplift</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Combinations</td><td style="padding:2px 0;">67 active airline–airport routes</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Total volume</td><td style="padding:2px 0;">1.71M t uplift</td></tr>
     </table>
   </div>
   <div style="flex:1; background:#1a1a2a; border:1px solid #3a5a8a; border-radius:8px; padding:0.7em 0.9em;">
@@ -644,13 +644,13 @@ style="color: #00d4aa;">✓</span></p>
 <tbody>
 <tr>
 <td><strong>Overall Error</strong></td>
-<td><strong>3.1%</strong></td>
-<td>3.9%</td>
+<td><strong>3.84%</strong></td>
+<td>9.51%</td>
 </tr>
 <tr>
 <td><strong>6-Month Total Misorder</strong></td>
-<td>50,149 t</td>
-<td>63,452 t</td>
+<td>65,548 t</td>
+<td>162,541 t</td>
 </tr>
 </tbody>
 </table>
@@ -673,35 +673,23 @@ the edges.</strong></p>
 <tbody>
 <tr>
 <td><strong>Current FLT</strong> (formula + ML correction)</td>
-<td><strong>3.1%</strong></td>
-</tr>
-<tr>
-<td>F+ benchmark</td>
-<td>3.9%</td>
+<td><strong>3.84%</strong></td>
 </tr>
 <tr>
 <td>Formula HL (blend, deps, mins)</td>
-<td>4.3–4.7%</td>
+<td>4.4–6.8%</td>
 </tr>
 <tr>
-<td>ML ratio HL</td>
-<td>5.1%</td>
+<td>Formula simple (blend, deps, mins)</td>
+<td>5.3–7.5%</td>
 </tr>
 <tr>
-<td>Formula simple</td>
-<td>5.2%</td>
+<td>F+ benchmark</td>
+<td>9.51%</td>
 </tr>
 <tr>
-<td>ML ratio simple</td>
-<td>6.0–6.3%</td>
-</tr>
-<tr>
-<td>ML direct</td>
-<td>6.7–7.5%</td>
-</tr>
-<tr>
-<td>Baselines</td>
-<td>9–120%</td>
+<td>ML direct (LR,Boosting)</td>
+<td>11–19%</td>
 </tr>
 </tbody>
 </table>
@@ -823,7 +811,7 @@ timeline
 <h3>The Opportunity</h3>
 <div style="font-size: 0.85em;">
 <ul>
-<li><strong>Today:</strong> 10 departure airports → <strong>13,303
+<li><strong>Today:</strong> 10 departure airports → <strong>96,993
 t</strong> less misorder in 6 months</li>
 <li>Every airport added means more routes, more data, more savings</li>
 <li>The model is airline-agnostic and built to scale</li>
@@ -839,10 +827,10 @@ t</strong> less misorder in 6 months</li>
 <div style="font-size: 0.85em;">
 <div>
 <ul>
-<li class="fragment"><strong>5 out of 6 months, 21% less
+<li class="fragment"><strong>5 out of 6 months, 60% less
 misorder</strong></li>
-<li class="fragment">10 airports, 11 airlines, 64 airline–airport
-combinations — 6 months validated</li>
+<li class="fragment">10 airports, 11 airlines, 67 airline–airport routes
+— 6 months validated</li>
 <li class="fragment">Airline-agnostic: adding airlines = adding
 data</li>
 <li class="fragment">Continue the project and expand coverage</li>
