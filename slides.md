@@ -725,14 +725,14 @@ F+ sees an empty schedule and makes **no prediction**. FLT forecasts from histor
 
 | | FLT | F+ |
 |---|---|---|
-| **All routes — Nov & Dec** | **3.84%** | **9.51%** |
-| Same routes, same months (excl. 3S & YF) | 2.97% | 3.95% |
+| **Full test period (all routes)** | **3.84%** | **9.51%** |
+| Like-for-like (excl. 3S & YF Nov & Dec) | 3.1% | 3.9% |
 
 </div>
 
 <div style="font-size:0.84em; margin-top:0.7em;">
 
-Even on a **like-for-like** basis FLT is **25% more accurate** — and 3S/YF represent **5.8% of total uplift volume**.
+Even on a **like-for-like** basis FLT is **~20% more accurate** — and 3S/YF represent **5.8% of total uplift volume**.
 
 </div>
 
