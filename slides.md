@@ -1,7 +1,7 @@
 ---
 title: "FLT: Smarter Fuel Uplift Forecasting"
 subtitle: DataTactics GmbH
-date: February 2026
+date: March 17 2026
 theme: moon
 transition: slide
 highlight-style: breezeDark
@@ -725,7 +725,7 @@ F+ sees an empty schedule and makes **no prediction**. FLT forecasts from histor
 
 | | FLT | F+ |
 |---|---|---|
-| **Full test period (all routes)** | **3.84%** | **9.51%** |
+| **Full test period (all routes)** | **3.8%** | **9.5%** |
 | Like-for-like (excl. 3S & YF Nov & Dec) | 3.1% | 3.9% |
 
 </div>
