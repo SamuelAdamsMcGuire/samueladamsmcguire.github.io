@@ -276,7 +276,7 @@ This makes learning easier and generalisation to new routes much more reliable.
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Jan 2024 – Jun 2025 <span style="color:#aaa;">(17 months)</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 64 airline–airport pairs</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 67 airline–airport routes</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Target</td><td style="padding:2px 0;">Actual uplift kg · per day · per airport · per airline · per seat_bin</td></tr>
     </table>
   </div>
@@ -506,7 +506,7 @@ Near-term (1–90 days) and long-range (91–220 days) schedules behave differen
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Oct 2023 – Jun 2025 <span style="color:#aaa;">(20 months)</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 64 airline–airport pairs</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 67 airline–airport routes</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Horizon</td><td style="padding:2px 0;">1 – 220 days to operations</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Target</td><td style="padding:2px 0;">Δ departures · Δ flight minutes · per day · per airport · per airline · per seat_bin</td></tr>
     </table>
@@ -618,8 +618,8 @@ flowchart TB
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">LH, OS, LX, SN, EW, EN, WK, 4Y, YF, XQ, 3S</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Combinations</td><td style="padding:2px 0;">64 active airline–airport pairs</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Total volume</td><td style="padding:2px 0;">1.61M t uplift</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Combinations</td><td style="padding:2px 0;">67 active airline–airport routes</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Total volume</td><td style="padding:2px 0;">1.71M t uplift</td></tr>
     </table>
   </div>
   <div style="flex:1; background:#1a1a2a; border:1px solid #3a5a8a; border-radius:8px; padding:0.7em 0.9em;">
@@ -660,8 +660,8 @@ flowchart TB
 
 | | FLT | F+ |
 |---|---|---|
-| **Overall Error** | **3.1%** | 3.9% |
-| **6-Month Total Misorder** | 50,149 t | 63,452 t |
+| **Overall Error** | **3.84%** | 9.51% |
+| **6-Month Total Misorder** | 65,548 t | 162,541 t |
 
 </div>
 
@@ -680,15 +680,11 @@ flowchart TB
 
 | Approach | Best WAPE |
 |---|---|
-| **Current FLT** (formula + ML correction) | **3.1%** |
-| F+ benchmark | 3.9% |
-| Formula HL (blend, deps, mins) | 4.3–4.7% |
-| ML ratio HL | 5.1% |
-| Formula simple | 5.2% |
-| ML ratio simple | 6.0–6.3% |
-| ML direct | 6.7–7.5% |
-| Baselines | 9–120% |
-
+| **Current FLT** (formula + ML correction) | **3.84%** |
+| Formula HL (blend, deps, mins) | 4.4–6.8% |
+| Formula simple (blend, deps, mins) | 5.3–7.5% |
+| F+ benchmark | 9.51% |
+| ML direct (LR,Boosting) | 11–19% |
 </div>
 
 ---
@@ -811,7 +807,7 @@ timeline
 
 <div style="font-size: 0.85em;">
 
-- **Today:** 10 departure airports → **13,303 t** less misorder in 6 months
+- **Today:** 10 departure airports → **96,993 t** less misorder in 6 months
 - Every airport added means more routes, more data, more savings
 - The model is airline-agnostic and built to scale
 - **~400 airports** on the roadmap
@@ -832,8 +828,8 @@ timeline
 
 ::: incremental
 
-- **5 out of 6 months, 21% less misorder**
-- 10 airports, 11 airlines, 64 airline–airport combinations — 6 months validated
+- **5 out of 6 months, 60% less misorder**
+- 10 airports, 11 airlines, 67 airline–airport routes — 6 months validated
 - Airline-agnostic: adding airlines = adding data
 - Continue the project and expand coverage
 
