@@ -714,24 +714,25 @@ FLT caught the unscheduled flights using historical patterns.
 
 ### The Schedule Blind Spot
 
+<div style="font-size:0.84em; margin-bottom:0.5em;">
+
 3S and YF are cargo and charter operators — they publish schedules **only for the near term**.
-F+ sees an empty schedule and makes **no prediction**. FLT uses historical patterns to forecast regardless.
-
-<div style="font-size: 0.85em; margin-top: 0.8em;">
-
-| | FLT WAPE | F+ WAPE |
-|---|---|---|
-| **All routes — Nov & Dec** | **3.84%** | **9.51%** |
-| Excluding 3S & YF (Nov & Dec) | 2.97% | 3.95% |
+F+ sees an empty schedule and makes **no prediction**. FLT forecasts from historical patterns regardless.
 
 </div>
 
-<div style="margin-top: 0.9em; font-size: 0.9em;">
+<div style="font-size:0.8em;">
 
-Even on a **like-for-like** comparison — same routes, same months — FLT is **25% more accurate**.
+| | FLT | F+ |
+|---|---|---|
+| **All routes — Nov & Dec** | **3.84%** | **9.51%** |
+| Same routes, same months (excl. 3S & YF) | 2.97% | 3.95% |
 
-3S and YF represent **5.8% of total uplift volume** across the test period.
-F+'s inability to forecast them alone accounts for most of its 9.51% error.
+</div>
+
+<div style="font-size:0.84em; margin-top:0.7em;">
+
+Even on a **like-for-like** basis FLT is **25% more accurate** — and 3S/YF represent **5.8% of total uplift volume**.
 
 </div>
 
