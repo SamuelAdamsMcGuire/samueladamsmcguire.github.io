@@ -1,3 +1,6 @@
+<!-- dataTactics logo overlay — injected on every build -->
+<img src="assets/dt_logo_on_dark.svg" class="dt-logo-overlay" alt="dataTactics">
+
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({
@@ -15,10 +18,10 @@
   const NODE_DETAILS = {
     D:  { title: 'Actual Departures',      color: '#4dabf7', text: 'Number of departures that actually operated, taken from historical flight records. One of two signals fed into the base estimate.' },
     M:  { title: 'Actual Flight Minutes',  color: '#4dabf7', text: 'Total block minutes that actually flew, taken from historical flight records. A longer rotation typically carries more fuel — this gives the base estimate a second independent signal beyond departure count.' },
-    R:  { title: 'Route Mean Rates',       color: '#fcc419', text: 'Recency-weighted historical rates: kg per departure and kg per flight minute, calculated per airline, per airport, per seat_bin from the past 17 months. Recent months are weighted more heavily so seasonal shifts are reflected quickly.' },
+    R:  { title: 'Route Mean Rates',       color: '#F7BB40', text: 'Recency-weighted historical rates: kg per departure and kg per flight minute, calculated per airline, per airport, per seat_bin from the past 17 months. Recent months are weighted more heavily so seasonal shifts are reflected quickly.' },
     B:  { title: 'Base Estimate',          color: '#888',    text: '½ × (rate/dep × deps + rate/min × mins). Applies the historical rates to the actual departure and minute counts, blending the two results equally to reduce variance. When the formula is well-calibrated the ML correction ratio stays close to 1.0 — making the model\'s job easy.' },
-    ML: { title: 'ML Correction Ratio',   color: '#5aaa5a', text: 'A LightGBM model trained to predict actual_uplift ÷ base. Predicting a ratio near 1.0 gives a normalised target that is consistent across busy hubs and thin leisure routes alike. It corrects wherever the statistical formula systematically drifts.' },
-    P:  { title: 'Predicted Uplift',       color: '#00d4aa', text: 'Final output: base × predicted ratio, in kg — per day, per airline, per departure airport, per seat_bin.' },
+    ML: { title: 'ML Correction Ratio',   color: '#10B981', text: 'A LightGBM model trained to predict actual_uplift ÷ base. Predicting a ratio near 1.0 gives a normalised target that is consistent across busy hubs and thin leisure routes alike. It corrects wherever the statistical formula systematically drifts.' },
+    P:  { title: 'Predicted Uplift',       color: '#5BA3C9', text: 'Final output: base × predicted ratio, in kg — per day, per airline, per departure airport, per seat_bin.' },
     S:  { title: 'Published Schedule (SSIM)', color: '#888', text: 'The raw schedule as published by the airline — departure counts and planned flight times per route. This is the starting point; Phase 1 corrects for what will actually operate.' },
     H1: { title: 'Near-term horizon: 1–90 days',  color: '#aaa', text: 'Flights within 90 days of operations. Schedules at this range are more stable — cancellations and swaps are mostly known. A dedicated model pair learns these near-term patterns separately.' },
     H2: { title: 'Long-range horizon: 91–220 days', color: '#aaa', text: 'Flights 91–220 days out. Schedules at this range are more speculative — summer schedules filed months ahead carry more uncertainty. A separate model pair learns how to adjust for this.' },
@@ -26,8 +29,8 @@
     M1: { title: 'Minutes Model — Near-term',    color: '#4dabf7', text: 'HistGBM model trained to predict the delta between scheduled and actual flight minutes for the 1–90 day horizon. Target: actual_mins − scheduled_mins.' },
     D2: { title: 'Departures Model — Long-range', color: '#9ecae1', text: 'HistGBM model trained to predict the departure delta for the 91–220 day horizon. Long-range schedules tend to overstate capacity, so this model learns a different correction pattern.' },
     M2: { title: 'Minutes Model — Long-range',   color: '#9ecae1', text: 'HistGBM model trained to predict the flight minutes delta for the 91–220 day horizon.' },
-    PD: { title: 'Predicted Actual Departures', color: '#00d4aa', text: 'Schedule departures + predicted delta from the relevant horizon model. Fed into the uplift base estimate in place of raw scheduled departures.' },
-    PM: { title: 'Predicted Actual Flight Minutes', color: '#00d4aa', text: 'Scheduled flight minutes + predicted delta from the relevant horizon model. Fed into the uplift base estimate in place of raw scheduled minutes.' }
+    PD: { title: 'Predicted Actual Departures', color: '#5BA3C9', text: 'Schedule departures + predicted delta from the relevant horizon model. Fed into the uplift base estimate in place of raw scheduled departures.' },
+    PM: { title: 'Predicted Actual Flight Minutes', color: '#5BA3C9', text: 'Scheduled flight minutes + predicted delta from the relevant horizon model. Fed into the uplift base estimate in place of raw scheduled minutes.' }
   };
 
   window.showNodeDetail = function(nodeId) {
@@ -36,7 +39,7 @@
     if (!d) return;
     const pop = document.createElement('div');
     pop.className = 'nd-popup';
-    pop.style.cssText = 'position:fixed;background:#12121e;border:1px solid #3a4a6a;border-radius:10px;padding:1.4em 1.8em;max-width:500px;font-size:1.4vw;color:#ccc;z-index:9999;box-shadow:0 6px 32px rgba(0,0,0,0.8);line-height:1.6;pointer-events:none;';
+    pop.style.cssText = 'position:fixed;background:#0E2A42;border:1px solid #2D5A7B;border-radius:10px;padding:1.4em 1.8em;max-width:500px;font-size:1.4vw;color:#ccc;z-index:9999;box-shadow:0 6px 32px rgba(0,0,0,0.8);line-height:1.6;pointer-events:none;';
     pop.innerHTML = `<div style="font-weight:bold;color:${d.color};margin-bottom:0.5em;font-size:1.15em;">${d.title}</div><div>${d.text}</div><div style="font-size:0.75em;color:#555;margin-top:0.6em;text-align:right;">click anywhere to close</div>`;
     document.body.appendChild(pop);
     const r = pop.getBoundingClientRect();

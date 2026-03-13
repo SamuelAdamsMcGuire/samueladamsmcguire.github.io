@@ -18,12 +18,12 @@ css: styles.css
 ```{=html}
 <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top:2em; text-align:center; gap:1.6em;">
 
-  <div style="font-size:1.6em; font-weight:bold; color:#e0e0e0; line-height:1.3;">
+  <div style="font-size:1.6em; font-weight:bold; color:#FBF9F5; line-height:1.3;">
     Build a fuel uplift forecast that<br>
-    <span style="color:#00d4aa;">outperforms the current standard.</span>
+    <span style="color:#5BA3C9;">outperforms the current standard.</span>
   </div>
 
-  <div style="width:60px; height:3px; background:#00d4aa; border-radius:2px;"></div>
+  <div style="width:60px; height:3px; background:#5BA3C9; border-radius:2px;"></div>
 
   <div style="font-size:1em; color:#aaa; max-width:880px; line-height:1.8;">
     F+ is the benchmark.<br>We want to beat it — consistently, measurably, and in production.
@@ -57,7 +57,7 @@ flowchart LR
     style S fill:#2a3a5a,stroke:#5a7aaa,color:#fff
     style H fill:#2a3a5a,stroke:#5a7aaa,color:#fff
     style A fill:#2a2a4a,stroke:#888,color:#fff
-    style P fill:#1a4a3a,stroke:#00d4aa,color:#fff
+    style P fill:#1a4a3a,stroke:#5BA3C9,color:#fff
 </div>
 </div>
 ```
@@ -131,14 +131,14 @@ flowchart LR
     F --> R
     R --> OUT
 
-    style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
-    style P1 fill:#1a3a1a,stroke:#51cf66,color:#fff
-    style D1 fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style M1 fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style P2 fill:#3a2a1a,stroke:#fcc419,color:#fff
-    style F fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style S fill:#1A4568,stroke:#4dabf7,color:#fff
+    style P1 fill:#1a3a1a,stroke:#10B981,color:#fff
+    style D1 fill:#1a4a1a,stroke:#10B981,color:#fff
+    style M1 fill:#1a4a1a,stroke:#10B981,color:#fff
+    style P2 fill:#3a2a1a,stroke:#F7BB40,color:#fff
+    style F fill:#4a3a1a,stroke:#F7BB40,color:#fff
     style R fill:#2a1a4a,stroke:#cc5de8,color:#fff
-    style OUT fill:#1a4a3a,stroke:#00d4aa,color:#fff
+    style OUT fill:#1a4a3a,stroke:#5BA3C9,color:#fff
 
     click S showPipelineDetail
     click D1 showPipelineDetail
@@ -154,11 +154,11 @@ flowchart LR
 <script>
 const pipelineDetails = {
   S: "<strong style='color:#4dabf7'>Published Schedule (SSIM)</strong><br>The schedule filed by airlines — departure counts and flight minutes per route. Available months in advance but drifts from what will actually operate.",
-  D1: "<strong style='color:#51cf66'>Departure Delta Model</strong><br>Predicts how many more or fewer flights will operate vs. the published schedule. Split by forecast horizon: 1–90 days and 91–220 days ahead.",
-  M1: "<strong style='color:#51cf66'>Flight Minutes Delta Model</strong><br>Predicts the correction to total flight time. Runs in parallel with the departure model — both corrections feed into Phase 2.",
-  F: "<strong style='color:#fcc419'>Formula Base Estimate</strong><br>Converts corrected departures and flight minutes into a fuel estimate using recency-weighted kg/dep and kg/min rates. Falls back to airport or global averages for sparse routes.",
+  D1: "<strong style='color:#10B981'>Departure Delta Model</strong><br>Predicts how many more or fewer flights will operate vs. the published schedule. Split by forecast horizon: 1–90 days and 91–220 days ahead.",
+  M1: "<strong style='color:#10B981'>Flight Minutes Delta Model</strong><br>Predicts the correction to total flight time. Runs in parallel with the departure model — both corrections feed into Phase 2.",
+  F: "<strong style='color:#F7BB40'>Formula Base Estimate</strong><br>Converts corrected departures and flight minutes into a fuel estimate using recency-weighted kg/dep and kg/min rates. Falls back to airport or global averages for sparse routes.",
   R: "<strong style='color:#cc5de8'>ML Correction Ratio</strong><br>A HistGBM model predicts how much the formula estimate will be off, expressed as a ratio near 1.0. Final prediction = base × ratio.",
-  OUT: "<strong style='color:#00d4aa'>Predicted Uplift kg</strong><br>Monthly fuel uplift forecast per airline and airport. This is what we compare against F+ — the current production benchmark."
+  OUT: "<strong style='color:#5BA3C9'>Predicted Uplift kg</strong><br>Monthly fuel uplift forecast per airline and airport. This is what we compare against F+ — the current production benchmark."
 };
 function showPipelineDetail(id) {
   const box = document.getElementById('pipeline-detail-box');
@@ -175,31 +175,31 @@ function showPipelineDetail(id) {
 <div style="margin-top:0.3em; font-size:0.78em;">
     <div style="font-size:0.75em; color:#aaa; margin-bottom:0.25em;">Models</div>
     <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:0.6em;">
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Linear Regression</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Ridge</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">XGBoost</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">GradientBoosting</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">HistGBM</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">LightGBM</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Direct target</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Ratio target</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Quantile target</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Blend (deps + mins)</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Linear Regression</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Ridge</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">XGBoost</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">GradientBoosting</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">HistGBM</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">LightGBM</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Direct target</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Ratio target</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Quantile target</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Blend (deps + mins)</span>
     </div>
     <div style="font-size:0.75em; color:#aaa; margin-bottom:0.25em;">Features</div>
     <div style="display:flex; flex-wrap:wrap; gap:5px;">
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">no_of_deps · flight_mins</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">days_to_ops</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">airline · airport · seat_bin</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">airline × airport</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">month · quarter · day_of_year sin/cos</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">schedule_season</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">hub · charter · long_haul · leisure</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">mins/dep · mins×hub · mins×charter</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">route_mean/dep · route_mean/min</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">seasonal route mean (SS/WS)</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">outlier removal</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">feature scaling</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">no_of_deps · flight_mins</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">days_to_ops</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">airline · airport · seat_bin</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">airline × airport</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">month · quarter · day_of_year sin/cos</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">schedule_season</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">hub · charter · long_haul · leisure</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">mins/dep · mins×hub · mins×charter</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">route_mean/dep · route_mean/min</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">seasonal route mean (SS/WS)</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">outlier removal</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">feature scaling</span>
     </div>
 </div>
 ```
@@ -214,29 +214,29 @@ function showPipelineDetail(id) {
 <div style="margin-top:0.5em;">
   <div style="font-size:0.7em; color:#aaa; margin-bottom:0.4em; text-transform:uppercase; letter-spacing:0.08em;">Approach</div>
   <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1.2em;">
-    <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Formula blend</span>
-    <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Recency-weighted rates</span>
-    <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">HistGBM correction ratio</span>
+    <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Formula blend</span>
+    <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Recency-weighted rates</span>
+    <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">HistGBM correction ratio</span>
   </div>
   <div style="font-size:0.7em; color:#aaa; margin-bottom:0.4em; text-transform:uppercase; letter-spacing:0.08em;">Features (correction model)</div>
   <div style="display:flex; flex-wrap:wrap; gap:8px;">
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">airline</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">airport</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">airline × airport</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">seat_bin</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">no_of_deps</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">flight_mins</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">flight_mins / dep</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">flight_mins × deps</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">month</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">schedule_season</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">hub_indicator</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">charter_airline</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">long_haul</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">leisure_route</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">mins × hub</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">mins × charter</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">route_mean uplift / flight</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">airline</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">airport</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">airline × airport</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">seat_bin</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">no_of_deps</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">flight_mins</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">flight_mins / dep</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">flight_mins × deps</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">month</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">schedule_season</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">hub_indicator</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">charter_airline</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">long_haul</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">leisure_route</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">mins × hub</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">mins × charter</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">route_mean uplift / flight</span>
   </div>
 </div>
 ```
@@ -248,21 +248,21 @@ function showPipelineDetail(id) {
 ```{=html}
 <div style="display:flex; flex-direction:column; gap:0.5em; margin-top:0.2em; font-size:0.82em;">
 
-  <div style="background:#1a1a2e; border-left:3px solid #fcc419; border-radius:6px; padding:0.35em 0.9em; color:#e0e0e0; line-height:1.4;">
-    Instead of predicting fuel uplift directly, we predict a <strong style="color:#fcc419;">ratio</strong> — how much the actual uplift will differ from a formula-based estimate.
+  <div style="background:#102238; border-left:3px solid #F7BB40; border-radius:6px; padding:0.35em 0.9em; color:#FBF9F5; line-height:1.4;">
+    Instead of predicting fuel uplift directly, we predict a <strong style="color:#F7BB40;">ratio</strong> — how much the actual uplift will differ from a formula-based estimate.
   </div>
 
   <div style="display:flex; gap:0.7em;">
-    <div style="flex:1; background:#1a1a2e; border:1px solid #3a3a5a; border-radius:8px; padding:0.35em 0.85em;">
+    <div style="flex:1; background:#102238; border:1px solid #3a3a5a; border-radius:8px; padding:0.35em 0.85em;">
       <div style="font-size:0.75em; color:#ff6b6b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.25em;">The problem with direct prediction</div>
       <div style="color:#ccc; line-height:1.4;">
         Raw fuel uplift varies enormously — a hub route can consume <strong>10× more</strong> than a thin leisure route. A model predicting raw kg struggles to generalise across that range.
       </div>
     </div>
-    <div style="flex:1; background:#1a1a2e; border:1px solid #2a4a2a; border-radius:8px; padding:0.35em 0.85em;">
-      <div style="font-size:0.75em; color:#00d4aa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.25em;">Why the ratio works</div>
+    <div style="flex:1; background:#102238; border:1px solid #2a4a2a; border-radius:8px; padding:0.35em 0.85em;">
+      <div style="font-size:0.75em; color:#5BA3C9; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.25em;">Why the ratio works</div>
       <div style="color:#ccc; line-height:1.4;">
-        The ratio — <em>actual ÷ formula estimate</em> — clusters around <strong style="color:#00d4aa;">1.0</strong> for every route regardless of size. A stable, near-normal target is what ML models learn best.
+        The ratio — <em>actual ÷ formula estimate</em> — clusters around <strong style="color:#5BA3C9;">1.0</strong> for every route regardless of size. A stable, near-normal target is what ML models learn best.
       </div>
     </div>
   </div>
@@ -284,7 +284,7 @@ function showPipelineDetail(id) {
   <!-- Base formula -->
   <div style="text-align:center; margin-bottom:0.6em;">
     <div style="font-size:0.72em; color:#aaa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">Base estimate</div>
-    <div style="display:inline-block; background:#1a1a2e; border:1px solid #5a6a2a; border-radius:8px; padding:0.4em 1.4em; font-family:monospace; font-size:1.15em; color:#fcc419;">
+    <div style="display:inline-block; background:#102238; border:1px solid #5a6a2a; border-radius:8px; padding:0.4em 1.4em; font-family:monospace; font-size:1.15em; color:#F7BB40;">
       base &nbsp;=&nbsp; ½ (rate<sub style="font-size:0.75em;">dep</sub> × deps &nbsp;+&nbsp; rate<sub style="font-size:0.75em;">min</sub> × mins)
     </div>
     <div style="font-size:0.78em; color:#aaa; margin-top:0.3em;">Recency-weighted kg/dep and kg/min rates blended equally</div>
@@ -293,20 +293,20 @@ function showPipelineDetail(id) {
   <!-- Train / Predict columns -->
   <div style="display:flex; gap:1em;">
 
-    <div style="flex:1; background:#1a1a2e; border:1px solid #3a4a6a; border-radius:8px; padding:0.5em 0.9em;">
+    <div style="flex:1; background:#102238; border:1px solid #3a4a6a; border-radius:8px; padding:0.5em 0.9em;">
       <div style="font-size:0.7em; color:#9ecae1; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">① Training — learning the ratio</div>
-      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.25em;">
-        target &nbsp;=&nbsp; <span style="color:#00d4aa;">actual uplift</span> &nbsp;÷&nbsp; <span style="color:#fcc419;">base</span>
+      <div style="font-family:monospace; font-size:1em; color:#FBF9F5; margin-bottom:0.25em;">
+        target &nbsp;=&nbsp; <span style="color:#5BA3C9;">actual uplift</span> &nbsp;÷&nbsp; <span style="color:#F7BB40;">base</span>
       </div>
       <div style="font-size:0.78em; color:#aaa; line-height:1.4;">
         For every historical month where we know the outcome, we compute this ratio and train HistGBM to predict it from route and schedule features.
       </div>
     </div>
 
-    <div style="flex:1; background:#1a1a2e; border:1px solid #2a5a2a; border-radius:8px; padding:0.5em 0.9em;">
-      <div style="font-size:0.7em; color:#74c476; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">② Prediction — applying the ratio</div>
-      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.25em;">
-        result &nbsp;=&nbsp; <span style="color:#fcc419;">base</span> &nbsp;×&nbsp; <span style="color:#00d4aa;">predicted ratio</span>
+    <div style="flex:1; background:#102238; border:1px solid #2a5a2a; border-radius:8px; padding:0.5em 0.9em;">
+      <div style="font-size:0.7em; color:#10B981; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">② Prediction — applying the ratio</div>
+      <div style="font-family:monospace; font-size:1em; color:#FBF9F5; margin-bottom:0.25em;">
+        result &nbsp;=&nbsp; <span style="color:#F7BB40;">base</span> &nbsp;×&nbsp; <span style="color:#5BA3C9;">predicted ratio</span>
       </div>
       <div style="font-size:0.78em; color:#aaa; line-height:1.4;">
         The ratio clusters close to 1.0 — the formula carries the load. The model corrects where the formula systematically over- or underestimates.
@@ -324,7 +324,7 @@ function showPipelineDetail(id) {
 ```{=html}
 <div style="display:flex; gap:1.5em; margin-top:0.2em; font-size:0.8em;">
   <div style="flex:1; background:#1a2a1a; border:1px solid #3a6a4a; border-radius:8px; padding:0.5em 0.9em;">
-    <div style="color:#74c476; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
+    <div style="color:#10B981; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Jan 2024 – Jun 2025 <span style="color:#aaa;">(17 months)</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
@@ -337,8 +337,8 @@ function showPipelineDetail(id) {
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Forecast date</td><td style="padding:2px 0;">12 June 2025</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Test window</td><td style="padding:2px 0;">Jul – Dec 2025 <span style="color:#aaa;">(6 months)</span></td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Departures</td><td style="padding:2px 0;"><span style="color:#00d4aa; font-weight:bold;">Actual departures</span> — what really flew</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Flight minutes</td><td style="padding:2px 0;"><span style="color:#00d4aa; font-weight:bold;">Actual flight minutes</span> — what really flew</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Departures</td><td style="padding:2px 0;"><span style="color:#5BA3C9; font-weight:bold;">Actual departures</span> — what really flew</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Flight minutes</td><td style="padding:2px 0;"><span style="color:#5BA3C9; font-weight:bold;">Actual flight minutes</span> — what really flew</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Purpose</td><td style="padding:2px 0;">Isolate uplift model quality from schedule error</td></tr>
     </table>
   </div>
@@ -372,12 +372,12 @@ flowchart LR
     B --> ML
     ML -->|"base × ratio"| P
 
-    style D fill:#1a3a5a,stroke:#5a8aaa,color:#fff
-    style M fill:#1a3a5a,stroke:#5a8aaa,color:#fff
+    style D fill:#1A4568,stroke:#5a8aaa,color:#fff
+    style M fill:#1A4568,stroke:#5a8aaa,color:#fff
     style R fill:#3a2a1a,stroke:#aa8a5a,color:#fff
     style B fill:#2a2a4a,stroke:#888,color:#fff
     style ML fill:#2a4a2a,stroke:#5aaa5a,color:#fff
-    style P fill:#1a4a3a,stroke:#00d4aa,color:#fff
+    style P fill:#1a4a3a,stroke:#5BA3C9,color:#fff
     click D showNodeDetail
     click M showNodeDetail
     click R showNodeDetail
@@ -433,34 +433,34 @@ The uplift model works. The bottleneck is the **inputs**.
 <div style="margin-top:0.3em; font-size:0.78em;">
     <div style="font-size:0.75em; color:#aaa; margin-bottom:0.25em;">Models</div>
     <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:0.6em;">
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Linear · Lasso · Ridge · ElasticNet</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">SVR</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">KNeighbors</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Random Forest</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">XGBoost</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">CatBoost</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">HistGBM</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">LightGBM</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">MultiOutputRegressor (joint)</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Separate models per target</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Delta target</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Direct target</span>
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Horizon split 1–90 / 91–220</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Linear · Lasso · Ridge · ElasticNet</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">SVR</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">KNeighbors</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Random Forest</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">XGBoost</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">CatBoost</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">HistGBM</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">LightGBM</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">MultiOutputRegressor (joint)</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Separate models per target</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Delta target</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Direct target</span>
+      <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Horizon split 1–90 / 91–220</span>
     </div>
     <div style="font-size:0.75em; color:#aaa; margin-bottom:0.25em;">Features</div>
     <div style="display:flex; flex-wrap:wrap; gap:5px;">
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">sched_deps · sched_mins</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">days_to_ops</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">airline · airport · seat_bin</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">airline × airport</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">month · quarter · day_of_week</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">day_of_year sin/cos · schedule_season</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">short/long haul · charter · leisure month</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">lag Δdeps / Δmins — 7/14/28/90/180/365d</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">rolling mean (7d)</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">German holidays</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">route historical bias</span>
-      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:3px 9px;border-radius:20px;font-size:0.78em;">schedule reliability score</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">sched_deps · sched_mins</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">days_to_ops</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">airline · airport · seat_bin</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">airline × airport</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">month · quarter · day_of_week</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">day_of_year sin/cos · schedule_season</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">short/long haul · charter · leisure month</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">lag Δdeps / Δmins — 7/14/28/90/180/365d</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">rolling mean (7d)</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">German holidays</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">route historical bias</span>
+      <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:3px 9px;border-radius:20px;font-size:0.78em;">schedule reliability score</span>
     </div>
 </div>
 ```
@@ -473,28 +473,28 @@ The uplift model works. The bottleneck is the **inputs**.
 <div style="margin-top:0.5em;">
   <div style="font-size:0.7em; color:#aaa; margin-bottom:0.4em; text-transform:uppercase; letter-spacing:0.08em;">Approach</div>
   <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1.2em;">
-    <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">LightGBM</span>
-    <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Delta model — predict the change</span>
-    <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Horizon split: 1–90 / 91–220 days</span>
-    <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Separate models for deps &amp; mins</span>
+    <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">LightGBM</span>
+    <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Delta model — predict the change</span>
+    <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Horizon split: 1–90 / 91–220 days</span>
+    <span style="background:#1A4568;border:1px solid #2D5A7B;color:#9ecae1;padding:4px 12px;border-radius:20px;font-size:0.72em;">Separate models for deps &amp; mins</span>
   </div>
   <div style="font-size:0.7em; color:#aaa; margin-bottom:0.4em; text-transform:uppercase; letter-spacing:0.08em;">Features</div>
   <div style="display:flex; flex-wrap:wrap; gap:8px;">
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">airline</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">airport</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">airline × airport</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">seat_bin</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">sched_departures</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">sched_flight_mins</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">days_to_ops</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">month</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">day_of_week</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">quarter · day_of_year sin/cos</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">schedule_season</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">is_short_haul · is_long_haul</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">is_charter · is_leisure_month</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">lag Δdeps 7/14/28/90/180/365d</span>
-    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:4px 12px;border-radius:20px;font-size:0.72em;">lag Δmins 7/14/28/90/180/365d</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">airline</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">airport</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">airline × airport</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">seat_bin</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">sched_departures</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">sched_flight_mins</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">days_to_ops</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">month</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">day_of_week</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">quarter · day_of_year sin/cos</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">schedule_season</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">is_short_haul · is_long_haul</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">is_charter · is_leisure_month</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">lag Δdeps 7/14/28/90/180/365d</span>
+    <span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:4px 12px;border-radius:20px;font-size:0.72em;">lag Δmins 7/14/28/90/180/365d</span>
   </div>
 </div>
 ```
@@ -509,7 +509,7 @@ The uplift model works. The bottleneck is the **inputs**.
   <!-- Base formula -->
   <div style="text-align:center; margin-bottom:0.6em;">
     <div style="font-size:0.72em; color:#aaa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">Correction target</div>
-    <div style="display:inline-block; background:#1a1a2e; border:1px solid #5a6a2a; border-radius:8px; padding:0.4em 1.4em; font-family:monospace; font-size:1.15em; color:#fcc419;">
+    <div style="display:inline-block; background:#102238; border:1px solid #5a6a2a; border-radius:8px; padding:0.4em 1.4em; font-family:monospace; font-size:1.15em; color:#F7BB40;">
       Δ &nbsp;=&nbsp; actual &nbsp;−&nbsp; scheduled
     </div>
     <div style="font-size:0.78em; color:#aaa; margin-top:0.3em;">One delta model for departures, one for flight minutes</div>
@@ -518,20 +518,20 @@ The uplift model works. The bottleneck is the **inputs**.
   <!-- Train / Predict columns -->
   <div style="display:flex; gap:1em;">
 
-    <div style="flex:1; background:#1a1a2e; border:1px solid #3a4a6a; border-radius:8px; padding:0.5em 0.9em;">
+    <div style="flex:1; background:#102238; border:1px solid #3a4a6a; border-radius:8px; padding:0.5em 0.9em;">
       <div style="font-size:0.7em; color:#9ecae1; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">① Training — learning the delta</div>
-      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.25em;">
-        target &nbsp;=&nbsp; <span style="color:#00d4aa;">actual</span> &nbsp;−&nbsp; <span style="color:#fcc419;">scheduled</span>
+      <div style="font-family:monospace; font-size:1em; color:#FBF9F5; margin-bottom:0.25em;">
+        target &nbsp;=&nbsp; <span style="color:#5BA3C9;">actual</span> &nbsp;−&nbsp; <span style="color:#F7BB40;">scheduled</span>
       </div>
       <div style="font-size:0.78em; color:#aaa; line-height:1.4;">
         For every historical day we know what was scheduled and what actually flew. LightGBM learns to predict the gap from route, horizon, and lag features.
       </div>
     </div>
 
-    <div style="flex:1; background:#1a1a2e; border:1px solid #2a5a2a; border-radius:8px; padding:0.5em 0.9em;">
-      <div style="font-size:0.7em; color:#74c476; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">② Prediction — applying the delta</div>
-      <div style="font-family:monospace; font-size:1em; color:#e0e0e0; margin-bottom:0.25em;">
-        result &nbsp;=&nbsp; <span style="color:#fcc419;">scheduled</span> &nbsp;+&nbsp; <span style="color:#00d4aa;">predicted Δ</span>
+    <div style="flex:1; background:#102238; border:1px solid #2a5a2a; border-radius:8px; padding:0.5em 0.9em;">
+      <div style="font-size:0.7em; color:#10B981; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3em;">② Prediction — applying the delta</div>
+      <div style="font-family:monospace; font-size:1em; color:#FBF9F5; margin-bottom:0.25em;">
+        result &nbsp;=&nbsp; <span style="color:#F7BB40;">scheduled</span> &nbsp;+&nbsp; <span style="color:#5BA3C9;">predicted Δ</span>
       </div>
       <div style="font-size:0.78em; color:#aaa; line-height:1.4;">
         Predicting a delta near zero is easier than predicting an absolute count from scratch — the schedule is already a strong baseline, and the model just corrects its known biases.
@@ -571,12 +571,12 @@ flowchart LR
     style S fill:#2a2a3a,stroke:#888,color:#fff
     style H1 fill:#2a2a3a,stroke:#666,color:#bbb
     style H2 fill:#2a2a3a,stroke:#666,color:#bbb
-    style D1 fill:#1a3a5a,stroke:#5a8aaa,color:#fff
-    style M1 fill:#1a3a5a,stroke:#5a8aaa,color:#fff
+    style D1 fill:#1A4568,stroke:#5a8aaa,color:#fff
+    style M1 fill:#1A4568,stroke:#5a8aaa,color:#fff
     style D2 fill:#1a3050,stroke:#4a7a9a,color:#ddd
     style M2 fill:#1a3050,stroke:#4a7a9a,color:#ddd
-    style PD fill:#1a4a3a,stroke:#00d4aa,color:#fff
-    style PM fill:#1a4a3a,stroke:#00d4aa,color:#fff
+    style PD fill:#1a4a3a,stroke:#5BA3C9,color:#fff
+    style PM fill:#1a4a3a,stroke:#5BA3C9,color:#fff
     click S showNodeDetail
     click H1 showNodeDetail
     click H2 showNodeDetail
@@ -603,7 +603,7 @@ Near-term (1–90 days) and long-range (91–220 days) schedules behave differen
 ```{=html}
 <div style="display:flex; gap:1.5em; margin-top:0.2em; font-size:0.8em;">
   <div style="flex:1; background:#1a2a1a; border:1px solid #3a6a4a; border-radius:8px; padding:0.5em 0.9em;">
-    <div style="color:#74c476; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
+    <div style="color:#10B981; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Oct 2023 – Jun 2025 <span style="color:#aaa;">(20 months)</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
@@ -618,7 +618,7 @@ Near-term (1–90 days) and long-range (91–220 days) schedules behave differen
       <tr><td style="padding:2px 0; color:#aaa;">Forecast date</td><td style="padding:2px 0;">12 June 2025</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Test window</td><td style="padding:2px 0;">Jul – Dec 2025 <span style="color:#aaa;">(6 months)</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Input</td><td style="padding:2px 0;">Published schedule as of Jun 12 — scheduled deps + mins</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Ground truth</td><td style="padding:2px 0;"><span style="color:#00d4aa; font-weight:bold;">Actual departures</span> + <span style="color:#00d4aa; font-weight:bold;">actual flight minutes</span></td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Ground truth</td><td style="padding:2px 0;"><span style="color:#5BA3C9; font-weight:bold;">Actual departures</span> + <span style="color:#5BA3C9; font-weight:bold;">actual flight minutes</span></td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Metric</td><td style="padding:2px 0;">WAPE on predicted vs actual deps / mins</td></tr>
     </table>
   </div>
@@ -691,14 +691,14 @@ flowchart TB
     BLEND --> CR
     CR --> FO
     style input fill:#1a2a4a,stroke:#4dabf7,color:#fff
-    style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
-    style phase1 fill:#1a3a1a,stroke:#51cf66,color:#fff
-    style P1A fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style P1B fill:#1a4a1a,stroke:#51cf66,color:#fff
-    style phase2 fill:#3a2a1a,stroke:#fcc419,color:#fff
-    style RM fill:#4a3a1a,stroke:#fcc419,color:#fff
-    style BLEND fill:#4a3a1a,stroke:#fcc419,color:#fff
-    style FB fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style S fill:#1A4568,stroke:#4dabf7,color:#fff
+    style phase1 fill:#1a3a1a,stroke:#10B981,color:#fff
+    style P1A fill:#1a4a1a,stroke:#10B981,color:#fff
+    style P1B fill:#1a4a1a,stroke:#10B981,color:#fff
+    style phase2 fill:#3a2a1a,stroke:#F7BB40,color:#fff
+    style RM fill:#4a3a1a,stroke:#F7BB40,color:#fff
+    style BLEND fill:#4a3a1a,stroke:#F7BB40,color:#fff
+    style FB fill:#4a3a1a,stroke:#F7BB40,color:#fff
     style CR fill:#3a1a4a,stroke:#cc5de8,color:#fff
     style output fill:#1a3a3a,stroke:#20c997,color:#fff
     style FO fill:#1a4a4a,stroke:#20c997,color:#fff
@@ -715,7 +715,7 @@ flowchart TB
 ```{=html}
 <div style="display:flex; gap:1.5em; margin-top:0.4em; font-size:0.8em;">
   <div style="flex:1; background:#1a2a1a; border:1px solid #3a6a4a; border-radius:8px; padding:0.7em 0.9em;">
-    <div style="color:#74c476; font-weight:bold; margin-bottom:0.4em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Scope</div>
+    <div style="color:#10B981; font-weight:bold; margin-bottom:0.4em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Scope</div>
     <table style="width:100%; border-collapse:collapse; color:#ccc;">
       <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
       <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">LH, OS, LX, SN, EW, EN, WK, 4Y, YF, XQ, 3S</td></tr>
@@ -749,12 +749,12 @@ flowchart TB
 </div>
 
 <div style="display: flex; justify-content: center; gap: 0.3em; font-size: 2em;">
-<span style="color: #00d4aa;">&#10003;</span>
-<span style="color: #00d4aa;">&#10003;</span>
+<span style="color: #5BA3C9;">&#10003;</span>
+<span style="color: #5BA3C9;">&#10003;</span>
 <span style="color: #ff6b6b;">&#10007;</span>
-<span style="color: #00d4aa;">&#10003;</span>
-<span style="color: #00d4aa;">&#10003;</span>
-<span style="color: #00d4aa;">&#10003;</span>
+<span style="color: #5BA3C9;">&#10003;</span>
+<span style="color: #5BA3C9;">&#10003;</span>
+<span style="color: #5BA3C9;">&#10003;</span>
 </div>
 
 <div style="margin-top: 1em; font-size: 0.9em;">
@@ -863,27 +863,27 @@ Even when we exclude the routes F+ cannot see, **FLT still wins: 3.1% vs 3.9%** 
     </thead>
     <tbody>
       <tr style="border-bottom:1px solid #2a2a3a;">
-        <td style="padding:0.32em 0.6em; color:#e0e0e0;">Schedule drift</td>
+        <td style="padding:0.32em 0.6em; color:#FBF9F5;">Schedule drift</td>
         <td style="padding:0.32em 0.6em; color:#ccc;">Phase 1 models predict actual departures &amp; flight minutes from the published schedule</td>
-        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:2px 10px;border-radius:20px;font-size:0.85em;">Solved</span></td>
+        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:2px 10px;border-radius:20px;font-size:0.85em;">Solved</span></td>
       </tr>
       <tr style="border-bottom:1px solid #2a2a3a;">
-        <td style="padding:0.32em 0.6em; color:#e0e0e0;">Horizon degradation</td>
+        <td style="padding:0.32em 0.6em; color:#FBF9F5;">Horizon degradation</td>
         <td style="padding:0.32em 0.6em; color:#ccc;">Horizon-split models (1–90 / 91–220 days) each specialise on their forecast range</td>
-        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:2px 10px;border-radius:20px;font-size:0.85em;">Solved</span></td>
+        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:2px 10px;border-radius:20px;font-size:0.85em;">Solved</span></td>
       </tr>
       <tr style="border-bottom:1px solid #2a2a3a;">
-        <td style="padding:0.32em 0.6em; color:#e0e0e0;">No route history</td>
+        <td style="padding:0.32em 0.6em; color:#FBF9F5;">No route history</td>
         <td style="padding:0.32em 0.6em; color:#ccc;">Fallback hierarchy: route rates → airport means → global mean. No city-pair history required.</td>
-        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#74c476;padding:2px 10px;border-radius:20px;font-size:0.85em;">Solved</span></td>
+        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:2px 10px;border-radius:20px;font-size:0.85em;">Solved</span></td>
       </tr>
       <tr style="border-bottom:1px solid #2a2a3a;">
-        <td style="padding:0.32em 0.6em; color:#e0e0e0;">Station disruptions</td>
+        <td style="padding:0.32em 0.6em; color:#FBF9F5;">Station disruptions</td>
         <td style="padding:0.32em 0.6em; color:#ccc;">Architecture supports a per-station disruption flag — when a station cannot fuel, predicted volume redistributes to alternate stations. Short-horizon only. Not yet implemented.</td>
-        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#3a2a1a;border:1px solid #7a5a2a;color:#fcc419;padding:2px 10px;border-radius:20px;font-size:0.85em;">Roadmap</span></td>
+        <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#3a2a1a;border:1px solid #7a5a2a;color:#F7BB40;padding:2px 10px;border-radius:20px;font-size:0.85em;">Roadmap</span></td>
       </tr>
       <tr>
-        <td style="padding:0.32em 0.6em; color:#e0e0e0;">Aircraft swaps</td>
+        <td style="padding:0.32em 0.6em; color:#FBF9F5;">Aircraft swaps</td>
         <td style="padding:0.32em 0.6em; color:#ccc;">seat_bin + kg/min rates capture aircraft size; within-bin swaps handled well</td>
         <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#2a2a1a;border:1px solid #5a5a3a;color:#ffd966;padding:2px 10px;border-radius:20px;font-size:0.85em;">Partial</span></td>
       </tr>

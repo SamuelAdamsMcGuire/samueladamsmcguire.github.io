@@ -1,3 +1,25 @@
+/* ── dataTactics brand overrides ── */
+
+/* Background */
+.reveal-viewport,
+.reveal,
+.reveal .slide-background {
+  background-color: #0E2A42 !important;
+}
+
+/* Logo — fixed top-right corner on every slide */
+.dt-logo-overlay {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  width: 330px;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+/* ─────────────────────────────── */
+
 .smallfont {
   font-size: 0.6em;
 }
