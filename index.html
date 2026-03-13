@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reset.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
   <style>
     .reveal .sourceCode {  /* see #7635 */
       overflow: visible;
@@ -29,7 +29,7 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/theme/moon.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/moon.css" id="theme">
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -89,7 +89,6 @@ flowchart LR
 <div style="font-size:0.85em; color:#aaa; margin-bottom:0.5em;">
 Five structural weaknesses — FLT was built to address them.
 </div>
-<div>
 <ul>
 <li class="fragment"><strong>Schedule drift</strong> — the published
 schedule is never what actually flies: cancellations, swaps and
@@ -106,14 +105,12 @@ airport can’t fuel, aircraft tank elsewhere; F+ doesn’t detect or adjust
 aircraft replacing a 250-seat one carries very different fuel
 requirements</li>
 </ul>
-</div>
 </section>
 <section id="our-hypothesis" class="slide level3">
 <h3>Our Hypothesis</h3>
 <div style="font-size: 0.9em; margin: 0.6em 0;">
 <p><strong>Don’t rely on city pairs or fixed routes.</strong></p>
 </div>
-<div>
 <ul>
 <li class="fragment">City-pair history breaks down for new routes, swaps
 and disruptions</li>
@@ -127,7 +124,6 @@ fuel efficiency without needing route-specific history</li>
 <li class="fragment">The model learns: <em>given this many flights of
 this size from this airport — how much fuel?</em></li>
 </ul>
-</div>
 </section>
 <section id="the-flt-pipeline-two-stages" class="slide level3">
 <h3>The FLT Pipeline — Two Stages</h3>
@@ -408,7 +404,6 @@ for details</span></p>
 <p>The uplift model works. The bottleneck is the
 <strong>inputs</strong>.</p>
 </div>
-<div>
 <ul>
 <li class="fragment">The previous results used <strong>actual departures
 and flight minutes</strong> — what really flew</li>
@@ -423,7 +418,6 @@ actually operate</strong> — not what was planned</li>
 <li class="fragment"><strong>Closing the gap between scheduled and
 actual is Phase 1 — the schedule correction models.</strong></li>
 </ul>
-</div>
 </section>
 <section id="what-we-tried-schedule-correction" class="slide level3">
 <h3>What We Tried — Schedule Correction</h3>
@@ -622,7 +616,6 @@ class="slide level3">
 </section>
 <section id="putting-it-all-together" class="slide level3">
 <h3>Putting It All Together</h3>
-<div>
 <ul>
 <li class="fragment">Phase 1 corrects the published schedule — predicted
 departures and flight minutes replace the raw SSIM inputs</li>
@@ -636,7 +629,6 @@ formula systematically drifts</li>
 <li class="fragment">The result: a forecast that adapts to what will
 actually fly — not just what was planned</li>
 </ul>
-</div>
 </section>
 <section id="the-complete-flt-pipeline" class="slide level3">
 <h3>The Complete FLT Pipeline</h3>
@@ -956,7 +948,6 @@ t</strong> less misorder in 6 months</li>
 <section id="the-ask" class="slide level3">
 <h3>The Ask</h3>
 <div style="font-size: 0.85em;">
-<div>
 <ul>
 <li class="fragment"><strong>5 out of 6 months, 60% less
 misorder</strong></li>
@@ -967,18 +958,17 @@ data</li>
 <li class="fragment">Continue the project and expand coverage</li>
 </ul>
 </div>
-</div>
 <!-- build: 2026-02-25 -->
 </section>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
 
   <!-- reveal.js plugins -->
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/notes/notes.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/search/search.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/search/search.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/zoom/zoom.js"></script>
 
   <script>
 
