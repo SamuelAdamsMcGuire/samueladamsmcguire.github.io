@@ -1,310 +1,331 @@
-# FLT Speaker Notes
+# Speaker Notes — FLT: Smarter Fuel Uplift Forecasting
+
+Presentation date: March 17, 2026
+Audience: Technical/business stakeholders familiar with airline fuel planning
 
 ---
 
 ## Our Mission
 
-The whole project in one sentence. We built an alternative to F+, and we want to beat it cleanly.
-
-Keep it short here — don't over-explain. Let the mission land, then move on.
+The one-sentence framing for everything that follows. F+ is what's in production today — it's the bar we need to beat. This slide sets up the entire conversation as a head-to-head comparison. Don't linger. Move quickly to what F+ actually does.
 
 ---
 
 ## How F+ Works
 
-F+ is simple: take the published schedule, look up the average uplift for each city pair and aircraft type over the last three months, and sum it up. That's it.
-
-The simplicity is both its strength and its weakness. It works well when routes are stable and history is available — but it falls apart quickly when either of those isn't true.
+Stress the simplicity: published schedule → look up the last 3 months of history on that City Pair and Aircraft Type → average it → done. That's the whole system. It's not a dumb approach — it works reasonably well for stable, well-historied routes. The problem is what it can't see, which is the next slide.
 
 ---
 
 ## The Limits of F+
 
-Walk through each point and let it build. Each one is a real failure mode you can explain in one sentence:
+Walk through the five points one by one, letting each one land before moving on (incremental animation).
 
-- **Schedule drift** — the published schedule and what actually flies diverge constantly, especially further out.
-- **Horizon degradation** — the further out the forecast, the more schedule drift accumulates.
-- **New/seasonal routes** — no history, no estimate. F+ is blind.
-- **Station disruptions** — if a station can't fuel, aircraft tank elsewhere. F+ doesn't know.
-- **Aircraft swaps** — a narrow-body replaced by a wide-body carries very different fuel. F+ treats them the same.
+- **Schedule drift**: airlines cancel, swap, and add flights constantly. F+ trusts the published schedule without question.
+- **Horizon degradation**: a forecast 6 months out is based on a schedule that's much less reliable than one made next week. F+ doesn't know that.
+- **No route history**: new routes, seasonal one-offs — F+ can't price them at all. No city pair = no estimate.
+- **Station disruptions**: if Frankfurt can't fuel, planes tank at the previous stop. F+ doesn't model this. Note the "(FLT roadmap: station disruption flag)" callout — if asked, explain that FLT's architecture supports a per-station binary flag; this is designed but not yet implemented.
+- **Aircraft swaps**: a 180-seat narrowbody and a 250-seat widebody are very different fuel consumers. A swap breaks F+'s city-pair average.
 
-These aren't edge cases. They happen regularly across 400 airports.
-
-Tell the audience these aren't just observations — FLT was designed specifically around solving them. The next slide shows how.
+These aren't edge cases — they happen constantly across a network of 400 airports.
 
 ---
 
 ## Our Hypothesis
 
-This is the conceptual pivot. We're not throwing out route history — we're reframing what we use.
+The key insight: **stop thinking in city pairs, start thinking in flight volume**.
 
-Instead of "what did this city pair historically uplift?", we ask: "given how much flying is actually happening here, how much fuel does that require?"
+Departures and flight minutes are what actually drive fuel consumption. They're measurable and forecastable. Seat bin captures aircraft size without needing route-specific history. The model generalises: "given this many flights of this size from this airport" — that's all it needs.
 
-Flight volume — departures and minutes — is a proxy for fuel demand that works even for new routes, swaps, and disruptions. Seat bin captures aircraft size without needing route-level history.
+This approach is route-agnostic by design. That's what makes it scalable.
+
+---
+
+## The FLT Pipeline — Two Stages
+
+High-level architecture overview — two phases working in sequence. Use the Mermaid diagram to walk through the flow before going into detail.
+
+Phase 1 (left, blue/green): takes the published schedule and corrects it — departure and flight minutes delta models predict what will actually operate, splitting by forecast horizon (1–90 days vs 91–220 days).
+
+Phase 2 (right, amber/purple): takes the corrected schedule and converts it to predicted fuel uplift — statistical base (recency-weighted kg/dep and kg/min rates) multiplied by an ML correction ratio.
+
+The clickable nodes are available if the audience wants to drill into any component. The key message: the two stages are independent but designed to connect — the output of Phase 1 is exactly what Phase 2 expects as input.
 
 ---
 
 ## What We Tried — Uplift Model
 
-This is a credibility slide. We didn't jump straight to the answer — we tested widely.
+Context slide showing the breadth of the experimentation. Don't read every tag. The point: we tested everything from linear models to gradient boosting, tried multiple target formulations, dozens of feature combinations. The tags are evidence of thoroughness. Move on to what we kept.
 
-Point out that we tried everything from a dummy baseline up to LightGBM, and experimented with how we frame the target (direct kg, ratio, quantile) and how we blend departures vs minutes.
+---
 
-Don't spend too long here — the takeaway is just: we were thorough.
+## The Key Insight — Why a Ratio?
+
+This slide explains the core design choice before showing the equation. Spend a moment here — it makes the equation slide much easier to follow.
+
+**The problem**: raw fuel kg varies by an order of magnitude across routes. Frankfurt LH might uplift 500 t/day; a thin charter might do 15 t. A model trying to predict raw kg has to simultaneously understand both ends of that scale — it's a very hard learning problem.
+
+**The solution**: normalise. Compute a formula-based estimate first, then predict how far off that estimate will be — expressed as a ratio around 1.0. Every route now looks similar to the model regardless of its size. The ratio for a thin charter and the ratio for LH-FRA both cluster near 1.0 — that's a consistent, learnable target.
+
+If asked: the formula estimate uses recency-weighted kg/departure and kg/flight-minute rates. The ratio is actual ÷ formula. The model learns to predict ratio values slightly above or below 1.0 depending on route characteristics.
 
 ---
 
 ## What We Use — Uplift Model
 
-The winning approach is a formula blend with a learned correction ratio.
-
-- The formula computes a base estimate from recency-weighted kg/dep and kg/min rates.
-- A HistGBM model learns to predict how much the formula is off — expressed as a ratio near 1.0.
-- The features for the correction model are everything the formula can't capture on its own: airline identity, airport, seat bin, route type, seasonality.
-
-The correction model doesn't replace the formula. It improves it.
+Three things survived the experimentation: a formula blend, recency-weighted rates, and a HistGBM correction ratio. The correction model's feature set is worth noting — it includes computed interaction terms (mins × hub, mins × charter) and a route mean uplift per flight as a prior. This is what gives it the ability to generalise to thin or new routes.
 
 ---
 
 ## How It Works — The Equation
 
-The base estimate is a simple blend of two rate-based estimates:
-- kg/dep rate × departures
-- kg/min rate × flight minutes
+Two-step process.
 
-These rates are recency-weighted from historical data.
+**Base estimate**: blend two fuel rate signals — kg per departure and kg per flight minute — weighted by recency. This gives a formula-based estimate that's already a strong predictor.
 
-The model then predicts a ratio: `actual / base`. In training this ratio clusters around 1.0 — the formula already does most of the work. The model just corrects the systematic over/underestimates.
+**Correction ratio**: HistGBM predicts how far the formula is likely to be off, expressed as a ratio around 1.0. Multiplying base × ratio gives the final prediction.
 
-At prediction time: `base × predicted ratio = final forecast`.
+Why a ratio? Because raw fuel kg varies enormously across routes — Frankfurt LH volumes are orders of magnitude above a thin charter. Normalising to a ratio near 1.0 gives the model a consistent learning target. That's what makes generalisation work.
 
 ---
 
 ## Uplift Model Architecture
 
-Walk through the diagram left to right.
+Walk through the flow: actual departures and minutes, combined with recency-weighted rates, produce a base estimate. HistGBM then nudges it via a correction ratio. The base does the heavy lifting; ML handles the systematic gaps.
 
-Actual departures and actual flight minutes feed into the base estimate, together with recency-weighted route rates. That base estimate is then multiplied by the ML correction ratio.
-
-The key design choice is predicting a ratio near 1.0 rather than raw kg. A busy hub might carry 10× more fuel than a thin leisure route — the ratio normalises that, making the model much easier to train and generalise.
+The key point: a direct ML model predicting raw kg on a new route has nothing to anchor to. The formula provides that anchor. That's why this architecture outperforms pure ML by a wide margin.
 
 ---
 
 ## Training and Test Data — Uplift Model
 
-Important: the test vector uses **actual departures and actual flight minutes** — not the published schedule. This is the "perfect schedule" test.
+Two things to highlight:
 
-Why? Because we want to isolate the quality of the uplift model itself, separate from any schedule prediction error. If the inputs are perfect, how good is the model?
+1. **Actual inputs test**: the test vector uses actual departures and flight minutes — not the published schedule. This intentionally isolates the uplift model from schedule error. It answers: "how good can this get if we knew exactly what would fly?"
 
-17 months of training data across 10 airports, 11 airlines, 64 airline–airport pairs.
+2. **17 months of training**: January 2024 – June 2025. One full summer and one winter season.
+
+The results on the next slide are the *ceiling* of the approach — what the uplift model achieves when inputs are perfect.
 
 ---
 
-## Uplift Model Results — Using Perfect Schedule
+## Uplift Model Results — Actual Inputs
 
-These are the headline numbers for the uplift model in isolation.
+Interactive chart — walk through it. Filters for airline, airport, month are live.
 
-If someone asks: this is the ceiling — what FLT can achieve when it has perfect inputs. The schedule correction models (Phase 1) are what bring us closer to this ceiling in production.
-
-Use the filters to show specific airlines or airports if there's interest.
+Key message: when we give the model perfect inputs, it's extremely accurate across all months and routes. This establishes that the uplift model is not the bottleneck. The challenge is that in production we have the published schedule, which drifts from reality. That's what Phase 1 addresses.
 
 ---
 
 ## The Missing Piece — Schedule Reality
 
-This is the bridge slide. The previous results are great — but they assumed we knew exactly what would fly.
+The pivot point of the presentation. At prediction time — June 12, 2025 — we only have what was published in the schedule. That diverges from what actually flew, especially at long horizons. The further out the forecast, the less reliable the scheduled departures and flight minutes are as inputs.
 
-In reality, we only have the published schedule, which diverges from actual operations. The closer our schedule predictions are to reality, the closer our uplift forecast gets to those ceiling numbers.
-
-Phase 1 is the schedule correction layer — its job is to take the published SSIM and predict what will actually operate.
+The solution: build models to predict what will actually operate. That's Phase 1 — schedule correction.
 
 ---
 
 ## What We Tried — Schedule Correction
 
-Same credibility slide as for the uplift model. We tried the full range: linear models, SVR, KNN, tree ensembles, joint vs separate targets, delta vs direct, horizon splits.
-
-The feature set here is richer because schedule prediction depends heavily on timing: lag features at 7, 14, 28, 90, 180, 365 days. The model needs to know how far ahead you are and what the historical pattern looks like.
+Same pattern as the uplift model slide — broad experimentation. Notable here is the horizon split (1–90 / 91–220 days) and the lag features (7, 14, 28, 90, 180, 365 days). Schedule behaviour is very different near-term vs. long-range, which is why we split. The lags capture seasonal patterns and route-specific biases.
 
 ---
 
 ## What We Use — Schedule Models
 
-Four models in production: deps 1–90, deps 91–220, mins 1–90, mins 91–220.
-
-LightGBM with a delta formulation — predict the difference between scheduled and actual, not the absolute value.
-
-Splitting by horizon (near-term vs long-range) is important: near-term schedules are more reliable, long-range schedules drift more. Each model specialises.
+Four LightGBM models: departures delta and minutes delta, each split by horizon (short: 1–90d, long: 91–220d). Delta target because the schedule is already a strong baseline — predicting a correction near zero is a much easier learning problem than predicting absolute flight counts from scratch.
 
 ---
 
 ## How It Works — Schedule Equation
 
-The target is simply: `actual − scheduled`.
+Same two-panel structure as the uplift equation slide.
 
-In training, for every historical day we know both the scheduled and actual values, so we can compute this delta directly.
+Training: for every historical day we know what was scheduled and what actually flew. The model learns the delta.
 
-At prediction time: `scheduled + predicted delta = predicted actual`.
-
-The delta approach is better than predicting absolute values because the schedule is already a strong baseline — the model only needs to correct its known biases, not predict from scratch.
+Prediction: take the published schedule, add the predicted delta. The model corrects systematic over- and under-scheduling by route, airline, and horizon.
 
 ---
 
 ## Schedule Correction Model Architecture
 
-Four models run in parallel, two per metric (deps, mins), split by horizon (1–90 and 91–220 days).
+Four models running in parallel. The key design choice: splitting by horizon (1–90 and 91–220 days). Near-term schedules are relatively stable; long-range schedules diverge substantially. Separate specialisation outperforms a single model handling both.
 
-The outputs are merged: predicted actual departures and predicted actual flight minutes. These then feed into the uplift model as if they were the real schedule.
+Each model produces predicted actual departures and predicted actual flight minutes, which then feed directly into the uplift model.
 
 ---
 
 ## Training and Test Data — Schedule Models
 
-Training goes back to October 2023 — 20 months — because schedule prediction benefits from more seasonal history.
+Training: 20 months of schedule vs. actuals pairs (October 2023 – June 2025). Longer training window than the uplift model because schedule drift is a longer-horizon signal that benefits from more seasonal coverage.
 
-The test vector uses the schedule as it was published on June 12, 2025. Ground truth is actual departures and flight minutes for July–December 2025.
-
-Metric is WAPE on predicted vs actual deps and mins — how close are our schedule corrections to reality?
+Test: the published schedule as of June 12, 2025 — horizon 1 through 220 days — compared against what actually flew July through December 2025. Models see only what was available at forecast time.
 
 ---
 
 ## Schedule Model Results — Departures
 
-Use the filters to explore by airline or airport. The mode toggle shows raw volumes (Volumes), absolute error, or WAPE %.
-
-The key story: our predicted departures track actual departures significantly better than the raw published schedule. That improvement flows directly into uplift accuracy.
+Interactive chart. The correction model substantially improves departure estimates across the board. The improvement is especially visible at longer horizons where schedule drift is largest. Walk through a few airline or airport examples if the audience wants depth.
 
 ---
 
 ## Schedule Model Results — Flight Minutes
 
-Same as departures — use filters as needed.
-
-Flight minutes is a proxy for block time, which drives fuel burn per flight. Getting this right matters as much as departure counts.
+Same story for flight minutes. The model handles it separately because aircraft swaps and route changes affect total block time independently from departure counts. Both corrections feed into the uplift model's base estimate.
 
 ---
 
 ## Putting It All Together
 
-This is the integration slide — how the two phases connect.
+The connective tissue slide. Walk through it in sequence:
 
-Phase 1 takes the raw SSIM schedule and outputs corrected departure and minute estimates. Those estimates feed straight into the uplift model as inputs. The recency-weighted rates convert volume to a base estimate, and the ML correction ratio fine-tunes it.
-
-The whole system is end-to-end: schedule in, fuel forecast out.
+1. Phase 1 takes the published schedule and corrects it — producing predicted actual departures and flight minutes.
+2. Those corrected values feed into the uplift model exactly as if they were the real thing.
+3. Recency-weighted rates convert corrected flight volume into a base estimate.
+4. The correction ratio fine-tunes for route-specific drift.
+5. Result: a forecast that tracks what will actually fly, not just what was planned.
 
 ---
 
 ## The Complete FLT Pipeline
 
-Walk through the diagram top to bottom.
+The full architecture in one diagram. Published schedule goes in at the top; predicted uplift comes out at the bottom. Phase 1 (green, schedule correction) feeds Phase 2 (amber, uplift formula + purple, ML correction).
 
-The published SSIM schedule enters Phase 1, which outputs predicted actual departures and flight minutes. These flow into Phase 2: recency-weighted rates compute a base estimate, with route/airport/global fallbacks if no history exists. A correction ratio model adjusts the base. Final output is predicted uplift.
+**The fallback path** (dotted line) — important if asked about sparse routes:
 
-If someone asks about the fallback: if a route has no history (new route, charter, unscheduled), the system falls back to airport-level or global means — it never returns null.
+The model uses a three-level fallback hierarchy for routes with little or no history:
+
+- **Level 0 (exact match)**: airline + airport + seat_bin — uses a recency-weighted kg/departure rate. Normal case for any route with history.
+- **Level 1 (airport + seat_bin)**: cross-airline average for that airport and aircraft size. Switches to kg/flight-minute rate to avoid a short-haul route inheriting a long-haul number.
+- **Level 2 (seat_bin only)**: global average for that aircraft size class across all airports and airlines. Same kg/minute approach.
+
+The key design point: fallback levels 1 and 2 use kg/minute not kg/departure, because minutes encode flight length. One departure means very different things for a 45-minute hop vs. a 10-hour wide-body flight. No route is unforecastable — something always fires.
 
 ---
 
 ## Validation Setup
 
-Same forecast date for both FLT and F+: June 12, 2025. Neither model had access to anything after that.
+Test conditions, clearly stated:
 
-64 active airline–airport pairs across 10 airports and 11 airlines. 1.61 million tonnes of actual uplift across the 6-month window. This is a real-world test, not a toy dataset.
+- 10 airports, 11 airlines, 67 airline–airport routes
+- Forecast date: June 12, 2025 (single fixed point — not a rolling window)
+- Test window: July – December 2025 (6 months)
+- Same inputs and forecast date for both FLT and F+ — genuine apples-to-apples
+- WAPE as the primary metric; Misorder (absolute tonnes of wrong ordering) as the operational measure
+
+Emphasise: same forecast date, same inputs. F+ isn't penalised unfairly. It sees everything it would see in production.
 
 ---
 
 ## FLT Beats F+ in 5 out of 6 Months
 
-The headline result. 5–1. Overall WAPE 3.1% vs 3.9% — a 21% reduction in error.
+The headline result. Five wins, one loss (September). Overall WAPE: 3.84% vs 9.51%. Total misorder over 6 months: 65,548 t vs 162,541 t — FLT has 96,993 t less misorder.
 
-The one month FLT lost (September — the X) is worth acknowledging: unusual schedule behaviour that month skewed the model's corrections slightly high. Investigating.
+A win = our forecast is closer to actual fuel uplift for that month.
 
-13,303 tonnes less misorder over the 6-month window. That's the real number.
+September is the one loss. Worth acknowledging rather than glossing over — transition months (summer → winter schedule) are harder to predict because schedule structures shift. The model has one such transition in training; more data will improve this.
 
 ---
 
 ## Why the Formula Approach Works
 
-The lesson from all the experimentation: pure ML approaches struggled. The formula carries most of the signal — it just needs correction at the edges.
+The table tells the story. Direct ML (LR, Boosting) comes in at 11–19% WAPE — worse than F+. Pure formula approaches sit at 4.4–7.5%. The formula with ML correction lands at 3.84%.
 
-The table shows this clearly. ML direct (no formula) got 6.7–7.5% WAPE. Formula alone got 4.3–5.2%. Formula + ML correction got 3.1% — better than everything else and better than F+.
-
-The correction model only needs to be right about the residuals. That's a much easier learning problem.
+The ML correction needs the formula's anchor to work well. Neither component alone is enough. The combination is what wins.
 
 ---
 
 ## Where We Win Big — Unscheduled Flights
 
-This is a concrete example of something F+ literally cannot do.
+XQ-KEF, July 2025: zero scheduled flights, two actual flights, two predicted by FLT. F+ had nothing — empty schedule, no city-pair history, no estimate.
 
-XQ-KEF, July 2025: zero scheduled flights. F+ sees zero, predicts nothing. FLT predicted 2 flights and 18,909 kg — close to the actual 15,854 kg.
+FLT caught it using historical patterns: XQ has operated at KEF before. The model seeds historically observed routes even when the current schedule shows nothing.
 
-How? The historical patterns for that route were seeded into the test vector. Even with zero scheduled, the model picked up that flights typically operate on this route and gave an estimate.
+Uplift: FLT predicted 18.9 t against 15.9 t actual. Not perfect, but close. F+ predicts zero.
 
-This is a structural advantage. F+ will always miss unscheduled operations.
+This is what route-agnostic means in practice.
+
+---
+
+## The Schedule Blind Spot
+
+3S and YF are cargo and charter operators. They don't publish long-range schedules — F+ sees nothing for these airlines beyond the near term. For November and December, F+ made no predictions at all for these routes. FLT forecasted from historical patterns and was close.
+
+The full-period result — 3.84% vs 9.51% — reflects this advantage. But even on the routes F+ can actually see, FLT wins: 3.1% vs 3.9%.
+
+The blind spot isn't what makes FLT better. FLT is better everywhere. The blind spot is an additional structural capability.
+
+3S and YF together represent 5.8% of the full 6-month test volume — meaningful, not a rounding error.
 
 ---
 
 ## FLT End-to-End Results
 
-Full results table: all airlines, airports, months, actual vs FLT predicted vs F+ predicted.
+The full drilldown. Interactive — filters for airline, airport, month.
 
-Use the filters to drill into specific combinations. Winner column shows who won each route.
-
-Good to use during Q&A when someone asks about a specific airline or airport.
+Key things to point out:
+- FLT wins across most airline–airport combinations
+- Largest absolute wins tend to be the highest-volume routes (biggest misorder reductions)
+- A few outlier months/routes where F+ wins — these are systematic improvement opportunities as more data accumulates
 
 ---
 
 ## How FLT Closes the Gap
 
-Walk the table row by row — it maps directly to the five limits on the previous slide.
+Map the five F+ limitations from the opening slide to outcomes:
 
-- **Schedule drift** and **Horizon degradation** → both solved by Phase 1. Two different problems, one model family.
-- **No route history** → the fallback hierarchy is the key insight. We never need city-pair data. Route → airport → global.
-- **Station disruptions** → honest answer: roadmap. We can detect anomalies via uplift ratio monitoring, but proactive redistribution isn't built yet. Good to acknowledge — shows we know the gaps.
-- **Aircraft swaps** → partial. If the swap is within the same seat bin (e.g. A319 → A320), FLT handles it seamlessly. Cross-bin late swaps (narrow → wide body after schedule publication) are still a gap — but the kg/min rate softens the error compared to F+.
+- **Schedule drift** → Solved. Phase 1 corrects for it.
+- **Horizon degradation** → Solved. Horizon-split models specialise by range.
+- **No route history** → Solved. Three-level fallback: exact route → airport+aircraft size → global aircraft size. No route returns zero.
+- **Station disruptions** → Roadmap. The architecture supports a per-station binary disruption flag. When a station cannot fuel, predicted volume would redistribute to alternate stations (configured per airline). Short-horizon only — meaningful for 1–30 day forecasts. Not yet implemented.
+- **Aircraft swaps** → Partial. seat_bin + kg/min rates capture aircraft size; within-bin swaps handled well; cross-bin swaps are partially addressed.
 
-The overall message: 3 fully solved, 1 on the roadmap, 1 partially addressed. That's a strong story.
+Be honest about the partial and roadmap items — it shows maturity and gives a clear direction for future phases.
 
 ---
 
 ## Built to Improve
 
-We have 17 months of training data — one full summer and one winter season. That's enough to validate, but not a lot of history.
+These results come from 17 months of data — one summer and one winter. The model improves structurally as more data accumulates:
 
-Every new month of data improves accuracy at every forecast horizon. More airports means richer shared patterns — the model sees more variation in airline and aircraft types.
+- Every new month adds data at every forecast horizon — `days_to_ops` is a feature, so the model learns how accuracy degrades with distance. More months = better calibration across the 1–220 day range.
+- `seat_bin` means aircraft-type patterns accumulate across routes and airports — more coverage reduces fallback errors on new or thin routes.
+- Charter and cargo routes with sparse published schedules improve as historical patterns accumulate.
+- New airlines onboard faster — seat-bin patterns transfer across carriers, so new entrants benefit from existing network knowledge immediately.
+- More airports strengthen the shared patterns for hub, leisure, and charter behaviour.
 
-These results are the floor. The system gets better automatically as it runs in production.
+The 3.84% is the floor, not the ceiling.
 
 ---
 
 ## Roadmap
 
-Start at Now: 10 airports validated, 5–1 vs F+.
+Five phases from proof of concept to full production:
 
-Phase 1: multi-scenario validation — more airlines, more conditions.
-Phase 2: expand to more airports.
-Phase 3: production deployment, 4–6 month horizon.
-Phase 4: extend to 15–18 month long-term model.
-Phase 5: ~400 airports, full system.
+- **Now**: 10 airports validated, 5-1 result, proof of concept done.
+- **Phase 1–2**: multi-scenario validation, expand airport coverage.
+- **Phase 3**: production deployment, 4–6 month horizon.
+- **Phase 4**: extend to 15–18 month horizon for longer-range planning.
+- **Phase 5**: full network, ~400 airports.
 
-The architecture doesn't change — it scales.
+Each phase is incremental — the core model doesn't change, only its scope.
 
 ---
 
 ## The Opportunity
 
-13,303 tonnes of misorder reduction from 10 airports in 6 months.
+10 airports in the test period = 96,993 t less misorder in 6 months. Scale that across a full network of ~400 airports and the impact is substantial.
 
-The model is airline-agnostic. Adding a new airline means adding their data — same model, more signal. Scaling to 400 airports with the same architecture is the path.
+The model is airline-agnostic — each new airline adds data that benefits all others through shared seat-bin and airport patterns.
 
-The economics scale linearly with coverage.
+The per-airport marginal cost of adding to the model is low. The incremental value scales with network size.
 
 ---
 
 ## The Ask
 
-Summarise: 5 out of 6 months, 21% less misorder, 10 airports, 11 airlines, 64 combinations. The validation is done.
+Summary: 5 out of 6 months, 60% less misorder, across 67 airline–airport route combinations.
 
-The ask is simple: continue the project and expand coverage. Every airport added improves the model and increases the savings.
+The ask is to continue and expand. The proof of concept is done. The question is how far to take it.
 
-If there are questions about timeline, cost, or integration — defer to the team for specifics.
+Keep it short — the slides have done the work. End with the number and the invitation to continue the conversation.

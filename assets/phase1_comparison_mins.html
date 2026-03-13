@@ -231,9 +231,9 @@ function updateChart() {
   const sub = buildSubtitle();
   const annot = [{ text: sub, x: 0.5, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false, font: { size: 11, color: '#aaa' }, xanchor: 'center' }];
   const toK = v => v != null ? Math.round(v / 1000) : null;
+  const mByM = sumByMonth(filtered, 'act_mins_raw', null, 'pred_mins_v1_raw', 'pred_mins_v2');
   let traces, yTitle;
   if (mode === 'vol') {
-    const mByM = sumByMonth(filtered, 'act_mins_raw', null, 'pred_mins_v1_raw', 'pred_mins_v2');
     const actY = mByM.map(b => toK(b ? b.act : null));
     const v1Y  = mByM.map(b => toK(b ? b.pv1 : null));
     const v2Y  = mByM.map(b => b && b.pv2n > 0 ? toK(b.pv2) : null);
@@ -241,13 +241,11 @@ function updateChart() {
     if (hasV2) traces.push(bar('New Model', monthNames, v2Y, '#ffd700', 'k'));
     yTitle = 'Flight mins (k)';
   } else if (mode === 'err') {
-    const wByM = wapeByMonth(filtered, 'act_mins_raw', null, 'pred_mins_v1_raw');
-    const v1E = wByM.map(b => b ? Math.round(b.absErrV1 / 1000) : null);
+    const v1E = mByM.map(b => b ? Math.round(Math.abs(b.pv1 - b.act) / 1000) : null);
     traces = [bar('FLT error (|pred−actual|)', monthNames, v1E, '#00d4aa', 'k')];
     yTitle = 'Abs Minutes Error (k)';
   } else {
-    const wByM = wapeByMonth(filtered, 'act_mins_raw', null, 'pred_mins_v1_raw');
-    const v1W = wByM.map(b => b && b.act > 0 ? +(b.absErrV1 / b.act * 100).toFixed(2) : null);
+    const v1W = mByM.map(b => b && b.act > 0 ? +(Math.abs(b.pv1 - b.act) / b.act * 100).toFixed(2) : null);
     traces = [wapeBar('FLT', monthNames, v1W, '#00d4aa')];
     if (hasV2) traces.push(wapeBar('New Model', monthNames, v1W.map(() => null), '#ffd700'));
     yTitle = 'WAPE %';

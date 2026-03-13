@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reset.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.css">
   <style>
     .reveal .sourceCode {  /* see #7635 */
       overflow: visible;
@@ -29,7 +29,7 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/moon.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/theme/moon.css" id="theme">
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -89,6 +89,7 @@ flowchart LR
 <div style="font-size:0.85em; color:#aaa; margin-bottom:0.5em;">
 Five structural weaknesses — FLT was built to address them.
 </div>
+<div>
 <ul>
 <li class="fragment"><strong>Schedule drift</strong> — the published
 schedule is never what actually flies: cancellations, swaps and
@@ -99,24 +100,26 @@ time</li>
 <li class="fragment"><strong>No route history</strong> — new and
 seasonal routes have no city-pair data, so F+ returns no estimate</li>
 <li class="fragment"><strong>Station disruptions</strong> — if an
-airport can’t fuel, aircraft tank elsewhere; F+ doesn’t detect or
-adjust</li>
+airport can’t fuel, aircraft tank elsewhere; F+ doesn’t detect or adjust
+<em>(FLT roadmap: station disruption flag)</em></li>
 <li class="fragment"><strong>Aircraft swaps</strong> — a 180-seat
 aircraft replacing a 250-seat one carries very different fuel
 requirements</li>
 </ul>
+</div>
 </section>
 <section id="our-hypothesis" class="slide level3">
 <h3>Our Hypothesis</h3>
 <div style="font-size: 0.9em; margin: 0.6em 0;">
 <p><strong>Don’t rely on city pairs or fixed routes.</strong></p>
 </div>
+<div>
 <ul>
 <li class="fragment">City-pair history breaks down for new routes, swaps
 and disruptions</li>
-<li class="fragment">Instead: use <strong>flight volume</strong> as the
-signal — encoded as <strong>departure count</strong> and <strong>flight
-minutes</strong></li>
+<li class="fragment">Instead: use <strong>departure count</strong> and
+<strong>flight minutes</strong> as the signal — these drive fuel
+consumption directly</li>
 <li class="fragment">These are measurable, forecastable quantities that
 reflect what will actually operate</li>
 <li class="fragment">Aircraft size (<strong>seat bin</strong>) captures
@@ -124,13 +127,77 @@ fuel efficiency without needing route-specific history</li>
 <li class="fragment">The model learns: <em>given this many flights of
 this size from this airport — how much fuel?</em></li>
 </ul>
+</div>
+</section>
+<section id="the-flt-pipeline-two-stages" class="slide level3">
+<h3>The FLT Pipeline — Two Stages</h3>
+
+<div style="zoom:1.1;">
+<div class="mermaid">
+%%{init: {'theme': 'dark', 'flowchart': {'nodeSpacing': 50, 'rankSpacing': 60}}}%%
+flowchart LR
+    S["Published\nSchedule\n(SSIM)"]
+
+    subgraph P1["Phase 1 — Schedule Correction"]
+        direction TB
+        D1["Departure\nDelta Model"]
+        M1["Flight Minutes\nDelta Model"]
+    end
+
+    subgraph P2["Phase 2 — Uplift Prediction"]
+        direction TB
+        F["Formula Base\nkg/dep · kg/min"]
+        R["ML Correction\nRatio ≈ 1.0"]
+    end
+
+    OUT["Predicted\nUplift kg"]
+
+    S --> P1
+    D1 --> F
+    M1 --> F
+    F --> R
+    R --> OUT
+
+    style S fill:#1a3a5a,stroke:#4dabf7,color:#fff
+    style P1 fill:#1a3a1a,stroke:#51cf66,color:#fff
+    style D1 fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style M1 fill:#1a4a1a,stroke:#51cf66,color:#fff
+    style P2 fill:#3a2a1a,stroke:#fcc419,color:#fff
+    style F fill:#4a3a1a,stroke:#fcc419,color:#fff
+    style R fill:#2a1a4a,stroke:#cc5de8,color:#fff
+    style OUT fill:#1a4a3a,stroke:#00d4aa,color:#fff
+
+    click S showPipelineDetail
+    click D1 showPipelineDetail
+    click M1 showPipelineDetail
+    click F showPipelineDetail
+    click R showPipelineDetail
+    click OUT showPipelineDetail
+</div>
+</div>
+
+<div id="pipeline-detail-box" style="display:none; margin-top:0.6em; background:#1e2d4a; border:1px solid #3a5a8a; border-radius:8px; padding:0.6em 1em; font-size:0.76em; color:#ccc; line-height:1.5;"></div>
+
+<script>
+const pipelineDetails = {
+  S: "<strong style='color:#4dabf7'>Published Schedule (SSIM)</strong><br>The schedule filed by airlines — departure counts and flight minutes per route. Available months in advance but drifts from what will actually operate.",
+  D1: "<strong style='color:#51cf66'>Departure Delta Model</strong><br>Predicts how many more or fewer flights will operate vs. the published schedule. Split by forecast horizon: 1–90 days and 91–220 days ahead.",
+  M1: "<strong style='color:#51cf66'>Flight Minutes Delta Model</strong><br>Predicts the correction to total flight time. Runs in parallel with the departure model — both corrections feed into Phase 2.",
+  F: "<strong style='color:#fcc419'>Formula Base Estimate</strong><br>Converts corrected departures and flight minutes into a fuel estimate using recency-weighted kg/dep and kg/min rates. Falls back to airport or global averages for sparse routes.",
+  R: "<strong style='color:#cc5de8'>ML Correction Ratio</strong><br>A HistGBM model predicts how much the formula estimate will be off, expressed as a ratio near 1.0. Final prediction = base × ratio.",
+  OUT: "<strong style='color:#00d4aa'>Predicted Uplift kg</strong><br>Monthly fuel uplift forecast per airline and airport. This is what we compare against F+ — the current production benchmark."
+};
+function showPipelineDetail(id) {
+  const box = document.getElementById('pipeline-detail-box');
+  if (box) { box.style.display = 'block'; box.innerHTML = pipelineDetails[id] || ''; }
+}
+</script>
 </section>
 <section id="what-we-tried-uplift-model" class="slide level3">
 <h3>What We Tried — Uplift Model</h3>
 <div style="margin-top:0.3em; font-size:0.78em;">
     <div style="font-size:0.75em; color:#aaa; margin-bottom:0.25em;">Models</div>
     <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:0.6em;">
-      <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Dummy</span>
       <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Linear Regression</span>
       <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">Ridge</span>
       <span style="background:#1a3a5a;border:1px solid #3a6a9a;color:#9ecae1;padding:3px 9px;border-radius:20px;font-size:0.78em;">XGBoost</span>
@@ -190,6 +257,35 @@ this size from this airport — how much fuel?</em></li>
   </div>
 </div>
 </section>
+<section id="the-key-insight-why-a-ratio" class="slide level3">
+<h3>The Key Insight — Why a Ratio?</h3>
+<div style="display:flex; flex-direction:column; gap:0.5em; margin-top:0.2em; font-size:0.82em;">
+
+  <div style="background:#1a1a2e; border-left:3px solid #fcc419; border-radius:6px; padding:0.35em 0.9em; color:#e0e0e0; line-height:1.4;">
+    Instead of predicting fuel uplift directly, we predict a <strong style="color:#fcc419;">ratio</strong> — how much the actual uplift will differ from a formula-based estimate.
+  </div>
+
+  <div style="display:flex; gap:0.7em;">
+    <div style="flex:1; background:#1a1a2e; border:1px solid #3a3a5a; border-radius:8px; padding:0.35em 0.85em;">
+      <div style="font-size:0.75em; color:#ff6b6b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.25em;">The problem with direct prediction</div>
+      <div style="color:#ccc; line-height:1.4;">
+        Raw fuel uplift varies enormously — a hub route can consume <strong>10× more</strong> than a thin leisure route. A model predicting raw kg struggles to generalise across that range.
+      </div>
+    </div>
+    <div style="flex:1; background:#1a1a2e; border:1px solid #2a4a2a; border-radius:8px; padding:0.35em 0.85em;">
+      <div style="font-size:0.75em; color:#00d4aa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.25em;">Why the ratio works</div>
+      <div style="color:#ccc; line-height:1.4;">
+        The ratio — <em>actual ÷ formula estimate</em> — clusters around <strong style="color:#00d4aa;">1.0</strong> for every route regardless of size. A stable, near-normal target is what ML models learn best.
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#1a2a1a; border:1px solid #3a6a4a; border-radius:6px; padding:0.3em 0.85em; color:#aaa; font-size:0.81em; line-height:1.35;">
+    The formula carries the scale. The model corrects the drift. Together they outperform either approach alone.
+  </div>
+
+</div>
+</section>
 <section id="how-it-works-the-equation" class="slide level3">
 <h3>How It Works — The Equation</h3>
 <div style="margin-top:0.3em; font-size:0.82em;">
@@ -227,6 +323,33 @@ this size from this airport — how much fuel?</em></li>
     </div>
 
   </div>
+</div>
+</section>
+<section id="training-and-test-data-uplift-model" class="slide level3">
+<h3>Training and Test Data — Uplift Model</h3>
+<div style="display:flex; gap:1.5em; margin-top:0.2em; font-size:0.8em;">
+  <div style="flex:1; background:#1a2a1a; border:1px solid #3a6a4a; border-radius:8px; padding:0.5em 0.9em;">
+    <div style="color:#74c476; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
+    <table style="width:100%; border-collapse:collapse; color:#ccc;">
+      <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Jan 2024 – Jun 2025 <span style="color:#aaa;">(17 months)</span></td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 67 airline–airport routes</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Target</td><td style="padding:2px 0;">Actual uplift kg · per day · per airport · per airline · per seat_bin</td></tr>
+    </table>
+  </div>
+  <div style="flex:1; background:#1a1a2a; border:1px solid #3a5a8a; border-radius:8px; padding:0.5em 0.9em;">
+    <div style="color:#9ecae1; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Test Vector — Actual Inputs</div>
+    <table style="width:100%; border-collapse:collapse; color:#ccc;">
+      <tr><td style="padding:2px 0; color:#aaa;">Forecast date</td><td style="padding:2px 0;">12 June 2025</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Test window</td><td style="padding:2px 0;">Jul – Dec 2025 <span style="color:#aaa;">(6 months)</span></td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Departures</td><td style="padding:2px 0;"><span style="color:#00d4aa; font-weight:bold;">Actual departures</span> — what really flew</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Flight minutes</td><td style="padding:2px 0;"><span style="color:#00d4aa; font-weight:bold;">Actual flight minutes</span> — what really flew</td></tr>
+      <tr><td style="padding:2px 0; color:#aaa;">Purpose</td><td style="padding:2px 0;">Isolate uplift model quality from schedule error</td></tr>
+    </table>
+  </div>
+</div>
+<div style="margin-top:0.4em; font-size:0.76em; color:#aaa; text-align:center;">
+  Using actual inputs removes schedule noise — this measures the ceiling of our approach.
 </div>
 </section>
 <section id="uplift-model-architecture" class="slide level3">
@@ -274,36 +397,8 @@ reliable. <span style="color:#555; font-size:0.88em;">↑ Click any node
 for details</span></p>
 </div>
 </section>
-<section id="training-and-test-data-uplift-model" class="slide level3">
-<h3>Training and Test Data — Uplift Model</h3>
-<div style="display:flex; gap:1.5em; margin-top:0.2em; font-size:0.8em;">
-  <div style="flex:1; background:#1a2a1a; border:1px solid #3a6a4a; border-radius:8px; padding:0.5em 0.9em;">
-    <div style="color:#74c476; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Training Data</div>
-    <table style="width:100%; border-collapse:collapse; color:#ccc;">
-      <tr><td style="padding:2px 0; color:#aaa;">Period</td><td style="padding:2px 0;">Jan 2024 – Jun 2025 <span style="color:#aaa;">(17 months)</span></td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Airports</td><td style="padding:2px 0;">BLL, FRA, VIE, PMI, ORD, HRG, KEF, HAM, HKG, WAW</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Airlines</td><td style="padding:2px 0;">11 airlines · 67 airline–airport routes</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Target</td><td style="padding:2px 0;">Actual uplift kg · per day · per airport · per airline · per seat_bin</td></tr>
-    </table>
-  </div>
-  <div style="flex:1; background:#1a1a2a; border:1px solid #3a5a8a; border-radius:8px; padding:0.5em 0.9em;">
-    <div style="color:#9ecae1; font-weight:bold; margin-bottom:0.3em; text-transform:uppercase; font-size:0.85em; letter-spacing:0.06em;">Test Vector — Perfect Schedule</div>
-    <table style="width:100%; border-collapse:collapse; color:#ccc;">
-      <tr><td style="padding:2px 0; color:#aaa;">Forecast date</td><td style="padding:2px 0;">12 June 2025</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Test window</td><td style="padding:2px 0;">Jul – Dec 2025 <span style="color:#aaa;">(6 months)</span></td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Departures</td><td style="padding:2px 0;"><span style="color:#00d4aa; font-weight:bold;">Actual departures</span> — what really flew</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Flight minutes</td><td style="padding:2px 0;"><span style="color:#00d4aa; font-weight:bold;">Actual flight minutes</span> — what really flew</td></tr>
-      <tr><td style="padding:2px 0; color:#aaa;">Purpose</td><td style="padding:2px 0;">Isolate uplift model quality from schedule error</td></tr>
-    </table>
-  </div>
-</div>
-<div style="margin-top:0.4em; font-size:0.76em; color:#aaa; text-align:center;">
-  Using actual inputs removes schedule noise — this measures the ceiling of our approach.
-</div>
-</section>
-<section id="uplift-model-results-using-perfect-schedule"
-class="slide level3">
-<h3>Uplift Model Results — Using Perfect Schedule</h3>
+<section id="uplift-model-results-actual-inputs" class="slide level3">
+<h3>Uplift Model Results — Actual Inputs</h3>
 <iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/oracle_comparison.html" height="615" width="100%">
 </iframe>
 </section>
@@ -313,6 +408,7 @@ class="slide level3">
 <p>The uplift model works. The bottleneck is the
 <strong>inputs</strong>.</p>
 </div>
+<div>
 <ul>
 <li class="fragment">The previous results used <strong>actual departures
 and flight minutes</strong> — what really flew</li>
@@ -327,6 +423,7 @@ actually operate</strong> — not what was planned</li>
 <li class="fragment"><strong>Closing the gap between scheduled and
 actual is Phase 1 — the schedule correction models.</strong></li>
 </ul>
+</div>
 </section>
 <section id="what-we-tried-schedule-correction" class="slide level3">
 <h3>What We Tried — Schedule Correction</h3>
@@ -525,18 +622,21 @@ class="slide level3">
 </section>
 <section id="putting-it-all-together" class="slide level3">
 <h3>Putting It All Together</h3>
+<div>
 <ul>
 <li class="fragment">Phase 1 corrects the published schedule — predicted
 departures and flight minutes replace the raw SSIM inputs</li>
 <li class="fragment">Those corrected values feed directly into the
 uplift model as if they were the real schedule</li>
 <li class="fragment">Recency-weighted fuel rates (kg/dep · kg/min)
-convert the corrected flight volume into a base estimate</li>
+applied to the corrected departure count and flight minutes give a base
+estimate</li>
 <li class="fragment">A learned correction ratio fine-tunes where the
 formula systematically drifts</li>
 <li class="fragment">The result: a forecast that adapts to what will
 actually fly — not just what was planned</li>
 </ul>
+</div>
 </section>
 <section id="the-complete-flt-pipeline" class="slide level3">
 <h3>The Complete FLT Pipeline</h3>
@@ -647,6 +747,11 @@ style="color: #00d4aa;">✓</span></p>
 </tbody>
 </table>
 </div>
+<div
+style="margin-top:0.6em; font-size:0.76em; color:#aaa; text-align:center;">
+<p>A win = our forecast is closer to actual fuel uplift for that
+month.</p>
+</div>
 </section>
 <section id="why-the-formula-approach-works" class="slide level3">
 <h3>Why the Formula Approach Works</h3>
@@ -710,8 +815,8 @@ the edges.</strong></p>
 <tr>
 <td>Uplift</td>
 <td>—</td>
-<td>15,854 kg</td>
-<td>18,909 kg</td>
+<td>15.9 t</td>
+<td>18.9 t</td>
 </tr>
 </tbody>
 </table>
@@ -742,21 +847,16 @@ patterns regardless.</p>
 <tbody>
 <tr>
 <td><strong>Full test period (all routes)</strong></td>
-<td><strong>3.8%</strong></td>
-<td><strong>9.5%</strong></td>
-</tr>
-<tr>
-<td>Like-for-like (excl. 3S &amp; YF Nov &amp; Dec)</td>
-<td>3.1%</td>
-<td>3.9%</td>
+<td><strong>3.84%</strong></td>
+<td><strong>9.51%</strong></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div style="font-size:0.84em; margin-top:0.7em;">
-<p>Even on a <strong>like-for-like</strong> basis FLT is <strong>~20%
-more accurate</strong> — and 3S/YF represent <strong>5.8% of total
-uplift volume</strong>.</p>
+<div style="font-size:0.84em; margin-top:0.8em;">
+<p>Even when we exclude the routes F+ cannot see, <strong>FLT still
+wins: 3.1% vs 3.9%</strong> — 3S and YF alone account for <strong>5.8%
+of the full 6-month test volume</strong>.</p>
 </div>
 </section>
 <section id="flt-end-to-end-results" class="slide level3">
@@ -793,7 +893,7 @@ uplift volume</strong>.</p>
       </tr>
       <tr style="border-bottom:1px solid #2a2a3a;">
         <td style="padding:0.32em 0.6em; color:#e0e0e0;">Station disruptions</td>
-        <td style="padding:0.32em 0.6em; color:#ccc;">Uplift ratio monitoring to detect anomalies and flag volume redistribution across stations</td>
+        <td style="padding:0.32em 0.6em; color:#ccc;">Architecture supports a per-station disruption flag — when a station cannot fuel, predicted volume redistributes to alternate stations. Short-horizon only. Not yet implemented.</td>
         <td style="padding:0.32em 0.6em; text-align:center;"><span style="background:#3a2a1a;border:1px solid #7a5a2a;color:#fcc419;padding:2px 10px;border-radius:20px;font-size:0.85em;">Roadmap</span></td>
       </tr>
       <tr>
@@ -812,8 +912,10 @@ uplift volume</strong>.</p>
 <li><strong>17 months</strong> of data — one summer, one winter
 season</li>
 <li>Every new month improves accuracy at every forecast horizon</li>
-<li>Uplift model trained on <strong>2025 data only</strong> due to
-tankering regulations</li>
+<li>Charter &amp; cargo routes with no published schedule improve as
+historical patterns accumulate</li>
+<li>New airlines onboard faster — shared seat-bin patterns transfer
+across carriers</li>
 <li>More airports = stronger shared patterns</li>
 </ul>
 </div>
@@ -854,6 +956,7 @@ t</strong> less misorder in 6 months</li>
 <section id="the-ask" class="slide level3">
 <h3>The Ask</h3>
 <div style="font-size: 0.85em;">
+<div>
 <ul>
 <li class="fragment"><strong>5 out of 6 months, 60% less
 misorder</strong></li>
@@ -864,17 +967,18 @@ data</li>
 <li class="fragment">Continue the project and expand coverage</li>
 </ul>
 </div>
+</div>
 <!-- build: 2026-02-25 -->
 </section>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.js"></script>
 
   <!-- reveal.js plugins -->
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/search/search.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/search/search.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/zoom/zoom.js"></script>
 
   <script>
 

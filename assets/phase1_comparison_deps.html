@@ -243,15 +243,13 @@ function updateChart() {
     if (hasV2) traces.push(bar('New Model', monthNames, v2Y, '#ffd700'));
     yTitle = 'Departures';
   } else if (mode === 'err') {
-    const wByM = wapeByMonth(filtered, 'act_deps_raw', 'sched_deps_raw', 'pred_deps_v1_raw');
-    const schedE = wByM.map(b => b ? Math.round(b.absErrSched) : null);
-    const v1E = wByM.map(b => b ? Math.round(b.absErrV1) : null);
+    const schedE = dByM.map(b => b ? Math.round(Math.abs(b.sched - b.act)) : null);
+    const v1E = dByM.map(b => b ? Math.round(Math.abs(b.pv1 - b.act)) : null);
     traces = [bar('Sched error (|sched−actual|)', monthNames, schedE, '#6b7fa3'), bar('FLT error (|pred−actual|)', monthNames, v1E, '#00d4aa')];
     yTitle = 'Abs Departure Error';
   } else {
-    const wByM = wapeByMonth(filtered, 'act_deps_raw', 'sched_deps_raw', 'pred_deps_v1_raw');
-    const schedW = wByM.map(b => b && b.act > 0 ? +(b.absErrSched / b.act * 100).toFixed(2) : null);
-    const v1W = wByM.map(b => b && b.act > 0 ? +(b.absErrV1 / b.act * 100).toFixed(2) : null);
+    const schedW = dByM.map(b => b && b.act > 0 ? +(Math.abs(b.sched - b.act) / b.act * 100).toFixed(2) : null);
+    const v1W = dByM.map(b => b && b.act > 0 ? +(Math.abs(b.pv1 - b.act) / b.act * 100).toFixed(2) : null);
     traces = [wapeBar('Scheduled', monthNames, schedW, '#6b7fa3'), wapeBar('FLT', monthNames, v1W, '#00d4aa')];
     if (hasV2) traces.push(wapeBar('New Model', monthNames, v1W.map(() => null), '#ffd700'));
     yTitle = 'WAPE %';
