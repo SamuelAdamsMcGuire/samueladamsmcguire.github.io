@@ -1,6 +1,6 @@
 ---
 title: "FLT: Smarter Fuel Uplift Forecasting"
-subtitle: DataTactics GmbH
+subtitle: datatactics GmbH
 date: March 17 2026
 theme: moon
 transition: slide
