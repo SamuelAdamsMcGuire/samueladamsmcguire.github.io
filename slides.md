@@ -50,8 +50,12 @@ css: styles.css
       <div style="color:#ccc;font-size:0.88em;line-height:1.35;">3-month lookback misses seasonal shifts and route exits.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Rates go stale</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">kg-per-flight averages are updated manually. When operations change, F+ stays wrong.</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ No route history</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">New and seasonal routes have no city-pair data. F+ returns no estimate.</div>
+    </div>
+    <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Aircraft swaps</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">A 180-seat aircraft replacing a 250-seat one burns very different fuel. F+ doesn't adjust.</div>
     </div>
   </div>
 </div>
@@ -155,7 +159,7 @@ css: styles.css
         <td style="padding:5px 6px;color:#10B981;font-weight:bold;">2.4%</td>
         <td style="padding:5px 6px;color:#e67e22;">3.2%</td>
         <td style="padding:5px 6px;">❌</td>
-        <td style="padding:5px 6px;text-align:left;color:#aaa;font-size:0.82em;">Closest loss of the 6 months — Due to bad Phase 1 predictions</td>
+        <td style="padding:5px 6px;text-align:left;color:#aaa;font-size:0.82em;">Season transition — F+'s summer average coincidentally aligned</td>
       </tr>
       <tr style="background:#0d1a0d;">
         <td style="padding:5px 6px;text-align:left;font-weight:bold;">October</td>
