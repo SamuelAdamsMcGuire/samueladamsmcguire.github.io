@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reset.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.css">
   <style>
     .reveal .sourceCode {  /* see #7635 */
       overflow: visible;
@@ -29,7 +29,7 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/moon.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/theme/moon.css" id="theme">
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -67,7 +67,7 @@
   </div>
   <div style="display:flex;gap:0.7em;">
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Blind to cancellations</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Blind to schedule changes</div>
       <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Schedule shows 60 flights. 30 operate. F+ forecasts all 60.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
@@ -80,7 +80,7 @@
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
       <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Aircraft swaps</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">A 180-seat aircraft replacing a 250-seat one burns very different fuel. F+ doesn't adjust.</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Aircraft swaps happen frequently  F+ doesn't adjust.</div>
     </div>
   </div>
 </div>
@@ -205,6 +205,11 @@
   </div>
 </div>
 </section>
+<section id="end-to-end-results" class="slide level3">
+<h3>End-to-End Results</h3>
+<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/comparison_drilldown.html" height="615" width="100%">
+</iframe>
+</section>
 <section id="closing-the-gap" class="slide level3">
 <h3>Closing the Gap</h3>
 <div style="margin-top:0.4em;font-size:0.76em;">
@@ -250,11 +255,6 @@
   </div>
 </div>
 </section>
-<section id="end-to-end-results" class="slide level3">
-<h3>End-to-End Results</h3>
-<iframe scrolling="no" style="border:none;" seamless="seamless" data-src="assets/oracle_comparison.html" height="615" width="100%">
-</iframe>
-</section>
 <section id="roadmap" class="slide level3">
 <h3>Roadmap</h3>
 <div style="display:flex;align-items:stretch;gap:0;margin-top:0.7em;font-size:0.78em;">
@@ -291,12 +291,12 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/dist/reveal.js"></script>
 
   <!-- reveal.js plugins -->
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/search/search.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/search/search.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.4.0/plugin/zoom/zoom.js"></script>
 
   <script>
 
