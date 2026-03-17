@@ -42,7 +42,7 @@ css: styles.css
   </div>
   <div style="display:flex;gap:0.7em;">
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Blind to cancellations</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Blind to schedule changes</div>
       <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Schedule shows 60 flights. 30 operate. F+ forecasts all 60.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
@@ -55,7 +55,7 @@ css: styles.css
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
       <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Aircraft swaps</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">A 180-seat aircraft replacing a 250-seat one burns very different fuel. F+ doesn't adjust.</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Aircraft swaps happen frequently  F+ doesn't adjust.</div>
     </div>
   </div>
 </div>
@@ -195,6 +195,15 @@ css: styles.css
 
 ---
 
+
+
+### End-to-End Results
+
+<iframe scrolling="no" style="border:none;" seamless="seamless"
+  data-src="assets/oracle_comparison.html" height="615" width="100%"></iframe>
+
+---
+
 ### Closing the Gap
 
 ```{=html}
@@ -241,13 +250,6 @@ css: styles.css
   </div>
 </div>
 ```
-
----
-
-### End-to-End Results
-
-<iframe scrolling="no" style="border:none;" seamless="seamless"
-  data-src="assets/oracle_comparison.html" height="615" width="100%"></iframe>
 
 ---
 
