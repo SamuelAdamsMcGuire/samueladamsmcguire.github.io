@@ -63,24 +63,24 @@
 <h3>The Limits of F+</h3>
 <div style="display:flex;flex-direction:column;gap:0.6em;margin-top:0.5em;font-size:0.8em;">
   <div style="background:#1a1a2e;border-left:4px solid #F7BB40;border-radius:6px;padding:0.4em 0.9em;color:#FBF9F5;line-height:1.35;">
-    F+ multiplies a <strong>published schedule</strong> by <strong>historical average kg-per-flight rates</strong>.
+    F+ multiplies a <strong>published schedule</strong> by a <strong>fixed 3-month average kg-per-flight rate</strong>.
   </div>
   <div style="display:flex;gap:0.7em;">
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
       <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Blind to schedule changes</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Schedule shows 60 flights. 30 operate. F+ forecasts all 60.</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Schedule shows 60 flights. 30 actually operate. F+ forecasts all 60.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Static averages</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">3-month lookback misses seasonal shifts and route exits.</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Fixed 3-month average</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Always the last 3 months — same rate whether forecasting tomorrow or in 6 months. When operations change, the rate is wrong until the window catches up.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ No route history</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">New and seasonal routes have no city-pair data. F+ returns no estimate.</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ No schedule = no forecast</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Dependence on the schedule numbers. Any abence of flights short or long term lead to no forecast</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Aircraft swaps</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Aircraft swaps happen frequently  F+ doesn't adjust.</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Aircraft swaps ignored</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Aircraft swaps are common. F+ applies the same rate regardless of what actually flew.</div>
     </div>
   </div>
 </div>
@@ -275,19 +275,19 @@
         <td style="padding:0.3em 0.6em;text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:2px 10px;border-radius:20px;">Solved</span></td>
       </tr>
       <tr style="border-bottom:1px solid #2a2a3a;">
-        <td style="padding:0.3em 0.6em;color:#FBF9F5;">No route history</td>
-        <td style="padding:0.3em 0.6em;color:#ccc;">Fallback hierarchy: route rates → airport means → global mean. No city-pair history required.</td>
+        <td style="padding:0.3em 0.6em;color:#FBF9F5;">No schedule = no forecast</td>
+        <td style="padding:0.3em 0.6em;color:#ccc;">Fallback hierarchy: route rates → airport means → global mean. Historical patterns cover routes with no published schedule.</td>
         <td style="padding:0.3em 0.6em;text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:2px 10px;border-radius:20px;">Solved</span></td>
       </tr>
       <tr style="border-bottom:1px solid #2a2a3a;">
-        <td style="padding:0.3em 0.6em;color:#FBF9F5;">Station disruptions</td>
-        <td style="padding:0.3em 0.6em;color:#ccc;">Architecture supports a per-station disruption flag — volume redistributes to alternate stations when a station cannot fuel.</td>
-        <td style="padding:0.3em 0.6em;text-align:center;"><span style="background:#3a2a1a;border:1px solid #7a5a2a;color:#F7BB40;padding:2px 10px;border-radius:20px;">Roadmap</span></td>
-      </tr>
-      <tr>
         <td style="padding:0.3em 0.6em;color:#FBF9F5;">Aircraft swaps</td>
         <td style="padding:0.3em 0.6em;color:#ccc;">seat_bin + kg/min rates capture aircraft size; within-bin swaps handled well</td>
         <td style="padding:0.3em 0.6em;text-align:center;"><span style="background:#2a2a1a;border:1px solid #5a5a3a;color:#ffd966;padding:2px 10px;border-radius:20px;">Partial</span></td>
+      </tr>
+      <tr>
+        <td style="padding:0.3em 0.6em;color:#FBF9F5;">Station disruptions</td>
+        <td style="padding:0.3em 0.6em;color:#ccc;">Architecture supports a per-station disruption flag — volume redistributes to alternate stations when a station cannot fuel.</td>
+        <td style="padding:0.3em 0.6em;text-align:center;"><span style="background:#3a2a1a;border:1px solid #7a5a2a;color:#F7BB40;padding:2px 10px;border-radius:20px;">Roadmap</span></td>
       </tr>
     </tbody>
   </table>
