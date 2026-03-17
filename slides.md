@@ -122,6 +122,52 @@ css: styles.css
 
 ---
 
+### Training Data & Test Setup
+
+```{=html}
+<div style="display:flex;gap:0.8em;margin-top:0.2em;font-size:0.68em;align-items:flex-start;">
+
+  <div style="flex:1;background:#0d1f0d;border:1px solid #3a6a4a;border-radius:8px;padding:0.4em 0.8em;">
+    <div style="color:#10B981;font-weight:bold;margin-bottom:0.2em;text-transform:uppercase;font-size:0.82em;letter-spacing:0.05em;">Phase 1 — Schedule Models</div>
+    <table style="width:100%;border-collapse:collapse;color:#ccc;line-height:1.28;">
+      <tr><td style="color:#aaa;padding:0;width:34%;">Period</td><td>Oct 2023 – Jun 2025 <span style="color:#777;">(20 months)</span></td></tr>
+      <tr><td style="color:#aaa;padding:0;">Airports</td><td>BLL FRA VIE PMI ORD HRG KEF HAM HKG WAW</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Airlines</td><td>LH OS LX SN EW EN WK 4Y YF XQ 3S</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Horizon</td><td>1 – 220 days</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Target</td><td>Departures · flight minutes</td></tr>
+    </table>
+  </div>
+
+  <div style="flex:1;background:#0d0d1f;border:1px solid #3a5a8a;border-radius:8px;padding:0.4em 0.8em;">
+    <div style="color:#9ecae1;font-weight:bold;margin-bottom:0.2em;text-transform:uppercase;font-size:0.82em;letter-spacing:0.05em;">Phase 2 — Uplift Model</div>
+    <table style="width:100%;border-collapse:collapse;color:#ccc;line-height:1.28;">
+      <tr><td style="color:#aaa;padding:0;width:34%;">Period</td><td>Jan 2024 – Jun 2025 <span style="color:#777;">(17 months)</span></td></tr>
+      <tr><td style="color:#aaa;padding:0;">Airports</td><td>Same 10 airports</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Airlines</td><td>Same 11 airlines</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Target</td><td>Uplift kg</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Fallback</td><td>Route → airport → global mean</td></tr>
+    </table>
+  </div>
+
+  <div style="flex:1;background:#1a1208;border:1px solid #6a5a2a;border-radius:8px;padding:0.4em 0.8em;">
+    <div style="color:#F7BB40;font-weight:bold;margin-bottom:0.2em;text-transform:uppercase;font-size:0.82em;letter-spacing:0.05em;">Test Setup</div>
+    <table style="width:100%;border-collapse:collapse;color:#ccc;line-height:1.28;">
+      <tr><td style="color:#aaa;padding:0;width:34%;">Forecast date</td><td>12 June 2025</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Test window</td><td>Jul – Dec 2025 <span style="color:#777;">(6 months)</span></td></tr>
+      <tr><td style="color:#aaa;padding:0;">Input</td><td>Published schedule Jun 12</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Ground truth</td><td>Actual deps · flight mins · uplift kg</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Benchmark</td><td>F+ forecast, same window</td></tr>
+    </table>
+  </div>
+
+</div>
+<div style="margin-top:0.4em;margin-left:-1.5em;margin-right:-1.5em;text-align:center;font-size:0.72em;color:#999;border-top:1px solid #333;padding-top:0.3em;">
+  No future information used — models see only what a planner would have on 12 June 2025.
+</div>
+```
+
+---
+
 ### FLT vs F+ — Month by Month
 
 ```{=html}
