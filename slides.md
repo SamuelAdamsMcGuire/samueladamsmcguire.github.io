@@ -50,11 +50,11 @@ css: styles.css
       <div style="color:#ccc;font-size:0.88em;line-height:1.35;">The rate only has influence from the last 3 months and flips at month boundaries.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ No history = no forecast</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ No schedule = no forecast</div>
       <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Charter and cargo operators only publish short-term schedules. No mid- to long-term forecast is possible for those routes.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Scheduled type, not actual</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Scheduled aircraft type</div>
       <div style="color:#ccc;font-size:0.88em;line-height:1.35;">F+ uses the scheduled aircraft type. If a larger aircraft operates instead, the rate is wrong — and F+ cannot adjust.</div>
     </div>
   </div>
@@ -107,7 +107,7 @@ css: styles.css
     <div style="color:#FBF9F5;line-height:1.5;">
       <div style="margin-bottom:0.2em;">📥 <strong>Input:</strong> Corrected departures + flight minutes</div>
       <div style="margin-bottom:0.2em;">⚙️ <strong>Model:</strong> Formula base × ML correction ratio</div>
-      <div style="margin-bottom:0.2em;font-size:0.85em;color:#9ecae1;font-style:italic;">base = corrected deps × kg/dep + corrected mins × kg/min</div>
+      <div style="margin-bottom:0.2em;font-size:0.85em;color:#9ecae1;font-style:italic;">base = (corrected deps × kg/dep + corrected mins × kg/min)/2</div>
       <div>📤 <strong>Output:</strong> Predicted uplift (kg)</div>
     </div>
     <div style="margin-top:0.45em;background:#0a1828;border-radius:5px;padding:0.25em 0.6em;font-size:0.8em;color:#74c476;">
@@ -145,7 +145,7 @@ css: styles.css
       <tr><td style="color:#aaa;padding:0;">Airports</td><td>Same 10 airports</td></tr>
       <tr><td style="color:#aaa;padding:0;">Airlines</td><td>Same 11 airlines</td></tr>
       <tr><td style="color:#aaa;padding:0;">Target</td><td>Uplift kg</td></tr>
-      <tr><td style="color:#aaa;padding:0;">Fallback</td><td>Route → airport → global mean</td></tr>
+      <tr><td style="color:#aaa;padding:0;">Fallback</td><td>Historically similar routes</td></tr>
     </table>
   </div>
 

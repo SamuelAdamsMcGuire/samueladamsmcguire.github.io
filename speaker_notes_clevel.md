@@ -38,11 +38,16 @@ The challenge is that at forecast time (6 months out) we only have the schedule,
 
 ## Slide 4 — The FLT Pipeline
 
+I tried a lot of different set ups. This is just what worked this best. 
+
 Two stages, one pipeline:
 
 **Phase 1 — Schedule Correction:** A LightGBM model has learned, from 20 months of history, how scheduled departures and flight minutes typically drift from what actually operates — broken down by airline, airport, days to operations, and season. It outputs corrected departure counts and flight minute estimates.
+Short and mid (long soon) horizons
 
-**Phase 2 — Uplift Prediction:** Takes Phase 1's corrected numbers as input. The model predicts a correction ratio applied to a formula base (corrected deps × kg/dep + corrected mins × kg/min). Predicting a ratio near 1.0 is far easier to learn than predicting raw kg directly — the target is consistent across all routes regardless of size.
+**Phase 2 — Uplift Prediction:** Takes Phase 1's corrected numbers as input. The model predicts a correction ratio applied to a formula base (corrected deps × kg/dep + corrected mins × kg/min)/2. Predicting a ratio near 1.0 is far easier to learn than predicting raw kg directly — the target is consistent across all routes regardless of size.
+
+We calculate the statistical value for uplift and then predict how wrong it is - nudge it up or down. We prediction something around 1. 1.1 nudge up and 0.8 nudge down.  
 
 The two stages compound: better schedule correction = better uplift inputs = better uplift prediction.
 
@@ -66,7 +71,7 @@ Walk through the table:
 
 **July and August:** Both models are accurate in summer peak. Schedule is reliable, routes operating as expected. FLT's edge is modest — 1.6% vs 2.4% and 1.9% vs 2.7%.
 
-**September — the one loss (3.2% vs F+ 2.4%):** June schedule still shows full summer ops. By September, airlines have quietly cancelled seasonal and charter routes without filing it. FLT's Phase 1 model trusts the (wrong) schedule and overcounts departures. F+ survives this accidentally — its 3-month rate was built from July/August actuals which already reflect the summer wind-down in kg-per-flight terms, so even with the wrong flight count the rate compensates. October onwards that trick stops working and F+ collapses while FLT recovers. Fix: Winterflugplan.
+**September — the one loss (3.2% vs F+ 2.4%):** Both models forecast from the same June 12 schedule. The main driver is EN/BLL: the schedule was correct (25–30 flights), but FLT's Phase 1 inflated the count based on historical EN/BLL patterns where actual was 1.5–2.5× scheduled. F+ doesn't modify flight counts — it applies a rate to the schedule directly — so when the schedule is right, F+ wins. A secondary contributor is EW/HAM, where EW contracted mid-summer after the forecast date. From October onwards F+'s spring rate goes completely stale for winter operations and it collapses — 6.4% vs FLT 3.7% in October, 24% vs 7.6% in November.
 
 **October:** F+ starts to break down as more winter cancellations kick in. FLT 3.7% vs F+ 6.4%.
 
