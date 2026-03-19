@@ -63,7 +63,7 @@
 <h3>The Limits of F+</h3>
 <div style="display:flex;flex-direction:column;gap:0.6em;margin-top:0.5em;font-size:0.8em;">
   <div style="background:#1a1a2e;border-left:4px solid #F7BB40;border-radius:6px;padding:0.4em 0.9em;color:#FBF9F5;line-height:1.35;">
-    F+ multiplies <strong>published schedule</strong> by a <strong>rolling 3-month average uplift-per-city-pair and scheduled aircraft type</strong>.
+    F+ assigns each scheduled event the average uplift from the <strong>last three full calendar months</strong> for that <strong>city pair and scheduled aircraft type</strong>, then aggregates.
   </div>
   <div style="display:flex;gap:0.7em;">
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
@@ -71,16 +71,16 @@
       <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Schedule shows 60 flights. 30 actually operate. F+ forecasts all 60.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Fixed 3-month average</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Always the last 3 months — same rate whether forecasting tomorrow or in 6 months. When operations change, the rate is wrong until the window catches up.</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Last 3 full calendar months</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">The rate only has influence from the last 3 months and flips at month boundaries.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ No schedule = no forecast</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Dependence on the schedule numbers. Any abence of flights short or long term lead to no forecast</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ No history = no forecast</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Charter and cargo operators only publish short-term schedules. No mid- to long-term forecast is possible for those routes.</div>
     </div>
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
-      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Aircraft swaps ignored</div>
-      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">Aircraft swaps are common. F+ applies the same rate regardless of what actually flew.</div>
+      <div style="color:#ff6b6b;font-weight:bold;margin-bottom:0.15em;">❌ Scheduled type, not actual</div>
+      <div style="color:#ccc;font-size:0.88em;line-height:1.35;">F+ uses the scheduled aircraft type. If a larger aircraft operates instead, the rate is wrong — and F+ cannot adjust.</div>
     </div>
   </div>
 </div>
