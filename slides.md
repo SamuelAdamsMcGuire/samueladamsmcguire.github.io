@@ -38,7 +38,7 @@ css: styles.css
 ```{=html}
 <div style="display:flex;flex-direction:column;gap:0.6em;margin-top:0.5em;font-size:0.8em;">
   <div style="background:#1a1a2e;border-left:4px solid #F7BB40;border-radius:6px;padding:0.4em 0.9em;color:#FBF9F5;line-height:1.35;">
-    F+ multiplies a <strong>published schedule</strong> by a <strong>fixed 3-month average kg-per-flight rate</strong>.
+    F+ multiplies <strong>published schedule</strong> by a <strong>rolling 3-month average uplift-per-city-pair and scheduled aircraft type</strong>.
   </div>
   <div style="display:flex;gap:0.7em;">
     <div style="flex:1;background:#2a1a1a;border:1px solid #6a3a3a;border-radius:8px;padding:0.45em 0.8em;">
@@ -108,7 +108,7 @@ css: styles.css
       <div style="margin-bottom:0.2em;">📥 <strong>Input:</strong> Corrected departures + flight minutes</div>
       <div style="margin-bottom:0.2em;">⚙️ <strong>Model:</strong> Formula base × ML correction ratio</div>
       <div style="margin-bottom:0.2em;font-size:0.85em;color:#9ecae1;font-style:italic;">base = corrected deps × kg/dep + corrected mins × kg/min</div>
-      <div>📤 <strong>Output:</strong> Predicted fuel uplift (kg)</div>
+      <div>📤 <strong>Output:</strong> Predicted uplift (kg)</div>
     </div>
     <div style="margin-top:0.45em;background:#0a1828;border-radius:5px;padding:0.25em 0.6em;font-size:0.8em;color:#74c476;">
       ML corrects where route-average rates over- or underestimate
@@ -275,7 +275,7 @@ css: styles.css
       </tr>
       <tr style="border-bottom:1px solid #2a2a3a;">
         <td style="padding:0.3em 0.6em;color:#FBF9F5;">No schedule = no forecast</td>
-        <td style="padding:0.3em 0.6em;color:#ccc;">Fallback hierarchy: route rates → airport means → global mean. Historical patterns cover routes with no published schedule.</td>
+        <td style="padding:0.3em 0.6em;color:#ccc;">Fallback hierarchy: Historical patterns cover routes with no published schedule.</td>
         <td style="padding:0.3em 0.6em;text-align:center;"><span style="background:#1a3a2a;border:1px solid #3a6a4a;color:#10B981;padding:2px 10px;border-radius:20px;">Solved</span></td>
       </tr>
       <tr style="border-bottom:1px solid #2a2a3a;">
